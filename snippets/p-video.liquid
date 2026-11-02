@@ -1,0 +1,367 @@
+{%- doc -%}
+  Renders a video element, from a video object (<video> element) or a video URL (<iframe> element)
+
+  Shared parameters:
+
+  @param {boolean} [video_autoplay] - Whether the video should autoplay
+  @param {boolean} [video_loop] - Whether the video should loop
+  @param {string} [video_class] - Additional classes for the video element
+  @param {string} [video_style] - Additional inline styles
+  @param {object} [video_preview_image] - Preview image to show before video plays
+  @param {string} [widths] - Responsive widths
+  @param {string} [sizes] - Responsive sizes
+  @param {string} [loading] - Loading attribute
+  @param {string} [additional_attributes] - Any additional HTML attributes
+  @param {string} [video_type] - 'youtube' or 'vimeo'
+  @param {boolean} [disable_controls] - Whether to disable controls. If true, only play/pause will be usable.
+  @param {object} video - The Shopify video object or a string containing a YouTube ID or Vimeo ID
+  @param {string} section_id - The section ID
+  @param {object} [block] - The block object
+
+  Video from URL:
+
+  @param {boolean} [video_from_url] - Set to true to use a video from URL instead of a Shopify video object
+  @param {string} [video_alt] - The video alt text
+
+  @example
+  {% render 'video', video: section.settings.video, video_autoplay: true, video_loop: true, section_id: section.id %}
+{%- enddoc -%}
+
+{% liquid
+  assign block_settings = block.settings
+  assign video_alt = video_alt | default: video.alt
+  assign alt = 'blocks.load_video' | t: description: video_alt | escape
+  assign video_preview_image = video_preview_image | default: video.preview_image
+  assign video_autoplay = video_autoplay | default: block_settings.video_autoplay
+  assign video_loop = video_loop | default: block_settings.video_loop
+  assign media_width_desktop = 100 | divided_by: 2 | append: 'vw'
+  assign media_width_mobile = '100vw'
+  assign sizes = '(min-width: 750px) ' | append: media_width_desktop | append: ', ' | append: media_width_mobile
+  assign widths = '240, 352, 832, 1200, 1600, 1920, 2560, 3840'
+%}
+
+{% if video_from_url %}
+  {% liquid
+    if video_type == 'youtube'
+      assign video_src = 'https://www.youtube.com/embed/VIDEO_ID?' | replace: 'VIDEO_ID', video
+      assign video_src = video_src | append: '&mute=1&controls=0&modestbranding=1&rel=0'
+
+      if video_autoplay
+        assign video_src = video_src | append: '&autoplay=1'
+      endif
+
+      if video_loop
+        assign video_src = video_src | append: '&playlist=' | append: video | append: '&loop=1'
+      endif
+
+      assign video_src = video_src | append: '&enablejsapi=1'
+      assign class = 'js-youtube'
+    else
+      assign video_src = 'https://player.vimeo.com/video/VIDEO_ID?' | replace: 'VIDEO_ID', video
+      assign video_src = video_src | append: '&muted=1&controls=0&title=0&byline=0&portrait=0'
+
+      if video_autoplay
+        assign video_src = video_src | append: '&autoplay=1'
+      endif
+
+      if video_loop
+        assign video_src = video_src | append: '&loop=1'
+      endif
+
+      assign video_src = video_src | append: '&api=1'
+      assign class = 'js-vimeo'
+    endif
+  %}
+  {% capture video_iframe %}
+      <iframe
+        src="{{ video_src }}"
+        class="{{ class }}"
+        allow="autoplay; encrypted-media"
+        allowfullscreen
+        title="{{ video_alt | escape }}"
+      ></iframe>
+  {% endcapture %}
+{% else %}
+  {% capture video_tag %}
+    {% if video.host == 'youtube' %}
+      {{
+        video
+        | external_video_url: autoplay: video_autoplay, loop: video_loop, playlist: video.external_id, mute: '1', controls: 0, enablejsapi: 1, modestbranding: 1, rel: 0
+        | external_video_tag: data-video-type: 'youtube'
+      }}
+    {% elsif video.host == 'vimeo' %}
+      {{
+        video
+        | external_video_url: autoplay: video_autoplay, loop: video_loop, muted: '1', controls: 0, api: 1, title: 0, byline: 0, portrait: 0
+        | external_video_tag: data-video-type: 'vimeo'
+      }}
+    {% else %}
+      {{ video | video_tag: image_size: '2500x', autoplay: video_autoplay, loop: video_loop, muted: true, controls: false }}
+    {% endif %}
+  {% endcapture %}
+{% endif %}
+
+{% if video != blank %}
+  <div
+    class="video-media pro-video-media {{ video_class }}"
+    style="{{ video_style }}"
+    data-video-media
+    {% if video_autoplay %}
+      data-autoplay
+    {% endif %}
+    {{ additional_attributes }}
+  >
+    <div class="product-v-details">
+      <h5 class="v-pname">
+        {{ block.settings.video_product.title }}
+      </h5>
+      <div class="pr-vw-grp">
+      <span role="group" class="v-price">
+        <span class="v-regular-price">
+          {{ block.settings.video_product.price | money }}
+        </span>
+        {% if block.settings.video_product.compare_at_price > block.settings.video_product.price %}
+          <span class="v-compare-at-price">
+            {{ block.settings.video_product.compare_at_price | money }}
+          </span>
+        {% endif %}
+      </span>
+        <a href="{{ block.settings.video_product.url }}" class="p-view-btn">
+    <span class="add-to-cart-text">    
+          {{- 'new-cart-icon.svg' | inline_asset_content -}}
+    </span>
+  </a>
+      </div>
+    </div>
+
+    {% if video_preview_image != blank and video_autoplay == false %}
+      <button
+        class="button video-media__poster-button button-unstyled"
+        data-play-button
+        aria-label="{{ alt }}"
+        type="button"
+        style="--video-aspect-ratio: {{ video.aspect_ratio }}"
+      >
+        {{
+          video_preview_image
+          | image_url: width: 3840
+          | image_tag: widths: widths, sizes: sizes, loading: loading, class: 'video-media__poster-image'
+        }}
+
+        <span class="video-media__poster-icon icon-play">
+          <span class="visually-hidden">{{ 'accessibility.play_video' | t }}</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="#fff"
+            stroke="#fff"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-play w-6 h-6 text-primary-foreground group-hover:text-secondary-foreground transition-colors fill-current"
+          >
+            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+          </svg>
+        </span>
+      </button>
+
+      <template data-video-template>
+        {% if video_from_url %}
+          {{ video_iframe }}
+        {% else %}
+          {{ video_tag }}
+        {% endif %}
+      </template>
+    {% else %}
+      {% if video_from_url %}
+        {{ video_iframe }}
+      {% else %}
+        {{ video_tag }}
+      {% endif %}
+    {% endif %}
+  </div>
+{% else %}
+  <div
+    {{ additional_attributes }}
+    class="{%- if video_class -%}{{ video_class }} {%- endif -%}video-placeholder-wrapper"
+    style="{%- if video_style -%}{{ video_style }} {%- endif -%}--video-placeholder-width: {{ block_settings.custom_width | default: 100 }}%;"
+  >
+    {% if video_preview_image != blank and video_autoplay == false %}
+      {{ video_preview_image | image_url: width: 3840 | image_tag: widths: widths, sizes: sizes, loading: loading }}
+    {% else %}
+      {{ 'hero-apparel-3' | placeholder_svg_tag }}
+    {% endif %}
+    <span class="video-placeholder-wrapper__poster-icon icon-play">
+      <span class="visually-hidden">{{ 'accessibility.play_video' | t }}</span>
+      {{- 'icon-play.svg' | inline_asset_content -}}
+    </span>
+  </div>
+{% endif %}
+
+{% style %}
+      .swiper-video video,
+      .video-media__poster-button.button-unstyled{
+        border-radius: var(--border-radius);
+      }
+
+      .video-media {
+        position: relative;
+      }
+
+      .video-media iframe,
+      .video-media video {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: var(--border-radius);
+      }
+
+      .video-media__poster-button {
+        position: relative;
+        width: 100%;
+        display: block;
+        border: 0;
+        padding: 0;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .video-media__poster-image {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .video-media__poster-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 16px;
+        background-color: rgba(255, 251, 240, 0.3);
+        border-radius: 50%;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+        pointer-events: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      /* Hover zoom + background */
+      .video-media__poster-button:hover .video-media__poster-icon {
+        transform: translate(-50%, -50%) scale(1.15);
+        background-color: #E5B82A;
+      }
+
+      /* Change SVG fill & stroke on hover */
+      .video-media__poster-button:hover .video-media__poster-icon svg {
+        fill: #000;
+        stroke: #000;
+        transition: fill 0.3s ease, stroke 0.3s ease;
+      }
+      .product-v-details{
+      position: absolute;
+      bottom: 8px;
+      background-color: #fff;
+      width: 94%;
+      border-radius: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 7px;
+      z-index: 1;
+    }
+     .v-pname{
+      font-size: 15px;
+      line-height: normal;
+      color: #000;
+      margin: 0;
+      font-weight: 600;
+    }
+    .v-compare-at-price {
+    opacity: .4;
+    text-decoration-line: line-through;
+    text-decoration-thickness: 1.5px;
+    font-size: 14px;
+    line-height: normal;
+  }
+    .v-regular-price {
+    font-size: 14px;
+    line-height: normal;
+    font-weight: 600;
+  }
+  .v-price{
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: 5px;
+  }
+  .pr-vw-grp{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.p-view-btn{
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #E5B82A;
+  border-radius: 100%;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+.p-view-btn svg{
+  width: 30px;
+  height: 30px;
+}
+{% endstyle %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-video-media]').forEach(function (videoMedia) {
+      const playButton = videoMedia.querySelector('[data-play-button]');
+      const template = videoMedia.querySelector('[data-video-template]');
+
+      if (playButton && template) {
+        playButton.addEventListener('click', function () {
+          const templateContent = template.content || template;
+          const clone = document.importNode(templateContent, true);
+
+          // Hide the poster button
+          playButton.style.display = 'none';
+
+          // Insert the video
+          videoMedia.appendChild(clone);
+
+          // Get the video/iframe element
+          const videoElement = videoMedia.querySelector('video');
+          const iframeElement = videoMedia.querySelector('iframe');
+
+          // Play the video if it's a native video element
+          if (videoElement) {
+            videoElement.muted = true;
+            videoElement.play();
+          }
+
+          // Play the video if it's YouTube or Vimeo
+          if (iframeElement) {
+            if (iframeElement.classList.contains('js-youtube')) {
+              setTimeout(function () {
+                iframeElement.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+              }, 500);
+            } else if (iframeElement.classList.contains('js-vimeo')) {
+              setTimeout(function () {
+                iframeElement.contentWindow.postMessage('{"method":"play"}', '*');
+              }, 500);
+            }
+          }
+        });
+      }
+    });
+  });
+</script>

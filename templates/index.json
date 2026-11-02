@@ -1,0 +1,713 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "custom_slide_show_M4R3ti": {
+      "type": "custom-slide-show",
+      "blocks": {
+        "slide_U7t3xb": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Mochi_Mart_s_Cute_Essentials.png",
+            "mobile_image": "shopify://shop_images/Cute_Essentials_for_Happy_Days.png",
+            "heading": "",
+            "heading_size": "h2",
+            "subheading": "",
+            "button_label": "",
+            "link": "",
+            "button_style_secondary": false,
+            "box_align": "middle-center",
+            "show_text_box": false,
+            "text_alignment": "center",
+            "image_overlay_opacity": 0,
+            "color_scheme": "",
+            "text_alignment_mobile": "center"
+          }
+        },
+        "slide_YFQwR6": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Friends_for_Every_Mood.png",
+            "mobile_image": "shopify://shop_images/Plush_Pals_for_Every_Mood.png",
+            "heading": "",
+            "heading_size": "h2",
+            "subheading": "",
+            "button_label": "",
+            "link": "",
+            "button_style_secondary": false,
+            "box_align": "middle-center",
+            "show_text_box": false,
+            "text_alignment": "center",
+            "image_overlay_opacity": 0,
+            "color_scheme": "",
+            "text_alignment_mobile": "center"
+          }
+        }
+      },
+      "block_order": [
+        "slide_U7t3xb",
+        "slide_YFQwR6"
+      ],
+      "name": "slide show",
+      "settings": {
+        "title": "",
+        "heading_size": "h2",
+        "heading_weight": "medium-font",
+        "heading_family": "body_font",
+        "description_1": "",
+        "description_2": "",
+        "description_style": "body",
+        "color_scheme": "scheme-1",
+        "section_width": "page-width",
+        "slide_height": "adapt_image",
+        "slide_border_radius": 24,
+        "arrows_enabled": true,
+        "arrow_position": "arrows-bottom",
+        "arrow_option": "arrow-show-both",
+        "dots_enabled": true,
+        "dots_option": "show-both",
+        "arrow_bg_color": "#fffdf9",
+        "arrow_color": "#222222",
+        "dot_active_color": "#d32f2f",
+        "dot_inactive_color": "#8c8c8c",
+        "autoplay_enabled": false,
+        "autoplay_delay": 4000,
+        "loop_enabled": true,
+        "slides_per_view_desktop": 1,
+        "slides_per_view_laptop": 1,
+        "slides_per_view_tablet": 1,
+        "slides_per_view_medium_tablet": 1,
+        "slides_per_view_mobile": 1,
+        "space_between_desktop": 20,
+        "space_between_laptop": 20,
+        "space_between_tablet": 20,
+        "space_between_medium_tablet": 20,
+        "space_between_mobile": 20,
+        "image_behavior": "none",
+        "show_text_below": true,
+        "accessibility_info": "Slideshow about our brand",
+        "padding_top": 36,
+        "padding_bottom": 20
+      }
+    },
+    "features_bar": {
+      "type": "features-bar",
+      "blocks": {
+        "feature_truck": {
+          "type": "feature",
+          "settings": {
+            "icon": "truck",
+            "text": "Preview shipping offer: over ₹999",
+            "link": ""
+          }
+        },
+        "feature_gift": {
+          "type": "feature",
+          "settings": {
+            "icon": "gift",
+            "text": "Gift-worthy finds",
+            "link": ""
+          }
+        },
+        "feature_delight": {
+          "type": "feature",
+          "settings": {
+            "icon": "package_check",
+            "text": "Made to delight",
+            "link": ""
+          }
+        },
+        "feature_moments": {
+          "type": "feature",
+          "settings": {
+            "icon": "heart",
+            "text": "Made for happy moments",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "feature_truck",
+        "feature_gift",
+        "feature_delight",
+        "feature_moments"
+      ],
+      "settings": {
+        "section_width": "page-width",
+        "marquee_desktop": false,
+        "marquee_speed": 22,
+        "marquee_gap": 36,
+        "pause_on_hover": true,
+        "font_size": 13,
+        "icon_size": 22,
+        "color_scheme": "scheme-1",
+        "custom_bg_color": "#fefaf1",
+        "icon_color": "#d32f2f",
+        "text_color": "",
+        "show_top_border": false,
+        "show_bottom_border": true,
+        "border_color": "#f0ece4",
+        "padding_top": 10,
+        "padding_bottom": 18
+      }
+    },
+    "collection_tiles": {
+      "type": "collection-tiles",
+      "blocks": {
+        "tile_1": {
+          "type": "collection",
+          "settings": {
+            "collection": "accessories",
+            "title": "",
+            "card_bg": "#fce4ec"
+          }
+        },
+        "tile_2": {
+          "type": "collection",
+          "settings": {
+            "collection": "cute-finds",
+            "title": "",
+            "card_bg": "#fcf1e5"
+          }
+        },
+        "tile_3": {
+          "type": "collection",
+          "settings": {
+            "collection": "cute-pens",
+            "title": "",
+            "card_bg": "#faeee5"
+          }
+        },
+        "tile_4": {
+          "type": "collection",
+          "settings": {
+            "collection": "gift-sets",
+            "title": "",
+            "card_bg": "#e8e0f5"
+          }
+        },
+        "tile_5": {
+          "type": "collection",
+          "settings": {
+            "collection": "key-chains",
+            "title": "",
+            "card_bg": "#f8e2e9"
+          }
+        },
+        "tile_6": {
+          "type": "collection",
+          "settings": {
+            "collection": "plush-toys",
+            "title": "",
+            "card_bg": "#dfd7f5"
+          }
+        },
+        "tile_7": {
+          "type": "collection",
+          "settings": {
+            "collection": "stationery",
+            "title": "",
+            "card_bg": "#e3def7"
+          }
+        },
+        "tile_8": {
+          "type": "collection",
+          "settings": {
+            "collection": "surprise-boxes",
+            "title": "",
+            "card_bg": "#eaf3e9"
+          }
+        },
+        "tile_9": {
+          "type": "collection",
+          "settings": {
+            "collection": "note-books",
+            "title": "",
+            "card_bg": "#fdf0e6"
+          }
+        },
+        "tile_10": {
+          "type": "collection",
+          "settings": {
+            "collection": "stickers",
+            "title": "",
+            "card_bg": "#fdf4e9"
+          }
+        }
+      },
+      "block_order": [
+        "tile_1",
+        "tile_2",
+        "tile_3",
+        "tile_4",
+        "tile_5",
+        "tile_6",
+        "tile_7",
+        "tile_8",
+        "tile_9",
+        "tile_10"
+      ],
+      "settings": {
+        "eyebrow": "FIND YOUR HAPPY PLACE",
+        "heading": "A little something for everyone",
+        "heading_size": "h2",
+        "subheading": "From desk days to cozy corners, find a little joy for every mood.",
+        "header_alignment": "left",
+        "show_view_all": false,
+        "view_all_text": "All collections →",
+        "view_all_link": "",
+        "collection_list": [],
+        "max_collections": 10,
+        "card_radius": 28,
+        "card_hover_effect": "tilt",
+        "columns": 5,
+        "columns_laptop": 4,
+        "columns_tablet": 3,
+        "mobile_columns": "2",
+        "slide_columns_gap": 16,
+        "slide_row_gap": 24,
+        "slide_mobile_columns_gap": 12,
+        "slide_mobile_row_gap": 16,
+        "layout_mode": "grid",
+        "enable_full_slider": false,
+        "enable_custom_slider": true,
+        "enable_mobile_slider": true,
+        "enable_desktop_slider": false,
+        "slides_per_view_desktop": 5,
+        "slides_per_view_laptop": 4,
+        "slides_per_view_tablet": 3,
+        "slides_per_view_medium_tablet": 2.5,
+        "slides_per_view_mobile": 2.2,
+        "space_between_desktop": 16,
+        "space_between_mobile": 12,
+        "arrows_enabled": true,
+        "arrow_position": "arrows-bottom",
+        "arrow_option": "arrow-only-mobile",
+        "dots_enabled": false,
+        "dots_option": "only-mobile",
+        "autoplay_enabled": false,
+        "autoplay_delay": 3000,
+        "loop_enabled": false,
+        "centered_enabled": false,
+        "section_width": "page-width",
+        "background_color": "#fefaf1",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    },
+    "product_list_fa6P9H": {
+      "type": "product-list",
+      "blocks": {
+        "static-header": {
+          "type": "_product-list-content",
+          "static": true,
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "static-product-card": {
+          "type": "_product-card",
+          "name": "t:names.product_card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 4,
+            "background_color": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "product_card_gallery_677WP3": {
+              "type": "_product-card-gallery",
+              "name": "t:names.product_card_media",
+              "settings": {
+                "image_ratio": "adapt",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "product_title_YXxMTj": {
+              "type": "product-title",
+              "name": "t:names.product_title",
+              "settings": {
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 4,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "price_JQzVV4": {
+              "type": "price",
+              "name": "t:names.product_price",
+              "settings": {
+                "show_sale_price_first": true,
+                "show_installments": false,
+                "show_tax_info": false,
+                "type_preset": "h6",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "text_color": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "product_card_gallery_677WP3",
+            "product_title_YXxMTj",
+            "price_JQzVV4"
+          ]
+        }
+      },
+      "settings": {
+        "eyebrow": "PREVIEW PICKS",
+        "heading": "Bestsellers & sweet finds",
+        "heading_size": "h2",
+        "subheading": "A handpicked mix of plush pals, pens, and gifts.",
+        "header_alignment": "left",
+        "show_view_all": true,
+        "view_all_text": "Shop all best sellers →",
+        "view_all_link": "",
+        "collection": "all",
+        "max_products": 8,
+        "columns": 4,
+        "columns_laptop": 3,
+        "columns_tablet": 2,
+        "mobile_columns": "2",
+        "slide_columns_gap": 16,
+        "slide_row_gap": 24,
+        "slide_mobile_columns_gap": 12,
+        "slide_mobile_row_gap": 16,
+        "layout_mode": "grid",
+        "enable_full_slider": false,
+        "enable_custom_slider": true,
+        "enable_mobile_slider": true,
+        "enable_desktop_slider": false,
+        "slides_per_view_desktop": 4,
+        "slides_per_view_laptop": 3,
+        "slides_per_view_tablet": 2,
+        "slides_per_view_medium_tablet": 2,
+        "slides_per_view_mobile": 1.8,
+        "space_between_desktop": 16,
+        "space_between_mobile": 12,
+        "arrows_enabled": true,
+        "arrow_position": "arrows-left-and-right",
+        "arrow_option": "arrow-only-mobile",
+        "dots_enabled": false,
+        "dots_option": "show-both",
+        "autoplay_enabled": false,
+        "autoplay_delay": 3000,
+        "loop_enabled": false,
+        "centered_enabled": false,
+        "section_width": "page-width",
+        "background_color": "",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    },
+    "promo_panel": {
+      "type": "image-with-text",
+      "settings": {
+        "section_width": "default",
+        "desktop_layout": "right",
+        "mobile_layout": "image_top",
+        "vertical_alignment": "center",
+        "panel_radius": 36,
+        "color_preset": "sage",
+        "custom_bg_color": "#e4efe7",
+        "eyebrow_color": "#d32f2f",
+        "heading_color": "#2c221e",
+        "heading_highlight_color": "#d32f2f",
+        "text_color": "#5c534e",
+        "show_icon": true,
+        "icon_type": "flower",
+        "icon_color": "#2c221e",
+        "icon_size": 26,
+        "custom_icon_svg": "",
+        "eyebrow": "A LITTLE JOY, WRAPPED UP",
+        "heading": "Little treats for",
+        "heading_highlight": "every mood.",
+        "heading_size_desktop": 44,
+        "heading_size_mobile": 30,
+        "text": "<p>For the thank-yous, the just-becauses, and the days that need something sweet. There's always a reason to treat someone (including you).</p>",
+        "text_size": 15,
+        "show_button": true,
+        "button_label": "Find the perfect gift",
+        "button_link": "",
+        "show_button_arrow": true,
+        "button_style": "solid",
+        "button_bg_color": "#d32f2f",
+        "button_text_color": "#ffffff",
+        "button_hover_bg_color": "#b71c1c",
+        "fallback_image": "gift.jpg",
+        "image_alt": "Little treats for every mood - cute gift box",
+        "image_fit": "cover",
+        "image_min_height_desktop": 440,
+        "image_min_height_mobile": 290,
+        "show_mascot": false,
+        "mascot_animation": "mascot-bob",
+        "mascot_width": 105,
+        "padding_top": 32,
+        "padding_bottom": 32
+      }
+    },
+    "customer_reviews": {
+      "type": "customer-reviews",
+      "blocks": {
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "quote": "“The cutest little haul! Everything felt like opening a present to myself.”",
+            "author": "A happy collector",
+            "verified": false
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "quote": "“Such thoughtful finds. The gift box made my friend's whole week.”",
+            "author": "A thoughtful gifter",
+            "verified": false
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "quote": "“I came for the mochi and stayed for literally everything else.”",
+            "author": "A repeat visitor",
+            "verified": false
+          }
+        },
+        "review_4": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "quote": "“Unboxing this was pure joy! The squishies and stationery are even cuter in person.”",
+            "author": "A desk styling fan",
+            "verified": false
+          }
+        },
+        "review_5": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "quote": "“Super fast delivery and adorable packaging. My go-to store for cute finds!”",
+            "author": "A verified buyer",
+            "verified": true
+          }
+        }
+      },
+      "block_order": [
+        "review_1",
+        "review_2",
+        "review_3",
+        "review_4",
+        "review_5"
+      ],
+      "settings": {
+        "eyebrow": "A PREVIEW OF HAPPY MOMENTS",
+        "heading": "The sweet word is out.",
+        "heading_size": 44,
+        "heading_size_mobile": 30,
+        "heading_alignment": "center",
+        "description": "",
+        "show_disclaimer": true,
+        "disclaimer_text": "Illustrative sample reviews for this storefront preview; not verified customer feedback.",
+        "slides_per_view_desktop": 3,
+        "slides_per_view_tablet": 2,
+        "slides_per_view_mobile": "1.15",
+        "space_between_desktop": 24,
+        "space_between_mobile": 16,
+        "loop_enabled": true,
+        "autoplay_enabled": false,
+        "autoplay_delay": 4000,
+        "show_arrows": true,
+        "show_dots": true,
+        "card_bg_color": "#ffffff",
+        "card_border_color": "#efeae2",
+        "card_border_radius": 24,
+        "card_hover_lift": true,
+        "quote_size": 16,
+        "color_scheme": "scheme-1",
+        "custom_bg_color": "",
+        "eyebrow_color": "#d32f2f",
+        "heading_color": "#2c221e",
+        "star_color": "#d32f2f",
+        "quote_color": "#2c2523",
+        "author_color": "#78716c",
+        "disclaimer_color": "#9ca3af",
+        "arrow_bg_color": "#ffffff",
+        "arrow_color": "#2c221e",
+        "dot_color": "#d6d3d1",
+        "dot_active_color": "#d32f2f",
+        "section_width": "page-width",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "social_moments": {
+      "type": "social-moments",
+      "blocks": {
+        "moment_1": {
+          "type": "image",
+          "settings": {
+            "fallback_image": "cat-1.jpg",
+            "alt_text": "Cute crystal pens",
+            "link": ""
+          }
+        },
+        "moment_2": {
+          "type": "image",
+          "settings": {
+            "fallback_image": "cat-2.jpg",
+            "alt_text": "Bunny and cat pens",
+            "link": ""
+          }
+        },
+        "moment_3": {
+          "type": "image",
+          "settings": {
+            "fallback_image": "cat-3.jpg",
+            "alt_text": "Pink fluffy plush",
+            "link": ""
+          }
+        },
+        "moment_4": {
+          "type": "image",
+          "settings": {
+            "fallback_image": "cat-4.jpg",
+            "alt_text": "Pink gift set box",
+            "link": ""
+          }
+        },
+        "moment_5": {
+          "type": "image",
+          "settings": {
+            "fallback_image": "cat-5.jpg",
+            "alt_text": "Hooded bunny plush",
+            "link": ""
+          }
+        },
+        "moment_6": {
+          "type": "image",
+          "settings": {
+            "fallback_image": "cat-6.jpg",
+            "alt_text": "Pastel washi tape & stickers",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "moment_1",
+        "moment_2",
+        "moment_3",
+        "moment_4",
+        "moment_5",
+        "moment_6"
+      ],
+      "settings": {
+        "eyebrow": "THE LITTLE MOMENTS",
+        "heading": "Follow @mochi_mart_",
+        "heading_size": 40,
+        "heading_size_mobile": 28,
+        "link_text": "Find us on Instagram",
+        "link_url": "https://instagram.com/",
+        "caption": "A peek at our little world — preview product imagery, not Instagram posts.",
+        "show_mascot": true,
+        "mascot_width": 115,
+        "color_scheme": "",
+        "panel_bg_color": "#ffe8ec",
+        "panel_radius": 36,
+        "eyebrow_color": "#d32f2f",
+        "heading_color": "#2c221e",
+        "link_color": "#d32f2f",
+        "caption_color": "#78716c",
+        "padding_top": 32,
+        "padding_bottom": 48
+      }
+    }
+  },
+  "order": [
+    "custom_slide_show_M4R3ti",
+    "features_bar",
+    "collection_tiles",
+    "product_list_fa6P9H",
+    "promo_panel",
+    "customer_reviews",
+    "social_moments"
+  ]
+}

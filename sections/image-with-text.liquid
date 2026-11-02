@@ -1,0 +1,878 @@
+{%- comment -%}
+  Image With Text / Treats & Promo Panel — Mochi Mart
+  Faithfully ported from Lovable design with soft curved pastel panel,
+  decorative flower motif, highlighted heading, pill CTA button, and optional bobbing/peeking mascot.
+{%- endcomment -%}
+
+{%- liquid
+  assign bg_color = '#e4efe7'
+  case section.settings.color_preset
+    when 'sage'
+      assign bg_color = '#e4efe7'
+    when 'blush'
+      assign bg_color = '#ffe8ec'
+    when 'butter'
+      assign bg_color = '#fff1cc'
+    when 'sky'
+      assign bg_color = '#e3f0fb'
+    when 'white'
+      assign bg_color = '#ffffff'
+    when 'custom'
+      assign bg_color = section.settings.custom_bg_color | default: '#e4efe7'
+  endcase
+
+  assign img_pos = section.settings.desktop_layout | default: 'right'
+  assign mob_pos = section.settings.mobile_layout | default: 'image_top'
+-%}
+
+<div
+  class="mochi-iwt-section section-{{ section.id }}"
+  id="MochiIwt-{{ section.id }}"
+  style="
+    --iwt-pt: {{ section.settings.padding_top }}px;
+    --iwt-pb: {{ section.settings.padding_bottom }}px;
+    --iwt-panel-bg: {{ bg_color }};
+    --iwt-radius: {{ section.settings.panel_radius }}px;
+    --iwt-eyebrow-color: {{ section.settings.eyebrow_color | default: '#d32f2f' }};
+    --iwt-heading-color: {{ section.settings.heading_color | default: '#2c221e' }};
+    --iwt-highlight-color: {{ section.settings.heading_highlight_color | default: '#d32f2f' }};
+    --iwt-heading-size: {{ section.settings.heading_size_desktop }}px;
+    --iwt-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+    --iwt-text-color: {{ section.settings.text_color | default: '#5c534e' }};
+    --iwt-text-size: {{ section.settings.text_size }}px;
+    --iwt-btn-bg: {{ section.settings.button_bg_color | default: '#d32f2f' }};
+    --iwt-btn-color: {{ section.settings.button_text_color | default: '#ffffff' }};
+    --iwt-btn-hover-bg: {{ section.settings.button_hover_bg_color | default: '#b71c1c' }};
+    --iwt-icon-color: {{ section.settings.icon_color | default: '#2c221e' }};
+    --iwt-icon-size: {{ section.settings.icon_size }}px;
+    --iwt-mascot-width: {{ section.settings.mascot_width }}px;
+  "
+>
+  <div class="mochi-iwt__outer {% if section.settings.section_width == 'narrow' %}mochi-iwt__outer--narrow{% elsif section.settings.section_width == 'full' %}mochi-iwt__outer--full{% endif %}">
+    <div class="mochi-iwt__panel">
+      <div class="mochi-iwt__split mochi-iwt__split--img-{{ img_pos }} mochi-iwt__split--mob-{{ mob_pos }}">
+        
+        {%- comment -%} Left / Content Column {%- endcomment -%}
+        <div class="mochi-iwt__content mochi-iwt__content--valign-{{ section.settings.vertical_alignment | default: 'center' }}">
+          
+          {%- comment -%} Decorative Top Motif / Icon {%- endcomment -%}
+          {%- if section.settings.show_icon -%}
+            <div class="mochi-iwt__icon-wrap" aria-hidden="true">
+              {%- case section.settings.icon_type -%}
+                {%- when 'flower' -%}
+                  <svg class="mochi-iwt__icon" viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+                    <circle cx="12" cy="12" r="3.2"/>
+                    <circle cx="12" cy="4.5" r="3.2"/>
+                    <circle cx="18.5" cy="8.2" r="3.2"/>
+                    <circle cx="18.5" cy="15.8" r="3.2"/>
+                    <circle cx="12" cy="19.5" r="3.2"/>
+                    <circle cx="5.5" cy="15.8" r="3.2"/>
+                    <circle cx="5.5" cy="8.2" r="3.2"/>
+                  </svg>
+                {%- when 'star' -%}
+                  <svg class="mochi-iwt__icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M12 2l2.9 6.6 7.1.6-5.3 4.8 1.6 7-6.3-3.7-6.3 3.7 1.6-7-5.3-4.8 7.1-.6L12 2z"/>
+                  </svg>
+                {%- when 'heart' -%}
+                  <svg class="mochi-iwt__icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                {%- when 'gift' -%}
+                  <svg class="mochi-iwt__icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 11h16v9H4zM3 7h18v4H3zM12 7v13"/><path d="M12 7c-2-4-6-3-5 0M12 7c2-4 6-3 5 0"/>
+                  </svg>
+                {%- when 'custom' -%}
+                  {{ section.settings.custom_icon_svg }}
+              {%- endcase -%}
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Eyebrow text {%- endcomment -%}
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="mochi-iwt__eyebrow">
+              {{ section.settings.eyebrow }}
+            </span>
+          {%- endif -%}
+
+          {%- comment -%} Heading with Highlight text {%- endcomment -%}
+          {%- if section.settings.heading != blank or section.settings.heading_highlight != blank -%}
+            <h2 class="mochi-iwt__heading">
+              {{ section.settings.heading }}
+              {%- if section.settings.heading_highlight != blank -%}
+                <span class="mochi-iwt__heading-highlight"> {{ section.settings.heading_highlight }}</span>
+              {%- endif -%}
+            </h2>
+          {%- endif -%}
+
+          {%- comment -%} Description / Text {%- endcomment -%}
+          {%- if section.settings.text != blank -%}
+            <div class="mochi-iwt__text rte">
+              {{ section.settings.text }}
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Call To Action Button {%- endcomment -%}
+          {%- if section.settings.show_button and section.settings.button_label != blank -%}
+            <div class="mochi-iwt__btn-wrap">
+              <a
+                href="{{ section.settings.button_link | default: routes.all_products_collection_url }}"
+                class="mochi-iwt__btn mochi-iwt__btn--{{ section.settings.button_style | default: 'solid' }}"
+              >
+                <span>{{ section.settings.button_label }}</span>
+                {%- if section.settings.show_button_arrow -%}
+                  <svg class="mochi-iwt__btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 12h14"></path>
+                    <path d="m12 5 7 7-7 7"></path>
+                  </svg>
+                {%- endif -%}
+              </a>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} Optional Mascot Character {%- endcomment -%}
+          {%- if section.settings.show_mascot -%}
+            <div class="mochi-iwt__mascot-inline">
+              {%- if section.settings.mascot_image != blank -%}
+                {{
+                  section.settings.mascot_image
+                  | image_url: width: 300
+                  | image_tag:
+                    loading: 'lazy',
+                    class: section.settings.mascot_animation,
+                    alt: 'Mochi Mascot'
+                }}
+              {%- else -%}
+                <img
+                  src="{{ 'mascot.png' | asset_url }}"
+                  alt="Mochi Mascot"
+                  loading="lazy"
+                  class="{{ section.settings.mascot_animation | default: 'mascot-bob' }}"
+                  width="110"
+                  height="110"
+                >
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+
+        </div>
+
+        {%- comment -%} Right / Image Column {%- endcomment -%}
+        <div class="mochi-iwt__media">
+          {%- if section.settings.image != blank -%}
+            {{
+              section.settings.image
+              | image_url: width: 1400
+              | image_tag:
+                loading: 'lazy',
+                class: 'mochi-iwt__img',
+                alt: section.settings.image_alt | default: section.settings.heading | escape
+            }}
+          {%- elsif section.settings.fallback_image != blank -%}
+            <img
+              src="{{ section.settings.fallback_image | asset_url }}"
+              alt="{{ section.settings.image_alt | default: section.settings.heading | escape }}"
+              loading="lazy"
+              class="mochi-iwt__img"
+              width="800"
+              height="800"
+            >
+          {%- else -%}
+            <img
+              src="{{ 'gift.jpg' | asset_url }}"
+              alt="{{ section.settings.image_alt | default: 'Little treats for every mood' | escape }}"
+              loading="lazy"
+              class="mochi-iwt__img"
+              width="800"
+              height="800"
+            >
+          {%- endif -%}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mochi-iwt-section {
+    padding-top: var(--iwt-pt);
+    padding-bottom: var(--iwt-pb);
+    font-family: var(--font-body--family, "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif);
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .mochi-iwt__outer {
+    max-width: var(--page-width, 1360px);
+    margin: 0 auto;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 768px) {
+    .mochi-iwt__outer {
+      padding: 0 24px;
+    }
+  }
+
+  .mochi-iwt__outer--narrow {
+    max-width: 1100px;
+  }
+
+  .mochi-iwt__outer--full {
+    max-width: 100%;
+    padding: 0 12px;
+  }
+
+  /* Soft Curved Panel */
+  .mochi-iwt__panel {
+    background-color: var(--iwt-panel-bg);
+    border-radius: var(--iwt-radius);
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    box-shadow: 0 8px 30px -16px rgba(0, 0, 0, 0.06);
+  }
+
+  /* 2-Column Split Grid */
+  .mochi-iwt__split {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .mochi-iwt__split {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .mochi-iwt__split--img-right .mochi-iwt__content {
+      order: 1;
+    }
+    .mochi-iwt__split--img-right .mochi-iwt__media {
+      order: 2;
+    }
+
+    .mochi-iwt__split--img-left .mochi-iwt__content {
+      order: 2;
+    }
+    .mochi-iwt__split--img-left .mochi-iwt__media {
+      order: 1;
+    }
+  }
+
+  /* Mobile ordering */
+  @media (max-width: 767px) {
+    .mochi-iwt__split--mob-image_top .mochi-iwt__media {
+      order: 1;
+    }
+    .mochi-iwt__split--mob-image_top .mochi-iwt__content {
+      order: 2;
+    }
+
+    .mochi-iwt__split--mob-image_bottom .mochi-iwt__media {
+      order: 2;
+    }
+    .mochi-iwt__split--mob-image_bottom .mochi-iwt__content {
+      order: 1;
+    }
+  }
+
+  /* Content Column */
+  .mochi-iwt__content {
+    display: flex;
+    flex-direction: column;
+    padding: 44px 32px;
+    box-sizing: border-box;
+    position: relative;
+    gap: 16px;
+  }
+
+  @media (min-width: 768px) {
+    .mochi-iwt__content {
+      padding: clamp(40px, 4.5vw, 68px) clamp(36px, 4.2vw, 64px);
+    }
+  }
+
+  .mochi-iwt__content--valign-top {
+    justify-content: flex-start;
+  }
+  .mochi-iwt__content--valign-center {
+    justify-content: center;
+  }
+  .mochi-iwt__content--valign-bottom {
+    justify-content: flex-end;
+  }
+
+  /* Decorative Flower Motif */
+  .mochi-iwt__icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    color: var(--iwt-icon-color);
+    margin-bottom: 2px;
+  }
+
+  .mochi-iwt__icon {
+    width: var(--iwt-icon-size);
+    height: var(--iwt-icon-size);
+    display: block;
+  }
+
+  /* Eyebrow */
+  .mochi-iwt__eyebrow {
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--iwt-eyebrow-color);
+  }
+
+  /* Heading */
+  .mochi-iwt__heading {
+    font-family: var(--font-heading--family, "Fredoka", "DM Sans", sans-serif);
+    font-size: var(--iwt-heading-size);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--iwt-heading-color);
+    margin: 0;
+  }
+
+  .mochi-iwt__heading-highlight {
+    color: var(--iwt-highlight-color);
+    display: inline;
+  }
+
+  @media (max-width: 767px) {
+    .mochi-iwt__heading {
+      font-size: var(--iwt-heading-size-mobile);
+      line-height: 1.18;
+    }
+  }
+
+  /* Subtitle / Description */
+  .mochi-iwt__text {
+    font-size: var(--iwt-text-size);
+    line-height: 1.6;
+    color: var(--iwt-text-color);
+    max-width: 480px;
+  }
+
+  .mochi-iwt__text p {
+    margin: 0 0 10px;
+  }
+  .mochi-iwt__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Call To Action Button */
+  .mochi-iwt__btn-wrap {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .mochi-iwt__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 13px 26px;
+    font-size: 14.5px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.2s ease, opacity 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  .mochi-iwt__btn--solid {
+    background-color: var(--iwt-btn-bg);
+    color: var(--iwt-btn-color);
+    border: none;
+    box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--iwt-btn-bg) 60%, transparent);
+  }
+
+  .mochi-iwt__btn--solid:hover {
+    background-color: var(--iwt-btn-hover-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 26px -8px color-mix(in srgb, var(--iwt-btn-bg) 75%, transparent);
+  }
+
+  .mochi-iwt__btn--outline {
+    background: transparent;
+    color: var(--iwt-btn-bg);
+    border: 2px solid var(--iwt-btn-bg);
+  }
+
+  .mochi-iwt__btn--outline:hover {
+    background: var(--iwt-btn-bg);
+    color: var(--iwt-btn-color);
+    transform: translateY(-2px);
+  }
+
+  .mochi-iwt__btn-arrow {
+    transition: transform 0.2s ease;
+  }
+
+  .mochi-iwt__btn:hover .mochi-iwt__btn-arrow {
+    transform: translateX(3px);
+  }
+
+  /* Optional Mascot Inside Copy */
+  .mochi-iwt__mascot-inline {
+    width: var(--iwt-mascot-width);
+    align-self: flex-end;
+    margin-top: auto;
+    line-height: 0;
+  }
+
+  .mochi-iwt__mascot-inline img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Media Column (Image) */
+  .mochi-iwt__media {
+    width: 100%;
+    height: 100%;
+    min-height: {{ section.settings.image_min_height_desktop | default: 420 }}px;
+    position: relative;
+    overflow: hidden;
+    background-color: color-mix(in srgb, var(--iwt-panel-bg) 70%, #ffffff);
+  }
+
+  @media (max-width: 767px) {
+    .mochi-iwt__media {
+      min-height: {{ section.settings.image_min_height_mobile | default: 280 }}px;
+    }
+  }
+
+  .mochi-iwt__img {
+    width: 100%;
+    height: 100%;
+    object-fit: {{ section.settings.image_fit | default: 'cover' }};
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .mochi-iwt__panel:hover .mochi-iwt__img {
+    transform: scale(1.02);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mochi-iwt__panel:hover .mochi-iwt__img,
+    .mochi-iwt__btn:hover {
+      transform: none !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Image with text (Lovable)",
+  "tag": "section",
+  "class": "mochi-image-with-text-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout & Sizing"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section container width",
+      "options": [
+        { "value": "default", "label": "Standard page width (1360px)" },
+        { "value": "narrow", "label": "Narrow centered (1100px)" },
+        { "value": "full", "label": "Full width with margin" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "desktop_layout",
+      "label": "Desktop image position",
+      "options": [
+        { "value": "right", "label": "Image on right, text on left" },
+        { "value": "left", "label": "Image on left, text on right" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile stacking layout",
+      "options": [
+        { "value": "image_top", "label": "Image on top" },
+        { "value": "image_bottom", "label": "Image on bottom" }
+      ],
+      "default": "image_top"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "Text vertical alignment",
+      "options": [
+        { "value": "top", "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "panel_radius",
+      "label": "Panel corner radius",
+      "min": 16,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Colors & Theme Preset"
+    },
+    {
+      "type": "select",
+      "id": "color_preset",
+      "label": "Pastel color theme preset",
+      "options": [
+        { "value": "sage", "label": "Sage green (#e4efe7)" },
+        { "value": "blush", "label": "Blush pink (#ffe8ec)" },
+        { "value": "butter", "label": "Butter yellow (#fff1cc)" },
+        { "value": "sky", "label": "Sky blue (#e3f0fb)" },
+        { "value": "white", "label": "Pure white (#ffffff)" },
+        { "value": "custom", "label": "Custom color (below)" }
+      ],
+      "default": "sage"
+    },
+    {
+      "type": "color",
+      "id": "custom_bg_color",
+      "label": "Custom panel background color",
+      "default": "#e4efe7"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow text color",
+      "default": "#d32f2f"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Main heading color",
+      "default": "#2c221e"
+    },
+    {
+      "type": "color",
+      "id": "heading_highlight_color",
+      "label": "Heading highlight color",
+      "default": "#d32f2f"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Description text color",
+      "default": "#5c534e"
+    },
+    {
+      "type": "header",
+      "content": "Top Decorative Icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show cute decorative icon",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "icon_type",
+      "label": "Icon symbol",
+      "options": [
+        { "value": "flower", "label": "Cute 6-Petal Flower" },
+        { "value": "star", "label": "Kawaii Star" },
+        { "value": "heart", "label": "Heart" },
+        { "value": "gift", "label": "Gift Box" },
+        { "value": "custom", "label": "Custom SVG code" }
+      ],
+      "default": "flower"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#2c221e"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 16,
+      "max": 44,
+      "step": 2,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "html",
+      "id": "custom_icon_svg",
+      "label": "Custom SVG (when 'Custom' is selected)"
+    },
+    {
+      "type": "header",
+      "content": "Headings & Text"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small eyebrow text",
+      "default": "A LITTLE JOY, WRAPPED UP"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading (First part)",
+      "default": "Little treats for"
+    },
+    {
+      "type": "text",
+      "id": "heading_highlight",
+      "label": "Heading highlighted text (in red)",
+      "default": "every mood.",
+      "info": "Rendered in the highlight color for emphasis"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading font size (Desktop)",
+      "min": 28,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading font size (Mobile)",
+      "min": 22,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description text",
+      "default": "<p>For the thank-yous, the just-becauses, and the days that need something sweet. There's always a reason to treat someone (including you).</p>"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Description text size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Call To Action Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show action button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Find the perfect gift"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button_arrow",
+      "label": "Show arrow icon in button",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [
+        { "value": "solid", "label": "Solid pill" },
+        { "value": "outline", "label": "Outline pill" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background color",
+      "default": "#d32f2f"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Button hover background color",
+      "default": "#b71c1c"
+    },
+    {
+      "type": "header",
+      "content": "Image / Photography"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Custom image"
+    },
+    {
+      "type": "text",
+      "id": "fallback_image",
+      "label": "Theme asset fallback filename",
+      "default": "gift.jpg",
+      "info": "Filename of image in theme assets (e.g. gift.jpg)"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text",
+      "default": "Little treats for every mood - cute gift box"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        { "value": "cover", "label": "Cover (fill column completely)" },
+        { "value": "contain", "label": "Contain (show entire image)" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "range",
+      "id": "image_min_height_desktop",
+      "label": "Image minimum height (Desktop)",
+      "min": 320,
+      "max": 650,
+      "step": 10,
+      "unit": "px",
+      "default": 440
+    },
+    {
+      "type": "range",
+      "id": "image_min_height_mobile",
+      "label": "Image minimum height (Mobile)",
+      "min": 220,
+      "max": 450,
+      "step": 10,
+      "unit": "px",
+      "default": 290
+    },
+    {
+      "type": "header",
+      "content": "Optional Animated Mascot"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mascot",
+      "label": "Show cute mascot inside content",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "mascot_image",
+      "label": "Custom mascot image"
+    },
+    {
+      "type": "select",
+      "id": "mascot_animation",
+      "label": "Mascot animation type",
+      "options": [
+        { "value": "mascot-bob", "label": "Bobbing bounce (3s)" },
+        { "value": "mascot-peek", "label": "Peeking animation (6s)" },
+        { "value": "none", "label": "Static (no animation)" }
+      ],
+      "default": "mascot-bob"
+    },
+    {
+      "type": "range",
+      "id": "mascot_width",
+      "label": "Mascot size",
+      "min": 60,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "default": 105
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text (Lovable)",
+      "category": "Image",
+      "settings": {
+        "color_preset": "sage",
+        "desktop_layout": "right",
+        "show_icon": true,
+        "icon_type": "flower",
+        "eyebrow": "A LITTLE JOY, WRAPPED UP",
+        "heading": "Little treats for",
+        "heading_highlight": "every mood.",
+        "text": "<p>For the thank-yous, the just-becauses, and the days that need something sweet. There's always a reason to treat someone (including you).</p>",
+        "button_label": "Find the perfect gift",
+        "fallback_image": "gift.jpg",
+        "padding_top": 32,
+        "padding_bottom": 32
+      }
+    }
+  ]
+}
+{% endschema %}
+

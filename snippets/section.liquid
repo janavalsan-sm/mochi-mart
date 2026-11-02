@@ -1,0 +1,193 @@
+{%- doc -%}
+  Renders a wrapper section
+
+  @param {section} section - The section object
+  @param {string} children - The children of the section
+  @param {string} section_id - The ID of the section
+  @param {string} background_color - The background color of the section
+  @param {string} [unique_id] - Optional unique ID for slider
+{%- enddoc -%}
+
+{% liquid
+  assign skip_contrast = false
+  if section.settings.background_media != blank and section.settings.background_media != 'none'
+    assign skip_contrast = true
+  endif
+%}
+{% render 'contrast-override',
+  background_color: background_color,
+  section_id: section_id,
+  skip_contrast: skip_contrast
+%}
+
+<div class="section-background color-custom-{{ section_id }}"></div>
+<div
+  class="section section--{{ section.settings.section_width }} color-custom-{{ section_id }}"
+  data-testid="ui-test-section"
+
+  {% if request.visual_preview_mode %}
+    data-shopify-visual-preview
+  {% endif %}
+
+  style="
+    {% if section.settings.section_height == 'custom' %}
+      --section-min-height: {{ section.settings.section_height_custom }}svh;
+    {% elsif section.settings.section_height == 'full-screen' %}
+      --section-min-height: 100svh;
+    {% elsif section.settings.section_height != '' %}
+      --section-min-height: var(--section-height-{{ section.settings.section_height }});
+    {% endif %}
+
+    {% if section.settings.section_height != '' %}
+     --section-preview-height: 600px;
+     {% endif %}
+  "
+>
+  <div class="custom-section-background">
+    {% render 'background-media',
+      background_media: section.settings.background_media,
+      background_video: section.settings.video,
+      background_video_position: section.settings.video_position,
+      background_image: section.settings.background_image,
+      background_image_position: section.settings.background_image_position
+    %}
+  </div>
+
+  <div
+    class="border-style custom-section-content"
+    style="{% render 'border-override', settings: section.settings %}"
+  >
+    {% if section.settings.toggle_overlay %}
+      {% render 'overlay', settings: section.settings, layer: '0' %}
+    {% endif %}
+
+    {% if section.settings.enable_custom_slider %}
+      {% assign slider_id = unique_id | default: section.id %}
+      {%- capture grid_styles -%}
+        --grid-desktop-horizontal-spacing: {{ section.settings.slide_columns_gap }}px;
+        --grid-desktop-vertical-spacing: {{ section.settings.slide_row_gap }}px;
+        --grid-mobile-horizontal-spacing: {{ section.settings.slide_mobile_columns_gap }}px;
+        --grid-mobile-vertical-spacing: {{ section.settings.slide_mobile_row_gap }}px;
+      {%- endcapture -%}
+      <div class="slider-outer spacing-style"
+        style="
+          {% render 'layout-panel-style', settings: section.settings %}
+          {% render 'spacing-style', settings: section.settings %}
+          {{ grid_styles }}
+        "
+      >
+        <div
+          id="new-swiper-{{ slider_id }}"
+          class="slider-btn new-swiper-container swiper {{ section.settings.arrow_position }} {{ section.settings.dots_option }} {{ section.settings.arrow_option }}"
+          data-id="{{ slider_id }}"
+          data-mobile-slider="{{ section.settings.enable_mobile_slider }}"
+          data-desktop-slider="{{ section.settings.enable_desktop_slider }}"
+          data-slides-per-view-desktop="{{ section.settings.slides_per_view_desktop }}"
+          data-space-between-desktop="{{ section.settings.space_between_desktop }}"
+          data-slides-per-view-laptop="{{ section.settings.slides_per_view_laptop }}"
+          data-space-between-laptop="{{ section.settings.space_between_laptop }}"
+          data-slides-per-view-tablet="{{ section.settings.slides_per_view_tablet }}"
+          data-space-between-tablet="{{ section.settings.space_between_tablet }}"
+          data-slides-per-view-medium-tablet="{{ section.settings.slides_per_view_medium_tablet }}"
+          data-space-between-medium-tablet="{{ section.settings.space_between_medium_tablet }}"
+          data-slides-per-view-mobile="{{ section.settings.slides_per_view_mobile }}"
+          data-space-between-mobile="{{ section.settings.space_between_mobile }}"
+          data-arrows-enabled="{{ section.settings.arrows_enabled }}"
+          data-autoplay-enabled="{{ section.settings.autoplay_enabled }}"
+          data-autoplay-delay="{{ section.settings.autoplay_delay }}"
+          data-loop-enabled="{{ section.settings.loop_enabled }}"
+        >
+          <div
+            class="
+              {% if section.settings.enable_desktop_slider or section.settings.enable_mobile_slider %} swiper-wrapper {% endif %}
+              {% if section.settings.enable_desktop_slider != true %} desktop-grid laptop-grid {% endif %}
+              {% if section.settings.enable_mobile_slider != true %} mobile-grid {% endif %}
+              {% if section.settings.enable_desktop_slider != true or section.settings.enable_mobile_slider != true %} logo-list contains-card contains-content-container {% endif %}
+              {% if section.settings.enable_desktop_slider and section.settings.enable_mobile_slider %}
+              {% else %}
+                {% if section.settings.enable_desktop_slider and section.settings.enable_mobile_slider != true %}
+                  grid--{{ section.settings.slides_per_view_tablet }}-col-tablet grid--{{ section.settings.slides_per_view_mobile | round }}-col-mobile
+                {% elsif section.settings.enable_mobile_slider and section.settings.enable_desktop_slider != true %}
+                  grid--{{ section.settings.slides_per_view_desktop }}-col-desktop grid--{{ section.settings.slides_per_view_laptop }}-col-laptop
+                {% else %}
+                  grid--{{ section.settings.slides_per_view_desktop }}-col-desktop grid--{{ section.settings.slides_per_view_laptop }}-col-laptop
+                  grid--{{ section.settings.slides_per_view_tablet }}-col-tablet grid--{{ section.settings.slides_per_view_mobile | round }}-col-mobile
+                {% endif %}
+              {% endif %}
+            "
+            style="{{ grid_styles }}"
+          >
+            {{ children }}
+          </div>
+        </div>
+        {% if section.settings.dots_enabled %}
+          <div class="pagination-container">
+            <div class="swiper-pagination"></div>
+          </div>
+        {% endif %}
+        {% if section.settings.arrows_enabled %}
+          <span class="swipwer--btn swiper-button-previ" data-swiper-id="{{ slider_id }}">
+            {% render 'slider-arrow-left' %}
+          </span>
+          <span class="swipwer--btn swiper-button-nexts" data-swiper-id="{{ slider_id }}">
+            {% render 'slider-arrow-right' %}
+          </span>
+        {% endif %}
+      </div>
+    {% else %}
+      <div
+        class="
+          spacing-style
+          layout-panel-flex
+          layout-panel-flex--{{ section.settings.content_direction }}
+          section-content-wrapper
+          {% if section.settings.vertical_on_mobile %} mobile-column{% endif %}
+        "
+        style="
+          {% render 'layout-panel-style', settings: section.settings %}
+          {% render 'spacing-style', settings: section.settings %}
+        "
+        data-testid="section-content"
+      >
+        {{ children }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script src="{{ 'arrow-out-slider.js' | asset_url }}" defer="defer"></script>
+
+{% stylesheet %}
+  .section-wrapper {
+    --section-height-offset: 0px;
+  }
+
+  .section[data-shopify-visual-preview] {
+    min-height: var(--section-preview-height);
+    padding-top: 0;
+  }
+
+  .section[data-shopify-visual-preview] .custom-section-background {
+    display: none;
+  }
+
+  body:has(#header-group > .header-section > #header-component[transparent]):not(
+      :has(#header-group > .header-section + .shopify-section)
+    )
+    #MainContent
+    > .section-wrapper:first-child {
+    --section-height-offset: var(--header-group-height, 0);
+  }
+
+  .custom-section-background {
+    grid-column: 1 / -1;
+  }
+
+  .custom-section-content {
+    z-index: var(--layer-flat);
+  }
+
+  .custom-section-content .swiper-slide {
+    height: auto;
+  }
+{% endstylesheet %}

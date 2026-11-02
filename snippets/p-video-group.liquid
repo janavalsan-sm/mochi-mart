@@ -1,0 +1,104 @@
+{%- doc -%}
+  Renders block content for all blocks that extend the group block.
+
+  @param {string} children - The DOM content of the group block.
+  @param {object} settings - The settings of the group block.
+  @param {string} shopify_attributes - String with Shopify attributes for the editor.
+  @param {string} [class] - Custom classes for the group block.
+  @param {string} [style] - Custom inline styles for the group block.
+
+  @example
+  {% render 'group', children: children, settings: settings, shopify_attributes: block.shopify_attributes %}
+{%- enddoc -%}
+
+<div
+  class="
+    group-block
+    group-block--height-{{ settings.height }}
+    group-block--width-{{ settings.width }}
+    border-style
+    spacing-style
+    size-style
+    {% if settings.inherit_color_scheme == false %} color-{{ settings.color_scheme }}{% endif %}
+    {{ class }}
+  "
+  style="
+    {% render 'border-override', settings: settings %}
+    {% render 'spacing-style', settings: settings %}
+    {% render 'size-style', settings: settings %}
+    {{ style }}
+  "
+  {{ shopify_attributes }}
+  data-testid="group-block"
+>
+  {%- if settings.link != blank -%}
+    <a
+      href="{{ settings.link }}"
+      class="group-block__link"
+      {% if settings.open_in_new_tab %}
+        target="_blank" rel="noopener"
+      {% endif %}
+    ></a>
+  {%- endif -%}
+
+  <div class="group-block__media-wrapper">
+    {% render 'background-media',
+      background_media: settings.background_media,
+      background_video: settings.video,
+      background_video_position: settings.video_position,
+      background_image: settings.background_image,
+      background_image_position: settings.background_image_position,
+      placeholder: settings.placeholder
+    %}
+    {% if settings.toggle_overlay %}
+      {% render 'overlay', settings: settings, layer: '0' %}
+    {% endif %}
+  </div>
+    <div class="slider-outer {{ settings.arrow_position }} {{ settings.dots_option }} {{ settings.arrow_option }}">
+      <div
+        id="new-swiper-{{ unique_id }}"
+        class="slider-btn new-swiper-container swiper "
+        data-id="{{ unique_id }}"
+        data-mobile-slider="true"
+        data-desktop-slider="true"
+        data-slides-per-view-desktop="{{ settings.slides_per_view_desktop }}"
+        data-space-between-desktop="{{ settings.space_between_desktop }}"
+        data-slides-per-view-laptop="{{settings.slides_per_view_laptop }}"
+        data-space-between-laptop="{{ settings.space_between_laptop }}"
+        data-slides-per-view-tablet="{{ settings.slides_per_view_tablet }}"
+        data-space-between-tablet="{{ settings.space_between_tablet }}"
+        data-slides-per-view-medium-tablet="{{ settings.slides_per_view_medium_tablet }}"
+        data-space-between-medium-tablet="{{ settings.space_between_medium_tablet }}"
+        data-slides-per-view-mobile="{{ settings.slides_per_view_mobile }}"
+        data-space-between-mobile="{{ settings.space_between_mobile }}"
+        data-arrows-enabled="{{ settings.arrows_enabled }}"
+        data-autoplay-enabled="{{ settings.autoplay_enabled }}"
+        data-autoplay-delay="{{ settings.autoplay_delay }}"
+        data-loop-enabled="{{ settings.loop_enabled }}"
+        data-dots-enabled="{{ settings.dots_enabled }}"
+        data-centered-enabled="{{ settings.centered_enabled }}"
+      >
+        <div
+          id="{{ unique_id }}"
+          class=" swiper-wrapper"
+        >
+          {{- children -}}
+        </div>
+      </div>
+    {% if settings.dots_enabled %}
+      <div class="pagination-container">
+        <div class="swiper-pagination"></div>
+      </div>
+    {% endif %}
+
+    {% if settings.arrows_enabled %}
+      <span class="swipwer--btn swiper-button-previ" data-swiper-id="{{ unique_id }}">
+        {% render 'slider-arrow-left' %}
+      </span>
+      <span class="swipwer--btn swiper-button-nexts" data-swiper-id="{{ unique_id }}">
+        {% render 'slider-arrow-right' %}
+      </span>
+    {% endif %}
+    </div>
+  </div>
+<script src="{{ 'arrow-out-slider.js' | asset_url }}" defer="defer"></script>

@@ -1,0 +1,62 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "t:names.footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "menu_shop": {
+          "type": "menu",
+          "settings": {
+            "heading": "SHOP",
+            "menu": "shop"
+          }
+        },
+        "menu_more": {
+          "type": "menu",
+          "settings": {
+            "heading": "MORE",
+            "menu": "more"
+          }
+        },
+        "menu_support": {
+          "type": "menu",
+          "settings": {
+            "heading": "SUPPORT",
+            "menu": "support"
+          }
+        }
+      },
+      "block_order": [
+        "menu_shop",
+        "menu_more",
+        "menu_support"
+      ],
+      "settings": {
+        "outer_bg_color": "#fde8a5",
+        "outer_border_radius": 36,
+        "logo_width": 80,
+        "blurb": "Mochi Mart is a happy little corner for plush pals, playful pens, cute stationery, and gifts that say \"I thought of you.\"",
+        "instagram_url": "https://instagram.com",
+        "email": "hello@mochimart.com",
+        "newsletter_heading": "JOIN THE HAPPY LIST",
+        "newsletter_text": "Be the first to know about new drops, little treats, and happy offers. Signups are not connected in this preview.",
+        "newsletter_placeholder": "Enter your email",
+        "bottom_left_text": "© 2026 Mochi Mart. Made with a little extra love.",
+        "show_payment_icons": true
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

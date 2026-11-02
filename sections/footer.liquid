@@ -1,0 +1,775 @@
+{%- comment -%}
+  Mochi Mart Footer matching the Lovable aesthetic.
+  Features a floating butter-yellow rounded panel (36px radius) with side gaps,
+  three white rounded cards (28px radius), and native Shopify Navigation menu blocks.
+{%- endcomment -%}
+
+{%- style -%}
+  #site-footer-{{ section.id }} {
+    --footer-outer-bg: {{ section.settings.outer_bg_color | default: 'var(--butter, #FDE8A5)' }};
+    --footer-outer-radius: {{ section.settings.outer_border_radius | default: 36 }}px;
+    --footer-card-radius: 28px;
+    --footer-primary: var(--color-primary-button-background, var(--primary, #D32F2F));
+    --footer-heading-color: var(--color-foreground-heading, #1C1C1C);
+    --footer-text-color: var(--color-foreground-muted, #555555);
+    --footer-divider-color: var(--color-border, #F0ECE4);
+    --footer-social-bg: var(--blush, #FAF4EC);
+    --footer-social-color: var(--color-foreground, #2E2E2E);
+    --footer-bottom-color: var(--color-foreground-muted, #7A6A4E);
+    width: 100% !important;
+    background-color: transparent !important;
+    margin: 0 !important;
+    padding: 56px 12px 20px !important;
+    box-sizing: border-box !important;
+    font-family: var(--font-body--family) !important;
+  }
+
+  @media screen and (max-width: 767px) {
+    #site-footer-{{ section.id }} {
+      padding: 36px 12px 16px !important;
+    }
+  }
+
+  .site-footer-panel {
+    background-color: var(--footer-outer-bg) !important;
+    border-radius: var(--footer-outer-radius, 36px) !important;
+    padding: 16px !important;
+    position: relative;
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 1560px !important;
+    margin: 0 auto !important;
+    overflow: hidden;
+  }
+
+  @media screen and (min-width: 640px) {
+    .site-footer-panel {
+      padding: 24px !important;
+    }
+  }
+
+  .site-footer-grid {
+    display: grid;
+    gap: 16px;
+    box-sizing: border-box;
+    align-items: stretch;
+  }
+
+  @media screen and (min-width: 1024px) {
+    .site-footer-grid {
+      grid-template-columns: 1.1fr 1.7fr 1.2fr;
+    }
+  }
+
+  .site-footer-card {
+    background-color: #FFFFFF !important;
+    border-radius: var(--footer-card-radius, 28px) !important;
+    padding: 28px !important;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    box-sizing: border-box;
+    min-width: 0;
+  }
+
+  /* Card 1: Brand Info */
+  .site-footer-card--brand .footer-logo-link {
+    display: inline-block;
+    max-width: 100%;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .site-footer-card--brand .footer-logo {
+    display: block;
+    width: {{ section.settings.logo_width | default: 110 }}px !important;
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+  }
+
+  .site-footer-card--brand .footer-logo-text {
+    font-family: var(--font-heading--family);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--footer-heading-color);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .footer-desc {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--footer-text-color);
+    margin: 16px 0 24px 0;
+    flex-grow: 1;
+  }
+
+  .footer-desc p {
+    margin: 0;
+  }
+
+  .footer-socials {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: auto;
+    list-style: none;
+    padding: 0;
+  }
+
+  .footer-social-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: var(--footer-social-bg);
+    color: var(--footer-social-color);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .footer-social-btn:hover {
+    transform: scale(1.08);
+    background-color: var(--footer-primary, #D32F2F);
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.25);
+  }
+
+  .footer-social-btn svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+
+  /* Card 2: Menus */
+  .site-footer-card--menus .footer-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    height: 100%;
+  }
+
+  @media screen and (max-width: 599px) {
+    .site-footer-card--menus .footer-links {
+      grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+      gap: 12px;
+    }
+  }
+
+  .footer-menu-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .footer-col-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--footer-heading-color);
+    margin: 0 0 10px 0;
+    line-height: 1.2;
+    font-family: var(--font-heading--family);
+  }
+
+  .footer-divider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--footer-divider-color);
+    margin-bottom: 14px;
+  }
+
+  .footer-menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-menu-link {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--footer-text-color);
+    text-decoration: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-block;
+    word-break: break-word;
+  }
+
+  .footer-menu-link:hover {
+    color: var(--footer-primary, #D32F2F);
+    transform: translateX(2px);
+  }
+
+  /* Card 3: Newsletter */
+  .site-footer-card--newsletter {
+    justify-content: flex-start;
+  }
+
+  .footer-newsletter-text {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--footer-text-color);
+    margin: 0 0 20px 0;
+    /* flex-grow: 1; */
+  }
+
+  .footer-newsletter-text p {
+    margin: 0;
+  }
+
+  .footer-newsletter-form {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .footer-pill-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .footer-email-field {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    padding: 0 20px;
+    border-radius: 999px;
+    border: 1px solid #ECE4D8;
+    background-color: #FAF5EE;
+    font-size: 0.875rem;
+    color: #333333;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+
+  .footer-email-field::placeholder {
+    color: #999999;
+  }
+
+  .footer-email-field:focus {
+    border-color: var(--footer-primary, #D32F2F);
+    background-color: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.12);
+  }
+
+  .footer-submit-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--footer-primary, #D32F2F);
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 8px rgba(211, 47, 47, 0.25);
+    padding: 0;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .footer-submit-btn:hover {
+    transform: scale(1.06);
+    background-color: #B71C1C;
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.35);
+  }
+
+  .footer-submit-btn:active {
+    transform: scale(0.95);
+  }
+
+  .footer-submit-btn svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+    pointer-events: none;
+  }
+
+  .footer-form-msg {
+    font-size: 0.8125rem;
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  /* Bottom Bar */
+  .site-footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+    padding: 18px 10px 4px;
+    font-size: 0.8125rem;
+    color: var(--footer-bottom-color);
+  }
+
+  .site-footer-bottom a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .footer-payment-icons {
+    display: flex;
+    align-items: center;
+  }
+
+  .footer-payment-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer-payment-item {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .footer-payment-item svg,
+  .footer-payment-item .payment-icon {
+    height: 24px;
+    width: auto;
+    border-radius: 4px;
+    display: block;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  @media screen and (max-width: 767px) {
+    .site-footer-card {
+      padding: 24px 20px;
+    }
+
+    .site-footer-bottom {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding: 12px 4px 4px;
+      font-size: 0.75rem;
+    }
+  }
+{%- endstyle -%}
+
+<div id="site-footer-{{ section.id }}" class="site-footer color-{{ section.settings.color_scheme | default: 'scheme-1' }}">
+  <div class="site-footer-panel">
+    <div class="site-footer-grid">
+      <!-- Card 1: Brand Info -->
+      <div class="site-footer-card site-footer-card--brand">
+        <div class="footer-brand-header">
+          {%- assign footer_logo = section.settings.logo | default: settings.logo -%}
+          {%- assign footer_logo_width = section.settings.logo_width | default: 110 -%}
+          {%- assign footer_logo_2x = footer_logo_width | times: 2 | at_least: 220 -%}
+          {%- if footer_logo != blank -%}
+            <a href="{{ routes.root_url }}" class="footer-logo-link">
+              {{
+                footer_logo
+                | image_url: width: footer_logo_2x
+                | image_tag:
+                  class: 'footer-logo',
+                  width: footer_logo_width,
+                  alt: shop.name
+              }}
+            </a>
+          {%- else -%}
+            <a href="{{ routes.root_url }}" class="footer-logo-link">
+              <img
+                src="{{ 'mochi-logo.png' | asset_url }}"
+                alt="{{ shop.name }}"
+                width="{{ footer_logo_width }}"
+                height="40"
+                class="footer-logo"
+                loading="lazy"
+              >
+            </a>
+          {%- endif -%}
+        </div>
+
+        <div class="footer-desc">
+          {%- if section.settings.blurb != blank -%}
+            <p>{{ section.settings.blurb }}</p>
+          {%- else -%}
+            <p>Mochi Mart is a happy little corner for plush pals, playful pens, cute stationery, and gifts that say "I thought of you."</p>
+          {%- endif -%}
+        </div>
+
+        <div class="footer-socials">
+          {%- assign insta_link = section.settings.instagram_url | default: settings.social_instagram_link -%}
+          <a
+            href="{{ insta_link | default: 'https://instagram.com' }}"
+            target="_blank"
+            rel="noopener"
+            class="footer-social-btn"
+            aria-label="Instagram"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+
+          {%- assign mail_to = section.settings.email | default: shop.email -%}
+          <a
+            href="mailto:{{ mail_to | default: 'hello@mochimart.com' }}"
+            class="footer-social-btn"
+            aria-label="Email"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </a>
+
+          <a
+            href="{{ routes.all_products_collection_url }}"
+            class="footer-social-btn"
+            aria-label="Shop"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 2: Menus (Configured via Shopify Admin Navigation Menu blocks) -->
+      <div class="site-footer-card site-footer-card--menus">
+        <div class="footer-links">
+          {%- assign menu_blocks = section.blocks | where: 'type', 'menu' -%}
+          {%- if menu_blocks.size > 0 -%}
+            {%- for block in menu_blocks -%}
+              {%- assign menu_handle = block.settings.menu -%}
+              {%- assign menu_obj = linklists[menu_handle] -%}
+              <div class="footer-menu-col" {{ block.shopify_attributes }}>
+                <h4 class="footer-col-title">
+                  {%- if block.settings.heading != blank -%}
+                    {{ block.settings.heading }}
+                  {%- elsif menu_obj != blank and menu_obj.title != blank -%}
+                    {{ menu_obj.title | upcase }}
+                  {%- else -%}
+                    MENU
+                  {%- endif -%}
+                </h4>
+                <div class="footer-divider"></div>
+                <ul class="footer-menu-list" role="list">
+                  {%- if menu_obj != blank and menu_obj.links.size > 0 -%}
+                    {%- for link in menu_obj.links -%}
+                      <li>
+                        <a href="{{ link.url }}" class="footer-menu-link">
+                          {{ link.title }}
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  {%- else -%}
+                    <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Shop all</a></li>
+                    <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">New arrivals</a></li>
+                    <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Best sellers</a></li>
+                  {%- endif -%}
+                </ul>
+              </div>
+            {%- endfor -%}
+          {%- else -%}
+            {%- comment -%} Default fallback if no blocks have been added yet {%- endcomment -%}
+            <div class="footer-menu-col">
+              <h4 class="footer-col-title">SHOP</h4>
+              <div class="footer-divider"></div>
+              <ul class="footer-menu-list" role="list">
+                {%- if linklists.footer != blank and linklists.footer.links.size > 0 -%}
+                  {%- for link in linklists.footer.links -%}
+                    <li><a href="{{ link.url }}" class="footer-menu-link">{{ link.title }}</a></li>
+                  {%- endfor -%}
+                {%- else -%}
+                  <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Shop all</a></li>
+                  <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">New arrivals</a></li>
+                  <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Best sellers</a></li>
+                  <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Gift sets</a></li>
+                {%- endif -%}
+              </ul>
+            </div>
+
+            <div class="footer-menu-col">
+              <h4 class="footer-col-title">MORE</h4>
+              <div class="footer-divider"></div>
+              <ul class="footer-menu-list" role="list">
+                {%- if linklists.main-menu != blank and linklists.main-menu.links.size > 0 -%}
+                  {%- for link in linklists.main-menu.links -%}
+                    <li><a href="{{ link.url }}" class="footer-menu-link">{{ link.title }}</a></li>
+                  {%- endfor -%}
+                {%- else -%}
+                  <li><a href="{{ routes.root_url }}pages/about-us" class="footer-menu-link">Our story</a></li>
+                  <li><a href="{{ routes.root_url }}pages/contact" class="footer-menu-link">Contact</a></li>
+                  <li><a href="{{ routes.root_url }}pages/faqs" class="footer-menu-link">FAQs</a></li>
+                {%- endif -%}
+              </ul>
+            </div>
+
+            <div class="footer-menu-col">
+              <h4 class="footer-col-title">SUPPORT</h4>
+              <div class="footer-divider"></div>
+              <ul class="footer-menu-list" role="list">
+                <li><a href="{{ routes.root_url }}policies/shipping-policy" class="footer-menu-link">Shipping & returns</a></li>
+                <li><a href="{{ routes.root_url }}pages/contact" class="footer-menu-link">Order help</a></li>
+                <li><a href="{{ routes.root_url }}pages/contact" class="footer-menu-link">Say hello</a></li>
+              </ul>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <!-- Card 3: Newsletter -->
+      <div class="site-footer-card site-footer-card--newsletter">
+        <h4 class="footer-col-title">
+          {{ section.settings.newsletter_heading | default: 'JOIN THE HAPPY LIST' }}
+        </h4>
+        <div class="footer-divider"></div>
+
+        <div class="footer-newsletter-text">
+          {%- if section.settings.newsletter_text != blank -%}
+            <p>{{ section.settings.newsletter_text }}</p>
+          {%- else -%}
+            <p>Be the first to know about new drops, little treats, and happy offers. Signups are not connected in this preview.</p>
+          {%- endif -%}
+        </div>
+
+        {%- form 'customer', class: 'footer-newsletter-form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          {%- if form.posted_successfully? -%}
+            <p class="footer-form-msg" style="color: #2E7D32;">Yay! You're on the list ✿</p>
+          {%- else -%}
+            <div class="footer-pill-input">
+              <label class="visually-hidden" for="FooterEmail-{{ section.id }}">Email</label>
+              <input
+                id="FooterEmail-{{ section.id }}"
+                type="email"
+                name="contact[email]"
+                class="footer-email-field"
+                placeholder="{{ section.settings.newsletter_placeholder | default: 'Enter your email' }}"
+                required
+                autocomplete="email"
+              >
+              <button type="submit" class="footer-submit-btn" aria-label="Subscribe">
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 10H16M11 5L16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            {%- if form.errors -%}
+              <p class="footer-form-msg" style="color: var(--footer-primary, #D32F2F);">
+                {{ form.errors.translated_fields.email }} {{ form.errors.messages.email }}
+              </p>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="site-footer-bottom">
+      <span>{{ section.settings.bottom_left_text | default: '© 2026 Mochi Mart. Made with a little extra love.' }}</span>
+      {%- if section.settings.show_payment_icons -%}
+        <div class="footer-payment-icons">
+          {%- unless shop.enabled_payment_types == empty -%}
+            <ul class="footer-payment-list" role="list">
+              {%- for type in shop.enabled_payment_types -%}
+                <li class="footer-payment-item">
+                  {{ type | payment_type_svg_tag: class: 'payment-icon' }}
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- else -%}
+            <ul class="footer-payment-list" role="list">
+              <li class="footer-payment-item">{{ 'visa' | payment_type_svg_tag: class: 'payment-icon' }}</li>
+              <li class="footer-payment-item">{{ 'master' | payment_type_svg_tag: class: 'payment-icon' }}</li>
+              <li class="footer-payment-item">{{ 'american_express' | payment_type_svg_tag: class: 'payment-icon' }}</li>
+              <li class="footer-payment-item">{{ 'apple_pay' | payment_type_svg_tag: class: 'payment-icon' }}</li>
+              <li class="footer-payment-item">{{ 'google_pay' | payment_type_svg_tag: class: 'payment-icon' }}</li>
+            </ul>
+          {%- endunless -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "section-wrapper site-footer-section",
+  "enabled_on": {
+    "groups": ["footer"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Panel Styling"
+    },
+    {
+      "type": "color",
+      "id": "outer_bg_color",
+      "label": "Butter yellow background",
+      "default": "#FDE8A5"
+    },
+    {
+      "type": "range",
+      "id": "outer_border_radius",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Panel border radius",
+      "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Brand Info (Card 1)"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 60,
+      "max": 250,
+      "step": 5,
+      "unit": "px",
+      "label": "Logo width",
+      "default": 110
+    },
+    {
+      "type": "textarea",
+      "id": "blurb",
+      "label": "Brand description",
+      "default": "Mochi Mart is a happy little corner for plush pals, playful pens, cute stationery, and gifts that say \"I thought of you.\""
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram link"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Contact email",
+      "default": "hello@mochimart.com"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter (Card 3)"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_heading",
+      "label": "Newsletter heading",
+      "default": "JOIN THE HAPPY LIST"
+    },
+    {
+      "type": "textarea",
+      "id": "newsletter_text",
+      "label": "Newsletter text",
+      "default": "Be the first to know about new drops, little treats, and happy offers. Signups are not connected in this preview."
+    },
+    {
+      "type": "text",
+      "id": "newsletter_placeholder",
+      "label": "Email placeholder",
+      "default": "Enter your email"
+    },
+    {
+      "type": "header",
+      "content": "Bottom Bar"
+    },
+    {
+      "type": "text",
+      "id": "bottom_left_text",
+      "label": "Copyright text",
+      "default": "© 2026 Mochi Mart. Made with a little extra love."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Navigation menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "info": "Leave blank to use the menu name from Shopify Admin"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Select menu",
+          "default": "footer",
+          "info": "Choose any navigation menu created in Shopify Admin > Online Store > Navigation"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "category": "Footer",
+      "blocks": [
+        {
+          "type": "menu",
+          "settings": {
+            "heading": "SHOP",
+            "menu": "footer"
+          }
+        },
+        {
+          "type": "menu",
+          "settings": {
+            "heading": "MORE",
+            "menu": "main-menu"
+          }
+        },
+        {
+          "type": "menu",
+          "settings": {
+            "heading": "SUPPORT",
+            "menu": "footer"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
