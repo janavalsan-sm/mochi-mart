@@ -3,7 +3,14 @@
 
 {% liquid
   assign max_items = section.settings.max_products | default: 8
-  if section.settings.background_color != blank
+  assign color_scheme = section.settings.color_scheme.id | default: section.settings.color_scheme
+  if color_scheme == blank
+    assign color_scheme = 'scheme-1'
+  endif
+
+  assign has_custom_bg = false
+  if section.settings.background_color != blank and section.settings.background_color != 'rgba(0,0,0,0)' and section.settings.background_color != 'transparent'
+    assign has_custom_bg = true
     render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
   endif
 %}
@@ -18,14 +25,15 @@
 {% render 'product-card-styles' %}
 {% render 'price-styles' %}
 
-<div class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"></div>
+<div class="section-background color-{{ color_scheme }}{% if has_custom_bg %} color-custom-{{ section.id }}{% endif %}"></div>
 
 <div
   class="
     section
     featured-collection-section
     section--{{ section.settings.section_width }}
-    {% if section.settings.background_color != blank %}color-custom-{{ section.id }}{% endif %}
+    color-{{ color_scheme }}
+    {% if has_custom_bg %}color-custom-{{ section.id }}{% endif %}
     spacing-style
   "
   style="
@@ -201,6 +209,15 @@
 <script src="{{ 'arrow-out-slider.js' | asset_url }}" defer="defer"></script>
 
 {% style %}
+  .featured-collection-section {
+    position: relative;
+    z-index: 1;
+    background-color: transparent !important;
+  }
+  .shopify-section:has(.featured-collection-section) {
+    position: relative;
+    isolation: isolate;
+  }
   /* Section Header */
   .featured-collection__header {
     display: flex;
@@ -233,7 +250,7 @@
     font-family: Fredoka, var(--font-heading--family, sans-serif);
     font-size: clamp(26px, 3.5vw, 36px);
     font-weight: 700;
-    color: #2d2d2d;
+    color: var(--color-foreground-heading, var(--color-foreground, #2d2d2d));
     margin: 0 0 8px 0;
     line-height: 1.2;
     letter-spacing: -0.01em;
@@ -241,7 +258,7 @@
   .featured-collection__subheading {
     font-family: var(--font-body--family, 'Nunito', sans-serif);
     font-size: 15px;
-    color: #6b7280;
+    color: rgb(var(--color-foreground-rgb, 44 34 30) / var(--opacity-70, 0.75));
     margin: 0;
     line-height: 1.5;
     max-width: 620px;
@@ -789,9 +806,20 @@
       "default": "page-width"
     },
     {
+      "type": "header",
+      "content": "Colors & Background"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
       "type": "color",
       "id": "background_color",
-      "label": "Section background color"
+      "label": "Custom background color",
+      "info": "Optional custom background color override. Leave empty to use the selected color scheme."
     },
     {
       "type": "header",

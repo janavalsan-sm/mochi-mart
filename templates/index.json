@@ -297,7 +297,8 @@
         "loop_enabled": true,
         "centered_enabled": false,
         "section_width": "page-width",
-        "background_color": "#fefaf1",
+        "color_scheme": "scheme-1",
+        "background_color": "",
         "padding-block-start": 48,
         "padding-block-end": 48
       }
@@ -471,6 +472,7 @@
         "loop_enabled": false,
         "centered_enabled": false,
         "section_width": "page-width",
+        "color_scheme": "scheme-1",
         "background_color": "",
         "padding-block-start": 48,
         "padding-block-end": 48
@@ -645,7 +647,8 @@
         "loop_enabled": false,
         "centered_enabled": false,
         "section_width": "page-width",
-        "background_color": "#FEFAF1",
+        "color_scheme": "scheme-1",
+        "background_color": "",
         "padding-block-start": 48,
         "padding-block-end": 48
       }
@@ -653,6 +656,8 @@
     "promo_panel": {
       "type": "image-with-text",
       "settings": {
+        "color_scheme": "scheme-1",
+        "custom_outer_bg_color": "",
         "section_width": "default",
         "desktop_layout": "right",
         "mobile_layout": "image_top",
@@ -777,7 +782,7 @@
         "card_hover_lift": true,
         "quote_size": 16,
         "color_scheme": "scheme-1",
-        "custom_bg_color": "#FEFAF1",
+        "custom_bg_color": "#fefaf1",
         "eyebrow_color": "#d32f2f",
         "heading_color": "#2c221e",
         "star_color": "#d32f2f",

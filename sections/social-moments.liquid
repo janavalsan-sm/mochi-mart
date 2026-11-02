@@ -4,8 +4,15 @@
   and the animated bobbing mascot doll character from Lovable.
 {%- endcomment -%}
 
+{%- liquid
+  assign color_scheme = section.settings.color_scheme.id | default: section.settings.color_scheme
+  if color_scheme == blank
+    assign color_scheme = 'scheme-1'
+  endif
+-%}
+
 <div
-  class="social-moments-section color-{{ section.settings.color_scheme }}"
+  class="social-moments-section color-{{ color_scheme }}"
   id="SocialMoments-{{ section.id }}"
   style="
     --sm-bg: {{ section.settings.panel_bg_color | default: '#ffe8ec' }};
@@ -486,7 +493,7 @@
       "type": "image_picker",
       "id": "mascot_image",
       "label": "Custom mascot image",
-      "info": "Leave empty to use the default cute mascot from Lovable"
+      "info": "Leave empty to use the default cute mascot"
     },
     {
       "type": "range",

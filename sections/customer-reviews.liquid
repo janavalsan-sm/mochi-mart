@@ -3,15 +3,22 @@
   Fully customizable Swiper slider showcasing customer reviews & testimonials with Lovable aesthetic.
 {%- endcomment -%}
 
+{%- liquid
+  assign color_scheme = section.settings.color_scheme.id | default: section.settings.color_scheme
+  if color_scheme == blank
+    assign color_scheme = 'scheme-1'
+  endif
+-%}
+
 <div
-  class="customer-reviews-section color-{{ section.settings.color_scheme }}"
+  class="customer-reviews-section color-{{ color_scheme }}"
   id="CustomerReviewsSection-{{ section.id }}"
   data-section-id="{{ section.id }}"
   style="
-    {%- if section.settings.custom_bg_color != blank -%}
+    {%- if section.settings.custom_bg_color != blank and section.settings.custom_bg_color != 'rgba(0,0,0,0)' and section.settings.custom_bg_color != 'transparent' -%}
       --reviews-bg: {{ section.settings.custom_bg_color }};
     {%- else -%}
-      --reviews-bg: transparent;
+      --reviews-bg: var(--color-background);
     {%- endif -%}
     --reviews-pt: {{ section.settings.padding_top }}px;
     --reviews-pb: {{ section.settings.padding_bottom }}px;

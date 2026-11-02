@@ -1,16 +1,23 @@
+{% liquid
+  assign color_scheme = section.settings.color_scheme.id | default: section.settings.color_scheme
+  if color_scheme == blank
+    assign color_scheme = 'scheme-1'
+  endif
+%}
+
 <div
-  class="features-bar-section features-bar--{{ section.id }} color-{{ section.settings.color_scheme }}"
+  class="features-bar-section features-bar--{{ section.id }} color-{{ color_scheme }}"
   style="
-    {%- if section.settings.custom_bg_color != blank -%}
+    {%- if section.settings.custom_bg_color != blank and section.settings.custom_bg_color != 'rgba(0,0,0,0)' and section.settings.custom_bg_color != 'transparent' -%}
       --features-bar-bg: {{ section.settings.custom_bg_color }};
     {%- else -%}
-      --features-bar-bg: transparent;
+      --features-bar-bg: var(--color-background);
     {%- endif -%}
     --features-bar-icon-color: {{ section.settings.icon_color | default: '#d32f2f' }};
     {%- if section.settings.text_color != blank -%}
       --features-bar-text-color: {{ section.settings.text_color }};
     {%- else -%}
-      --features-bar-text-color: inherit;
+      --features-bar-text-color: var(--color-foreground);
     {%- endif -%}
     --features-bar-border-color: {{ section.settings.border_color | default: '#f0ece4' }};
     --features-bar-pt: {{ section.settings.padding_top }}px;

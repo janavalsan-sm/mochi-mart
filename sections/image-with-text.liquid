@@ -1,10 +1,20 @@
 {%- comment -%}
   Image With Text / Treats & Promo Panel — Mochi Mart
-  Faithfully ported from Lovable design with soft curved pastel panel,
-  decorative flower motif, highlighted heading, pill CTA button, and optional bobbing/peeking mascot.
+  Curved pastel panel with decorative motif, highlighted heading, pill CTA button, and optional bobbing/peeking mascot.
 {%- endcomment -%}
 
 {%- liquid
+  assign color_scheme = section.settings.color_scheme.id | default: section.settings.color_scheme
+  if color_scheme == blank
+    assign color_scheme = 'scheme-1'
+  endif
+
+  assign has_custom_outer_bg = false
+  if section.settings.custom_outer_bg_color != blank and section.settings.custom_outer_bg_color != 'rgba(0,0,0,0)' and section.settings.custom_outer_bg_color != 'transparent'
+    assign has_custom_outer_bg = true
+    render 'contrast-override', background_color: section.settings.custom_outer_bg_color, section_id: section.id
+  endif
+
   assign bg_color = '#e4efe7'
   case section.settings.color_preset
     when 'sage'
@@ -25,10 +35,23 @@
   assign mob_pos = section.settings.mobile_layout | default: 'image_top'
 -%}
 
+<div class="section-background color-{{ color_scheme }}{% if has_custom_outer_bg %} color-custom-{{ section.id }}{% endif %}"></div>
+
 <div
-  class="mochi-iwt-section section-{{ section.id }}"
+  class="
+    section
+    mochi-iwt-section
+    section-{{ section.id }}
+    color-{{ color_scheme }}
+    {% if has_custom_outer_bg %}color-custom-{{ section.id }}{% endif %}
+  "
   id="MochiIwt-{{ section.id }}"
   style="
+    {% if has_custom_outer_bg %}
+      --iwt-outer-bg: {{ section.settings.custom_outer_bg_color }};
+    {% else %}
+      --iwt-outer-bg: var(--color-background);
+    {% endif %}
     --iwt-pt: {{ section.settings.padding_top }}px;
     --iwt-pb: {{ section.settings.padding_bottom }}px;
     --iwt-panel-bg: {{ bg_color }};
@@ -194,12 +217,18 @@
 </div>
 
 <style>
+  .shopify-section:has(.mochi-iwt-section) {
+    position: relative;
+    isolation: isolate;
+  }
   .mochi-iwt-section {
+    position: relative;
+    z-index: 1;
     padding-top: var(--iwt-pt);
     padding-bottom: var(--iwt-pb);
     font-family: var(--font-body--family, "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif);
-    position: relative;
     box-sizing: border-box;
+    background-color: var(--iwt-outer-bg, var(--color-background));
   }
 
   .mochi-iwt__outer {
@@ -474,10 +503,26 @@
 
 {% schema %}
 {
-  "name": "Image with text (Lovable)",
+  "name": "Image with text",
   "tag": "section",
   "class": "mochi-image-with-text-wrapper",
   "settings": [
+    {
+      "type": "header",
+      "content": "Outer Section Background"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "custom_outer_bg_color",
+      "label": "Custom outer background color",
+      "info": "Optional custom background for the outer section area (e.g. #fefaf1). Leave empty to use color scheme."
+    },
     {
       "type": "header",
       "content": "Layout & Sizing"
@@ -855,9 +900,11 @@
   ],
   "presets": [
     {
-      "name": "Image with text (Lovable)",
+      "name": "Image with text",
       "category": "Image",
       "settings": {
+        "color_scheme": "scheme-1",
+        "custom_outer_bg_color": "",
         "color_preset": "sage",
         "desktop_layout": "right",
         "show_icon": true,
