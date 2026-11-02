@@ -42,6 +42,7 @@
         "menu_support"
       ],
       "settings": {
+        "color_scheme": "scheme-1",
         "outer_bg_color": "#fde8a5",
         "outer_border_radius": 36,
         "logo_width": 80,

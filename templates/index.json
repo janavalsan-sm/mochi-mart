@@ -777,7 +777,7 @@
         "card_hover_lift": true,
         "quote_size": 16,
         "color_scheme": "scheme-1",
-        "custom_bg_color": "",
+        "custom_bg_color": "#FEFAF1",
         "eyebrow_color": "#d32f2f",
         "heading_color": "#2c221e",
         "star_color": "#d32f2f",
@@ -863,7 +863,7 @@
         "caption": "A peek at our little world — preview product imagery, not Instagram posts.",
         "show_mascot": true,
         "mascot_width": 115,
-        "color_scheme": "scheme-2",
+        "color_scheme": "scheme-1",
         "panel_bg_color": "#ffe8ec",
         "panel_radius": 36,
         "eyebrow_color": "#d32f2f",
@@ -871,7 +871,7 @@
         "link_color": "#d32f2f",
         "caption_color": "#78716c",
         "padding_top": 32,
-        "padding_bottom": 48
+        "padding_bottom": 0
       }
     }
   },
