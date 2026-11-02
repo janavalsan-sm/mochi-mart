@@ -472,7 +472,7 @@
         "loop_enabled": false,
         "centered_enabled": false,
         "section_width": "page-width",
-        "color_scheme": "scheme-1",
+        "color_scheme": "scheme-2",
         "background_color": "",
         "padding-block-start": 48,
         "padding-block-end": 48
@@ -878,6 +878,78 @@
         "padding_top": 32,
         "padding_bottom": 0
       }
+    },
+    "curated_edits": {
+      "type": "curated-edits",
+      "blocks": {
+        "edit_1": {
+          "type": "edit_card",
+          "settings": {
+            "title": "The collecting shelf",
+            "text": "Little surprises and keepsakes worth hunting for.",
+            "link_text": "Shop the edit →",
+            "fallback_image": "banner-stationery.jpg"
+          }
+        },
+        "edit_2": {
+          "type": "edit_card",
+          "settings": {
+            "title": "The happy desk",
+            "text": "A fresh little reason to love your to-do list.",
+            "link_text": "Shop the edit →",
+            "fallback_image": "banner-cute.jpg"
+          }
+        },
+        "edit_3": {
+          "type": "edit_card",
+          "settings": {
+            "title": "The cozy corner",
+            "text": "Plush friends made for everyday company.",
+            "link_text": "Shop the edit →",
+            "fallback_image": "banner-plush.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "edit_1",
+        "edit_2",
+        "edit_3"
+      ],
+      "settings": {
+        "eyebrow": "PICK YOUR KIND OF HAPPY",
+        "eyebrow_color": "#d32f2f",
+        "heading": "Little edits for your day",
+        "heading_size": "h2",
+        "heading_color": "#2d2d2d",
+        "subheading": "Something to scribble with, something to hug, something to collect.",
+        "subheading_color": "#5c534e",
+        "header_alignment": "left",
+        "show_mascot": true,
+        "mascot_size": 110,
+        "animate_mascot": true,
+        "section_width": "panel",
+        "color_preset": "butter",
+        "custom_bg_color": "#fff1cc",
+        "panel_radius": 36,
+        "card_radius": 28,
+        "card_aspect_ratio": "1/1",
+        "columns_desktop": 3,
+        "column_gap": 24,
+        "row_gap": 24,
+        "enable_mobile_slider": true,
+        "slides_per_view_mobile": 1.2,
+        "space_between_mobile": 14,
+        "enable_desktop_slider": false,
+        "slides_per_view_desktop": 3,
+        "space_between_desktop": 24,
+        "arrows_enabled": true,
+        "arrow_position": "arrows-bottom",
+        "arrow_option": "arrow-only-mobile",
+        "dots_enabled": true,
+        "dots_option": "only-mobile",
+        "padding_top": 24,
+        "padding_bottom": 24
+      }
     }
   },
   "order": [
@@ -887,6 +959,7 @@
     "product_list_fa6P9H",
     "product_list_wT4Wak",
     "promo_panel",
+    "curated_edits",
     "customer_reviews",
     "social_moments"
   ]

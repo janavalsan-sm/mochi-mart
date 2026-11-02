@@ -1,0 +1,952 @@
+{%- comment -%}
+  Curated Edits / "Little edits for your day" — Mochi Mart
+  Soft pastel panel with headline, mascot badge, and curated visual cards with text overlays.
+  Styled matching the Lovable aesthetic with responsive grid and mobile/desktop Swiper slider support.
+{%- endcomment -%}
+
+{% assign unique_id = 'curated-edits-' | append: section.id %}
+{{ 'slider-styles.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign bg_color = '#fff1cc'
+  case section.settings.color_preset
+    when 'butter'
+      assign bg_color = '#fff1cc'
+    when 'blush'
+      assign bg_color = '#ffe8ec'
+    when 'sage'
+      assign bg_color = '#e4efe7'
+    when 'sky'
+      assign bg_color = '#e3f0fb'
+    when 'white'
+      assign bg_color = '#ffffff'
+    when 'custom'
+      assign bg_color = section.settings.custom_bg_color | default: '#fff1cc'
+  endcase
+
+  assign desktop_slider = section.settings.enable_desktop_slider
+  assign mobile_slider = section.settings.enable_mobile_slider
+%}
+
+<div
+  class="section curated-edits-section section-{{ section.id }}"
+  id="CuratedEdits-{{ section.id }}"
+  style="
+    padding-top: {{ section.settings.padding_top | default: 40 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 40 }}px;
+  "
+>
+  <div class="{% if section.settings.section_width == 'page-width' %}page-wrap{% else %}curated-edits__panel-outer{% endif %}">
+    <div
+      class="curated-edits__panel"
+      style="
+        background-color: {{ bg_color }};
+        border-radius: {{ section.settings.panel_radius | default: 36 }}px;
+      "
+    >
+      {%- comment -%} Header Row: Eyebrow + Heading + Subheading (Left) & Mascot (Right) {%- endcomment -%}
+      <div class="curated-edits__header curated-edits__header--{{ section.settings.header_alignment | default: 'left' }}">
+        <div class="curated-edits__header-copy">
+          {% if section.settings.eyebrow != blank %}
+            <span
+              class="curated-edits__eyebrow"
+              style="color: {{ section.settings.eyebrow_color | default: '#d32f2f' }};"
+            >
+              {{ section.settings.eyebrow }}
+            </span>
+          {% endif %}
+          {% if section.settings.heading != blank %}
+            <{{ section.settings.heading_size | default: 'h2' }}
+              class="curated-edits__heading"
+              style="color: {{ section.settings.heading_color | default: '#2d2d2d' }};"
+            >
+              {{ section.settings.heading }}
+            </{{ section.settings.heading_size | default: 'h2' }}>
+          {% endif %}
+          {% if section.settings.subheading != blank %}
+            <p
+              class="curated-edits__subheading"
+              style="color: {{ section.settings.subheading_color | default: '#5c534e' }};"
+            >
+              {{ section.settings.subheading }}
+            </p>
+          {% endif %}
+        </div>
+
+        {% if section.settings.show_mascot %}
+          <div class="curated-edits__mascot-wrapper">
+            {% if section.settings.mascot_image != blank %}
+              {{
+                section.settings.mascot_image
+                | image_url: width: 300
+                | image_tag:
+                  loading: 'lazy',
+                  class: 'curated-edits__mascot mascot-bob',
+                  alt: 'Mochi Mascot'
+              }}
+            {% else %}
+              <img
+                src="{{ 'mascot.png' | asset_url }}"
+                alt="Mochi Mascot"
+                class="curated-edits__mascot{% if section.settings.animate_mascot %} mascot-bob{% endif %}"
+                width="{{ section.settings.mascot_size | default: 110 }}"
+                height="{{ section.settings.mascot_size | default: 110 }}"
+                loading="lazy"
+              >
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+
+      {%- comment -%} Cards Container / Swiper Slider {%- endcomment -%}
+      <div class="slider-outer {{ section.settings.arrow_position }} {{ section.settings.dots_option }} {{ section.settings.arrow_option }}{% if desktop_slider %} is-desktop-slider{% endif %}{% if mobile_slider %} is-mobile-slider{% endif %}">
+        <div
+          id="new-swiper-{{ unique_id }}"
+          class="slider-btn new-swiper-container swiper"
+          data-id="{{ unique_id }}"
+          data-mobile-slider="{{ mobile_slider }}"
+          data-desktop-slider="{{ desktop_slider }}"
+          data-tablet-slider="{{ desktop_slider }}"
+          data-slides-per-view-desktop="{{ section.settings.slides_per_view_desktop | default: 3 }}"
+          data-space-between-desktop="{{ section.settings.space_between_desktop | default: 24 }}"
+          data-slides-per-view-laptop="{{ section.settings.slides_per_view_desktop | default: 3 }}"
+          data-space-between-laptop="{{ section.settings.space_between_desktop | default: 24 }}"
+          data-slides-per-view-tablet="2"
+          data-space-between-tablet="16"
+          data-slides-per-view-medium-tablet="2"
+          data-space-between-medium-tablet="14"
+          data-slides-per-view-mobile="{{ section.settings.slides_per_view_mobile | default: 1.15 }}"
+          data-space-between-mobile="{{ section.settings.space_between_mobile | default: 14 }}"
+          data-arrows-enabled="{{ section.settings.arrows_enabled }}"
+          data-dots-enabled="{{ section.settings.dots_enabled }}"
+        >
+          <div
+            id="{{ unique_id }}"
+            class="
+              curated-edits__container
+              {% if desktop_slider or mobile_slider %} swiper-wrapper {% endif %}
+              {% if desktop_slider != true %} desktop-grid laptop-grid {% endif %}
+              {% if mobile_slider != true %} mobile-grid {% endif %}
+            "
+            style="
+              --desktop-cols: {{ section.settings.columns_desktop | default: 3 }};
+              --col-gap: {{ section.settings.column_gap | default: 24 }}px;
+              --row-gap: {{ section.settings.row_gap | default: 24 }}px;
+            "
+          >
+            {%- if section.blocks.size > 0 -%}
+              {%- for block in section.blocks -%}
+                {% liquid
+                  assign fallback = block.settings.fallback_image | default: 'banner-stationery.jpg'
+                  assign img = block.settings.image
+                %}
+                <div
+                  class="{% if desktop_slider or mobile_slider %}swiper-slide{% endif %} curated-edits__item"
+                  {{ block.shopify_attributes }}
+                >
+                  <a
+                    href="{{ block.settings.link | default: routes.all_products_collection_url }}"
+                    class="curated-edit-card"
+                    style="
+                      border-radius: {{ section.settings.card_radius | default: 28 }}px;
+                      --card-aspect-ratio: {{ section.settings.card_aspect_ratio | default: '1/1' }};
+                    "
+                  >
+                    <div class="curated-edit-card__media">
+                      {% if img != blank %}
+                        {{
+                          img
+                          | image_url: width: 800
+                          | image_tag:
+                            loading: 'lazy',
+                            class: 'curated-edit-card__image',
+                            alt: block.settings.title
+                        }}
+                      {% else %}
+                        <img
+                          src="{{ fallback | asset_url }}"
+                          alt="{{ block.settings.title | escape }}"
+                          class="curated-edit-card__image"
+                          width="600"
+                          height="600"
+                          loading="lazy"
+                        >
+                      {% endif %}
+                      <div
+                        class="curated-edit-card__overlay"
+                        style="--overlay-opacity: {{ block.settings.overlay_opacity | default: 65 | divided_by: 100.0 }};"
+                      ></div>
+                    </div>
+
+                    <div class="curated-edit-card__content">
+                      {% if block.settings.title != blank %}
+                        <h3 class="curated-edit-card__title">{{ block.settings.title }}</h3>
+                      {% endif %}
+                      {% if block.settings.text != blank %}
+                        <p class="curated-edit-card__text">{{ block.settings.text }}</p>
+                      {% endif %}
+                      {% if block.settings.link_text != blank %}
+                        <span class="curated-edit-card__link">
+                          {{ block.settings.link_text }}
+                        </span>
+                      {% endif %}
+                    </div>
+                  </a>
+                </div>
+              {%- endfor -%}
+            {%- else -%}
+              {%- comment -%} Default 3 cards if no blocks yet {%- endcomment -%}
+              {%- assign default_edits = 'The collecting shelf|Little surprises and keepsakes worth hunting for.|banner-stationery.jpg,The happy desk|A fresh little reason to love your to-do list.|banner-cute.jpg,The cozy corner|Plush friends made for everyday company.|banner-plush.jpg' | split: ',' -%}
+              {%- for item in default_edits -%}
+                {%- assign parts = item | split: '|' -%}
+                <div class="{% if desktop_slider or mobile_slider %}swiper-slide{% endif %} curated-edits__item">
+                  <a
+                    href="{{ routes.all_products_collection_url }}"
+                    class="curated-edit-card"
+                    style="
+                      border-radius: {{ section.settings.card_radius | default: 28 }}px;
+                      --card-aspect-ratio: {{ section.settings.card_aspect_ratio | default: '1/1' }};
+                    "
+                  >
+                    <div class="curated-edit-card__media">
+                      <img
+                        src="{{ parts[2] | asset_url }}"
+                        alt="{{ parts[0] | escape }}"
+                        class="curated-edit-card__image"
+                        width="600"
+                        height="600"
+                        loading="lazy"
+                      >
+                      <div class="curated-edit-card__overlay"></div>
+                    </div>
+                    <div class="curated-edit-card__content">
+                      <h3 class="curated-edit-card__title">{{ parts[0] }}</h3>
+                      <p class="curated-edit-card__text">{{ parts[1] }}</p>
+                      <span class="curated-edit-card__link">Shop the edit →</span>
+                    </div>
+                  </a>
+                </div>
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+
+          <div class="swiper-pagination"></div>
+        </div>
+
+        {% if section.settings.dots_enabled %}
+          <div class="pagination-container">
+            <div class="swiper-pagination"></div>
+          </div>
+        {% endif %}
+
+        {% if section.settings.arrows_enabled %}
+          <span class="swipwer--btn swiper-button-previ" data-swiper-id="{{ unique_id }}" aria-label="Previous">
+            {% render 'slider-arrow-left' %}
+          </span>
+          <span class="swipwer--btn swiper-button-nexts" data-swiper-id="{{ unique_id }}" aria-label="Next">
+            {% render 'slider-arrow-right' %}
+          </span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ 'arrow-out-slider.js' | asset_url }}" defer="defer"></script>
+
+{% style %}
+  .curated-edits__panel-outer {
+    margin: 10px clamp(12px, 2.2vw, 28px);
+  }
+  .curated-edits__panel {
+    padding: clamp(24px, 4vw, 48px) clamp(18px, 3.5vw, 44px);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 12px 36px -18px rgba(60, 40, 30, 0.08);
+  }
+
+  /* Header */
+  .curated-edits__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: clamp(24px, 3.5vw, 36px);
+    position: relative;
+  }
+  .curated-edits__header--center {
+    justify-content: center;
+    text-align: center;
+  }
+  .curated-edits__header--center .curated-edits__header-copy {
+    align-items: center;
+  }
+  .curated-edits__header-copy {
+    display: flex;
+    flex-direction: column;
+    max-width: 680px;
+  }
+  .curated-edits__eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-family: var(--font-body--family, 'DM Sans', sans-serif);
+  }
+  .curated-edits__heading {
+    font-family: Fredoka, var(--font-heading--family, sans-serif);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.01em;
+  }
+  .curated-edits__subheading {
+    font-family: var(--font-body--family, 'DM Sans', sans-serif);
+    font-size: clamp(14px, 1.8vw, 16px);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Mascot */
+  .curated-edits__mascot-wrapper {
+    flex-shrink: 0;
+    margin-top: -12px;
+  }
+  .curated-edits__mascot {
+    width: {{ section.settings.mascot_size | default: 110 }}px;
+    height: auto;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+  }
+  .mascot-bob {
+    animation: mascotBob 3s ease-in-out infinite;
+  }
+  @keyframes mascotBob {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  /* Desktop Grid */
+  @media (min-width: 1025px) {
+    .curated-edits__container.desktop-grid {
+      display: grid !important;
+      grid-template-columns: repeat(var(--desktop-cols, 3), 1fr) !important;
+      column-gap: var(--col-gap, 24px) !important;
+      row-gap: var(--row-gap, 24px) !important;
+      width: 100% !important;
+      transform: none !important;
+    }
+    .curated-edits__container.desktop-grid .swiper-slide {
+      width: auto !important;
+      margin-right: 0 !important;
+    }
+  }
+
+  /* Laptop Grid */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .curated-edits__container.laptop-grid:not(.swiper-wrapper) {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      column-gap: var(--col-gap, 20px) !important;
+      row-gap: var(--row-gap, 20px) !important;
+      width: 100% !important;
+      transform: none !important;
+    }
+    .curated-edits__container.laptop-grid:not(.swiper-wrapper) .swiper-slide {
+      width: auto !important;
+      margin-right: 0 !important;
+    }
+  }
+
+  /* Mobile Grid (when slider is disabled) */
+  @media (max-width: 768px) {
+    .curated-edits__container.mobile-grid:not(.swiper-wrapper) {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      row-gap: 16px !important;
+      width: 100% !important;
+      transform: none !important;
+    }
+    .curated-edits__container.mobile-grid:not(.swiper-wrapper) .swiper-slide {
+      width: auto !important;
+      margin-right: 0 !important;
+    }
+    .curated-edits__mascot {
+      width: clamp(70px, 18vw, 90px);
+    }
+  }
+
+  /* Swiper Slide Layout */
+  .curated-edits__item {
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Curated Edit Card Styling (Matches Lovable aesthetics) */
+  .curated-edit-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 10px 30px -20px rgba(60, 40, 30, 0.3);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .curated-edit-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 40px -20px rgba(60, 40, 30, 0.38);
+  }
+
+  /* Media Container with 1:1 Aspect Ratio */
+  .curated-edit-card__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--card-aspect-ratio, 1/1);
+    overflow: hidden;
+    border-radius: inherit;
+    background-color: #f7ede2;
+  }
+  .curated-edit-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: inherit;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .curated-edit-card:hover .curated-edit-card__image {
+    transform: scale(1.06);
+  }
+
+  /* Dark Gradient Overlay for Readability */
+  .curated-edit-card__overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, var(--overlay-opacity, 0.72)) 0%,
+      rgba(0, 0, 0, calc(var(--overlay-opacity, 0.72) * 0.55)) 45%,
+      rgba(0, 0, 0, 0.08) 80%,
+      transparent 100%
+    );
+    pointer-events: none;
+    transition: background 0.3s ease;
+  }
+  .curated-edit-card:hover .curated-edit-card__overlay {
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, calc(var(--overlay-opacity, 0.72) + 0.08)) 0%,
+      rgba(0, 0, 0, calc(var(--overlay-opacity, 0.72) * 0.6)) 50%,
+      rgba(0, 0, 0, 0.12) 85%,
+      transparent 100%
+    );
+  }
+
+  /* Content Overlay */
+  .curated-edit-card__content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: clamp(16px, 2.5vw, 24px);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    color: #ffffff;
+    pointer-events: none;
+  }
+  .curated-edit-card__title {
+    font-family: Fredoka, var(--font-heading--family, sans-serif);
+    font-size: clamp(19px, 2.4vw, 24px);
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+    line-height: 1.25;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+  .curated-edit-card__text {
+    font-family: var(--font-body--family, 'DM Sans', sans-serif);
+    font-size: clamp(13px, 1.6vw, 14px);
+    color: rgba(255, 255, 255, 0.92);
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+  .curated-edit-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body--family, 'DM Sans', sans-serif);
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    transition: gap 0.25s ease;
+  }
+  .curated-edit-card:hover .curated-edit-card__link {
+    gap: 10px;
+  }
+
+  /* Slider container padding to prevent clipping of card shadows */
+  .curated-edits-section .new-swiper-container {
+    padding-top: 10px !important;
+    padding-bottom: 24px !important;
+    margin-top: -10px !important;
+    margin-bottom: -24px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+
+  /* Navigation buttons */
+  .curated-edits-section .swipwer--btn {
+    background-color: var(--primary, #d32f2f) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 14px rgba(211, 47, 47, 0.28);
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+  }
+  .curated-edits-section .swipwer--btn:hover {
+    background-color: #b71c1c !important;
+    transform: scale(1.08);
+  }
+  .curated-edits-section .swipwer--btn svg path {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Curated edits",
+  "class": "ui-curated-edits",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Header Settings"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small heading (Eyebrow)",
+      "default": "PICK YOUR KIND OF HAPPY"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#d32f2f"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Little edits for your day"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h1", "label": "Large (h1)" },
+        { "value": "h2", "label": "Medium (h2)" },
+        { "value": "h3", "label": "Small (h3)" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#2d2d2d"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading / Description",
+      "default": "Something to scribble with, something to hug, something to collect."
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading color",
+      "default": "#5c534e"
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Mascot Badge"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mascot",
+      "label": "Show mascot",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "mascot_image",
+      "label": "Custom mascot image",
+      "info": "Leave blank to use the default cute Mochi mascot"
+    },
+    {
+      "type": "range",
+      "id": "mascot_size",
+      "label": "Mascot size",
+      "min": 60,
+      "max": 180,
+      "step": 5,
+      "unit": "px",
+      "default": 110
+    },
+    {
+      "type": "checkbox",
+      "id": "animate_mascot",
+      "label": "Animate mascot (gentle bobbing)",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Panel Style"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section container style",
+      "options": [
+        { "value": "panel", "label": "Soft floating panel (Lovable style)" },
+        { "value": "page-width", "label": "Standard page width" }
+      ],
+      "default": "panel"
+    },
+    {
+      "type": "select",
+      "id": "color_preset",
+      "label": "Background color preset",
+      "options": [
+        { "value": "butter", "label": "Butter (Soft Yellow #FFF1CC)" },
+        { "value": "blush", "label": "Blush (Soft Pink #FFE8EC)" },
+        { "value": "sage", "label": "Sage (Soft Green #E4EFE7)" },
+        { "value": "sky", "label": "Sky (Soft Blue #E3F0FB)" },
+        { "value": "white", "label": "White" },
+        { "value": "custom", "label": "Custom color" }
+      ],
+      "default": "butter"
+    },
+    {
+      "type": "color",
+      "id": "custom_bg_color",
+      "label": "Custom background color",
+      "default": "#fff1cc"
+    },
+    {
+      "type": "range",
+      "id": "panel_radius",
+      "label": "Panel corner radius",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "select",
+      "id": "card_aspect_ratio",
+      "label": "Card image aspect ratio",
+      "options": [
+        { "value": "1/1", "label": "Square (1:1)" },
+        { "value": "4/5", "label": "Portrait (4:5)" },
+        { "value": "4/3", "label": "Landscape (4:3)" }
+      ],
+      "default": "1/1"
+    },
+    {
+      "type": "header",
+      "content": "Grid Settings"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Desktop horizontal gap",
+      "min": 12,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "Desktop vertical gap",
+      "min": 12,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Slider Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mobile_slider",
+      "label": "Enable mobile slider (touch swipe)",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_mobile",
+      "label": "Mobile items per view (peek effect)",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "space_between_mobile",
+      "label": "Mobile space between items",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_desktop_slider",
+      "label": "Enable desktop slider",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_desktop",
+      "label": "Desktop items per view (when slider enabled)",
+      "min": 2,
+      "max": 4,
+      "step": 0.1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "space_between_desktop",
+      "label": "Desktop space between items",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "arrows_enabled",
+      "label": "Enable navigation arrows",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "arrow_position",
+      "options": [
+        { "value": "arrows-bottom", "label": "Bottom" },
+        { "value": "arrows-left-and-right", "label": "Left & Right" }
+      ],
+      "default": "arrows-bottom",
+      "label": "Arrow position"
+    },
+    {
+      "type": "select",
+      "id": "arrow_option",
+      "options": [
+        { "value": "arrow-only-mobile", "label": "Show arrows on mobile" },
+        { "value": "arrow-only-desktop", "label": "Show arrows on desktop" },
+        { "value": "arrow-show-both", "label": "Show arrows on both" }
+      ],
+      "default": "arrow-only-mobile",
+      "label": "Arrow visibility"
+    },
+    {
+      "type": "checkbox",
+      "id": "dots_enabled",
+      "label": "Enable dot pagination",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "dots_option",
+      "options": [
+        { "value": "only-mobile", "label": "Show dots on mobile" },
+        { "value": "only-desktop", "label": "Show dots on desktop" },
+        { "value": "show-both", "label": "Show dots on both" }
+      ],
+      "default": "only-mobile",
+      "label": "Dots visibility"
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "edit_card",
+      "name": "Edit card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Card image"
+        },
+        {
+          "type": "select",
+          "id": "fallback_image",
+          "label": "Fallback theme image file",
+          "options": [
+            { "value": "banner-stationery.jpg", "label": "Stationery & stickers (The collecting shelf)" },
+            { "value": "banner-cute.jpg", "label": "Cute strawberry pens (The happy desk)" },
+            { "value": "banner-plush.jpg", "label": "Fluffy plush bunny (The cozy corner)" },
+            { "value": "gift.jpg", "label": "Gift box" }
+          ],
+          "default": "banner-stationery.jpg"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Card heading",
+          "default": "The collecting shelf"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Card description",
+          "default": "Little surprises and keepsakes worth hunting for."
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link text",
+          "default": "Shop the edit →"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link URL"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "Dark overlay opacity",
+          "min": 20,
+          "max": 90,
+          "step": 5,
+          "unit": "%",
+          "default": 65
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Curated edits",
+      "blocks": [
+        {
+          "type": "edit_card",
+          "settings": {
+            "title": "The collecting shelf",
+            "text": "Little surprises and keepsakes worth hunting for.",
+            "link_text": "Shop the edit →",
+            "fallback_image": "banner-stationery.jpg"
+          }
+        },
+        {
+          "type": "edit_card",
+          "settings": {
+            "title": "The happy desk",
+            "text": "A fresh little reason to love your to-do list.",
+            "link_text": "Shop the edit →",
+            "fallback_image": "banner-cute.jpg"
+          }
+        },
+        {
+          "type": "edit_card",
+          "settings": {
+            "title": "The cozy corner",
+            "text": "Plush friends made for everyday company.",
+            "link_text": "Shop the edit →",
+            "fallback_image": "banner-plush.jpg"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

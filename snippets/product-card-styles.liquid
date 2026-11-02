@@ -31,14 +31,14 @@
     background: #ffffff !important;
     border-radius: var(--card-radius, 28px) !important;
     overflow: hidden !important;
-    box-shadow: 0 4px 18px -4px rgba(60, 40, 30, 0.12), 0 2px 6px -2px rgba(60, 40, 30, 0.05) !important;
+    box-shadow: 0 10px 30px -22px rgba(60, 40, 30, 0.35) !important;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     display: flex !important;
     flex-direction: column !important;
     position: relative !important;
     height: 100% !important;
     width: 100% !important;
-    border: 1px solid rgba(60, 40, 30, 0.06) !important;
+    border: none !important;
     box-sizing: border-box !important;
     text-align: left !important;
   }
@@ -48,8 +48,36 @@
   .card:not(product-card *):hover,
   .product-card:not(product-card *):hover {
     transform: translateY(-4px) !important;
-    box-shadow: 0 14px 28px -6px rgba(60, 40, 30, 0.18), 0 4px 10px -2px rgba(60, 40, 30, 0.08) !important;
+    box-shadow: 0 22px 40px -24px rgba(60, 40, 30, 0.4) !important;
     z-index: 4 !important;
+  }
+
+  /* Ensure slider containers provide breathing room so card drop shadow and hover lift are never clipped */
+  .slider-outer .new-swiper-container,
+  .new-swiper-container,
+  .swiper.new-swiper-container {
+    padding-top: 12px !important;
+    padding-bottom: 28px !important;
+    margin-top: -12px !important;
+    margin-bottom: -28px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+  .slider-outer .swiper-slide,
+  .new-swiper-container .swiper-slide {
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+  }
+  .slider-outer .swiper-slide product-card,
+  .new-swiper-container .swiper-slide product-card,
+  .slider-outer .swiper-slide .resource-list__item,
+  .new-swiper-container .swiper-slide .resource-list__item {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   /* Prevent any double/extra shadow or border from nested inner card elements */
