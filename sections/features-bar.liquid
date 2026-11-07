@@ -210,6 +210,13 @@
     overflow: hidden;
   }
 
+  @media (max-width: 767px) {
+    .features-bar--{{ section.id }} {
+      padding-top: calc(var(--features-bar-pt) * 0.6);
+      padding-bottom: calc(var(--features-bar-pb) * 0.6);
+    }
+  }
+
   .features-bar--{{ section.id }} .features-bar__wrapper--page-width {
     max-width: var(--page-width, 1320px);
     margin: 0 auto;

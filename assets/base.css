@@ -1071,10 +1071,14 @@ summary:hover {
 
 /* Spacing style */
 .spacing-style {
-  --spacing-scale: var(--spacing-scale-md);
+  --spacing-scale: var(--spacing-scale-sm, 0.5);
+
+  @media screen and (min-width: 750px) {
+    --spacing-scale: var(--spacing-scale-md, 0.7);
+  }
 
   @media screen and (min-width: 990px) {
-    --spacing-scale: var(--spacing-scale-default);
+    --spacing-scale: var(--spacing-scale-default, 1.0);
   }
 
   /* Must disable this, when you use these with calc and another unit type, things break — see logo.liquid */

@@ -231,6 +231,13 @@
     background-color: var(--iwt-outer-bg, var(--color-background));
   }
 
+  @media (max-width: 767px) {
+    .mochi-iwt-section {
+      padding-top: calc(var(--iwt-pt) * 0.5);
+      padding-bottom: calc(var(--iwt-pb) * 0.5);
+    }
+  }
+
   .mochi-iwt__outer {
     max-width: var(--page-width, 1360px);
     margin: 0 auto;

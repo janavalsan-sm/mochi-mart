@@ -47,8 +47,8 @@
   class="section curated-edits-section section-{{ section.id }} color-{{ color_scheme }}{% if has_custom_outer_bg %} color-custom-{{ section.id }}{% endif %}"
   id="CuratedEdits-{{ section.id }}"
   style="
-    padding-top: {{ section.settings.padding_top | default: 40 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | default: 40 }}px;
+    --curated-pt: {{ section.settings.padding_top | default: 40 }}px;
+    --curated-pb: {{ section.settings.padding_bottom | default: 40 }}px;
   "
 >
   <div class="{% if section.settings.section_width == 'page-width' %}page-wrap{% else %}curated-edits__panel-outer{% endif %}">
@@ -278,6 +278,14 @@
     position: relative;
     z-index: 1;
     background-color: transparent !important;
+    padding-top: var(--curated-pt);
+    padding-bottom: var(--curated-pb);
+  }
+  @media (max-width: 767px) {
+    .curated-edits-section {
+      padding-top: calc(var(--curated-pt) * 0.5);
+      padding-bottom: calc(var(--curated-pb) * 0.5);
+    }
   }
   .curated-edits__panel-outer {
     margin: 10px clamp(12px, 2.2vw, 28px);
