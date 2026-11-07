@@ -51,17 +51,17 @@
     section--{{ section.settings.section_width }}
     color-{{ color_scheme }}
     {% if has_custom_bg %}color-custom-{{ section.id }}{% endif %}
+    spacing-style
   "
   id="CustomerReviewsSection-{{ section.id }}"
   data-section-id="{{ section.id }}"
   style="
+    {% render 'spacing-style', settings: section.settings %};
     {%- if has_custom_bg -%}
       --reviews-bg: {{ section.settings.custom_bg_color }};
     {%- else -%}
       --reviews-bg: var(--color-background);
     {%- endif -%}
-    --reviews-pt: {{ section.settings.padding_top | default: 48 }}px;
-    --reviews-pb: {{ section.settings.padding_bottom | default: 48 }}px;
     --reviews-eyebrow-color: {{ section.settings.eyebrow_color | default: '#d32f2f' }};
     --reviews-heading-color: {{ section.settings.heading_color | default: 'var(--color-foreground-heading, var(--color-foreground, #2c221e))' }};
     --reviews-heading-size: {{ section.settings.heading_size | default: 44 }}px;
@@ -84,126 +84,124 @@
     --mobile-row-gap: {{ section.settings.slide_mobile_row_gap | default: 16 }}px;
   "
 >
-  <div class="customer-reviews__wrapper customer-reviews__wrapper--{{ section.settings.section_width }}">
-    {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.description != blank -%}
-      <div class="customer-reviews__header customer-reviews__header--{{ section.settings.heading_alignment | default: 'center' }}">
-        {%- if section.settings.eyebrow != blank -%}
-          <div class="customer-reviews__eyebrow">
-            {{ section.settings.eyebrow }}
-          </div>
-        {%- endif -%}
-
-        {%- if section.settings.heading != blank -%}
-          <h2 class="customer-reviews__heading">
-            {{ section.settings.heading }}
-          </h2>
-        {%- endif -%}
-
-        {%- if section.settings.description != blank -%}
-          <p class="customer-reviews__description">
-            {{ section.settings.description }}
-          </p>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
-
-    <div class="slider-outer {{ section.settings.arrow_position | default: 'arrows-left-and-right' }} {{ section.settings.dots_option | default: 'only-mobile' }} {{ arrow_opt }}{% if desktop_slider %} is-desktop-slider{% else %} is-desktop-grid{% endif %}{% if mobile_slider %} is-mobile-slider{% else %} is-mobile-grid{% endif %}">
-      <div
-        id="new-swiper-{{ unique_id }}"
-        class="slider-btn new-swiper-container swiper"
-        data-id="{{ unique_id }}"
-        data-mobile-slider="{{ mobile_slider }}"
-        data-tablet-slider="{{ mobile_slider }}"
-        data-desktop-slider="{{ desktop_slider }}"
-        data-slides-per-view-desktop="{{ section.settings.slides_per_view_desktop | default: 3 }}"
-        data-space-between-desktop="{{ section.settings.space_between_desktop | default: 24 }}"
-        data-slides-per-view-laptop="{{ section.settings.slides_per_view_laptop | default: section.settings.slides_per_view_desktop | default: 3 }}"
-        data-space-between-laptop="{{ section.settings.space_between_laptop | default: section.settings.space_between_desktop | default: 24 }}"
-        data-slides-per-view-tablet="{{ section.settings.slides_per_view_tablet | default: 2 }}"
-        data-space-between-tablet="{{ section.settings.space_between_tablet | default: section.settings.space_between_mobile | default: 16 }}"
-        data-slides-per-view-medium-tablet="{{ section.settings.slides_per_view_medium_tablet | default: 2 }}"
-        data-space-between-medium-tablet="{{ section.settings.space_between_medium_tablet | default: section.settings.space_between_mobile | default: 16 }}"
-        data-slides-per-view-mobile="{{ section.settings.slides_per_view_mobile | default: 1.15 }}"
-        data-space-between-mobile="{{ section.settings.space_between_mobile | default: 16 }}"
-        data-arrows-enabled="{{ section.settings.arrows_enabled }}"
-        data-autoplay-enabled="{{ section.settings.autoplay_enabled }}"
-        data-autoplay-delay="{{ section.settings.autoplay_delay | default: 4000 }}"
-        data-loop-enabled="{{ section.settings.loop_enabled }}"
-        data-dots-enabled="{{ section.settings.dots_enabled }}"
-      >
-        <div
-          id="{{ unique_id }}"
-          class="
-            customer-reviews__container
-            {% if desktop_slider or mobile_slider %} swiper-wrapper {% endif %}
-            {% if desktop_slider != true %} desktop-grid laptop-grid {% endif %}
-            {% if mobile_slider != true %} mobile-grid {% endif %}
-          "
-        >
-          {%- for block in section.blocks -%}
-            <div class="{% if desktop_slider or mobile_slider %}swiper-slide{% endif %} customer-reviews__slide" {{ block.shopify_attributes }}>
-              <div class="customer-reviews__card">
-                <div class="customer-reviews__stars" aria-label="{{ block.settings.rating }} out of 5 stars">
-                  {%- assign rating_val = block.settings.rating | default: 5 -%}
-                  {%- for i in (1..5) -%}
-                    {%- if i <= rating_val -%}
-                      <svg class="customer-reviews__star customer-reviews__star--filled" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                      </svg>
-                    {%- else -%}
-                      <svg class="customer-reviews__star customer-reviews__star--empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                      </svg>
-                    {%- endif -%}
-                  {%- endfor -%}
-                </div>
-
-                {%- if block.settings.quote != blank -%}
-                  <div class="customer-reviews__quote">
-                    {{ block.settings.quote }}
-                  </div>
-                {%- endif -%}
-
-                {%- if block.settings.author != blank -%}
-                  <div class="customer-reviews__author">
-                    <span class="customer-reviews__author-dash">—</span> {{ block.settings.author }}
-                    {%- if block.settings.verified -%}
-                      <span class="customer-reviews__verified-badge" title="Verified Customer">
-                        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                      </span>
-                    {%- endif -%}
-                  </div>
-                {%- endif -%}
-              </div>
-            </div>
-          {%- endfor -%}
-        </div>
-      </div>
-
-      {%- if section.settings.dots_enabled and section.blocks.size > 1 -%}
-        <div class="pagination-container {{ section.settings.dots_option }}">
-          <div class="swiper-pagination"></div>
+  {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.description != blank -%}
+    <div class="customer-reviews__header customer-reviews__header--{{ section.settings.heading_alignment | default: 'center' }}">
+      {%- if section.settings.eyebrow != blank -%}
+        <div class="customer-reviews__eyebrow">
+          {{ section.settings.eyebrow }}
         </div>
       {%- endif -%}
 
-      {%- if section.settings.arrows_enabled and section.blocks.size > 1 -%}
-        <span class="swipwer--btn swiper-button-previ" data-swiper-id="{{ unique_id }}" aria-label="Previous">
-          {% render 'slider-arrow-left' %}
-        </span>
-        <span class="swipwer--btn swiper-button-nexts" data-swiper-id="{{ unique_id }}" aria-label="Next">
-          {% render 'slider-arrow-right' %}
-        </span>
+      {%- if section.settings.heading != blank -%}
+        <h2 class="customer-reviews__heading">
+          {{ section.settings.heading }}
+        </h2>
+      {%- endif -%}
+
+      {%- if section.settings.description != blank -%}
+        <p class="customer-reviews__description">
+          {{ section.settings.description }}
+        </p>
       {%- endif -%}
     </div>
+  {%- endif -%}
 
-    {%- if section.settings.show_disclaimer and section.settings.disclaimer_text != blank -%}
-      <div class="customer-reviews__disclaimer">
-        {{ section.settings.disclaimer_text }}
+  <div class="slider-outer {{ section.settings.arrow_position | default: 'arrows-left-and-right' }} {{ section.settings.dots_option | default: 'only-mobile' }} {{ arrow_opt }}{% if desktop_slider %} is-desktop-slider{% else %} is-desktop-grid{% endif %}{% if mobile_slider %} is-mobile-slider{% else %} is-mobile-grid{% endif %}">
+    <div
+      id="new-swiper-{{ unique_id }}"
+      class="slider-btn new-swiper-container swiper"
+      data-id="{{ unique_id }}"
+      data-mobile-slider="{{ mobile_slider }}"
+      data-tablet-slider="{{ mobile_slider }}"
+      data-desktop-slider="{{ desktop_slider }}"
+      data-slides-per-view-desktop="{{ section.settings.slides_per_view_desktop | default: 3 }}"
+      data-space-between-desktop="{{ section.settings.space_between_desktop | default: 24 }}"
+      data-slides-per-view-laptop="{{ section.settings.slides_per_view_laptop | default: section.settings.slides_per_view_desktop | default: 3 }}"
+      data-space-between-laptop="{{ section.settings.space_between_laptop | default: section.settings.space_between_desktop | default: 24 }}"
+      data-slides-per-view-tablet="{{ section.settings.slides_per_view_tablet | default: 2 }}"
+      data-space-between-tablet="{{ section.settings.space_between_tablet | default: section.settings.space_between_mobile | default: 16 }}"
+      data-slides-per-view-medium-tablet="{{ section.settings.slides_per_view_medium_tablet | default: 2 }}"
+      data-space-between-medium-tablet="{{ section.settings.space_between_medium_tablet | default: section.settings.space_between_mobile | default: 16 }}"
+      data-slides-per-view-mobile="{{ section.settings.slides_per_view_mobile | default: 1.2 }}"
+      data-space-between-mobile="{{ section.settings.space_between_mobile | default: 16 }}"
+      data-arrows-enabled="{{ section.settings.arrows_enabled }}"
+      data-autoplay-enabled="{{ section.settings.autoplay_enabled }}"
+      data-autoplay-delay="{{ section.settings.autoplay_delay | default: 4000 }}"
+      data-loop-enabled="{{ section.settings.loop_enabled }}"
+      data-dots-enabled="{{ section.settings.dots_enabled }}"
+    >
+      <div
+        id="{{ unique_id }}"
+        class="
+          customer-reviews__container
+          {% if desktop_slider or mobile_slider %} swiper-wrapper {% endif %}
+          {% if desktop_slider != true %} desktop-grid laptop-grid {% endif %}
+          {% if mobile_slider != true %} mobile-grid {% endif %}
+        "
+      >
+        {%- for block in section.blocks -%}
+          <div class="{% if desktop_slider or mobile_slider %}swiper-slide{% endif %} customer-reviews__slide" {{ block.shopify_attributes }}>
+            <div class="customer-reviews__card">
+              <div class="customer-reviews__stars" aria-label="{{ block.settings.rating }} out of 5 stars">
+                {%- assign rating_val = block.settings.rating | default: 5 -%}
+                {%- for i in (1..5) -%}
+                  {%- if i <= rating_val -%}
+                    <svg class="customer-reviews__star customer-reviews__star--filled" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                  {%- else -%}
+                    <svg class="customer-reviews__star customer-reviews__star--empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+
+              {%- if block.settings.quote != blank -%}
+                <div class="customer-reviews__quote">
+                  {{ block.settings.quote }}
+                </div>
+              {%- endif -%}
+
+              {%- if block.settings.author != blank -%}
+                <div class="customer-reviews__author">
+                  <span class="customer-reviews__author-dash">—</span> {{ block.settings.author }}
+                  {%- if block.settings.verified -%}
+                    <span class="customer-reviews__verified-badge" title="Verified Customer">
+                      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    {%- if section.settings.dots_enabled and section.blocks.size > 1 -%}
+      <div class="pagination-container {{ section.settings.dots_option }}">
+        <div class="swiper-pagination"></div>
       </div>
     {%- endif -%}
+
+    {%- if section.settings.arrows_enabled and section.blocks.size > 1 -%}
+      <span class="swipwer--btn swiper-button-previ" data-swiper-id="{{ unique_id }}" aria-label="Previous">
+        {% render 'slider-arrow-left' %}
+      </span>
+      <span class="swipwer--btn swiper-button-nexts" data-swiper-id="{{ unique_id }}" aria-label="Next">
+        {% render 'slider-arrow-right' %}
+      </span>
+    {%- endif -%}
   </div>
+
+  {%- if section.settings.show_disclaimer and section.settings.disclaimer_text != blank -%}
+    <div class="customer-reviews__disclaimer">
+      {{ section.settings.disclaimer_text }}
+    </div>
+  {%- endif -%}
 </div>
 
 <script src="{{ 'arrow-out-slider.js' | asset_url }}" defer="defer"></script>
@@ -218,10 +216,7 @@
     position: relative;
     z-index: 1;
     background-color: transparent !important;
-    padding-top: var(--reviews-pt);
-    padding-bottom: var(--reviews-pb);
     font-family: var(--font-body--family, "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif);
-    overflow: visible;
   }
 
   .customer-reviews-section .section-background {
@@ -231,21 +226,14 @@
     background-color: var(--reviews-bg);
   }
 
-  .customer-reviews__wrapper--page-width {
-    max-width: var(--page-width, 1320px);
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-
-  .customer-reviews__wrapper--full-width {
+  /* Direct grid item placement for Horizon page-width grid */
+  .customer-reviews-section > .customer-reviews__header,
+  .customer-reviews-section > .slider-outer,
+  .customer-reviews-section > .customer-reviews__disclaimer {
+    grid-column: 2;
+    min-width: 0;
+    max-width: 100%;
     width: 100%;
-    padding: 0 24px;
-  }
-
-  @media (min-width: 768px) {
-    .customer-reviews__wrapper--page-width {
-      padding: 0 32px;
-    }
   }
 
   /* Header */
@@ -301,9 +289,29 @@
     display: inline-block;
   }
 
+  /* Slider Outer */
+  .customer-reviews-section .slider-outer {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .customer-reviews-section .new-swiper-container {
+    overflow: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .customer-reviews-section .new-swiper-container .swiper-wrapper {
+    box-sizing: border-box !important;
+  }
+
   /* Grid Layout (Desktop fallback when desktop slider is disabled) */
   @media (min-width: 1025px) {
-    .customer-reviews__container.desktop-grid {
+    .customer-reviews__container.desktop-grid:not(.swiper-wrapper) {
       display: grid !important;
       grid-template-columns: repeat(var(--desktop-columns, 3), 1fr) !important;
       column-gap: var(--desktop-col-gap, 24px) !important;
@@ -311,8 +319,8 @@
       width: 100% !important;
       transform: none !important;
     }
-    .customer-reviews__container.desktop-grid .swiper-slide,
-    .customer-reviews__container.desktop-grid .customer-reviews__slide {
+    .customer-reviews__container.desktop-grid:not(.swiper-wrapper) .swiper-slide,
+    .customer-reviews__container.desktop-grid:not(.swiper-wrapper) .customer-reviews__slide {
       width: auto !important;
       margin-right: 0 !important;
       transform: none !important;
@@ -331,16 +339,11 @@
 
   /* Desktop Swiper Layout */
   @media (min-width: 1025px) {
-    .new-swiper-container[data-desktop-slider="true"] {
-      overflow: hidden !important;
-      width: 100% !important;
-    }
-    .new-swiper-container[data-desktop-slider="true"] .swiper-wrapper {
+    .customer-reviews-section .new-swiper-container[data-desktop-slider="true"] .swiper-wrapper {
       display: flex !important;
       flex-wrap: nowrap !important;
-      width: 100% !important;
     }
-    .new-swiper-container[data-desktop-slider="true"] .swiper-slide {
+    .customer-reviews-section .new-swiper-container[data-desktop-slider="true"] .swiper-slide {
       height: auto !important;
       display: flex !important;
       flex-shrink: 0 !important;
@@ -383,19 +386,13 @@
 
   /* Mobile & Tablet Swiper Layout */
   @media (max-width: 1024px) {
-    .new-swiper-container[data-mobile-slider="true"],
-    .new-swiper-container[data-tablet-slider="true"] {
-      overflow: hidden !important;
-      width: 100% !important;
-    }
-    .new-swiper-container[data-mobile-slider="true"] .swiper-wrapper,
-    .new-swiper-container[data-tablet-slider="true"] .swiper-wrapper {
+    .customer-reviews-section .new-swiper-container[data-mobile-slider="true"] .swiper-wrapper,
+    .customer-reviews-section .new-swiper-container[data-tablet-slider="true"] .swiper-wrapper {
       display: flex !important;
       flex-wrap: nowrap !important;
-      width: 100% !important;
     }
-    .new-swiper-container[data-mobile-slider="true"] .swiper-slide,
-    .new-swiper-container[data-tablet-slider="true"] .swiper-slide {
+    .customer-reviews-section .new-swiper-container[data-mobile-slider="true"] .swiper-slide,
+    .customer-reviews-section .new-swiper-container[data-tablet-slider="true"] .swiper-slide {
       height: auto !important;
       display: flex !important;
       flex-shrink: 0 !important;
@@ -415,6 +412,8 @@
     height: auto;
     display: flex;
     box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
   }
 
   /* Card */
@@ -427,9 +426,13 @@
     flex-direction: column;
     justify-content: flex-start;
     width: 100%;
+    min-width: 0;
     min-height: 190px;
     box-sizing: border-box;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+    overflow: hidden;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   {%- if section.settings.card_hover_lift -%}
@@ -909,7 +912,7 @@
       "type": "checkbox",
       "id": "loop_enabled",
       "label": "Enable loop",
-      "default": true,
+      "default": false,
       "visible_if": "{{ section.settings.enable_custom_slider == true }}"
     },
     {

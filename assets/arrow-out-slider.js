@@ -67,12 +67,24 @@
     const desktopSpv = parseFloat(container.getAttribute('data-slides-per-view-desktop')) || 5;
     const desktopGap = parseInt(container.getAttribute('data-space-between-desktop'), 10) || 16;
 
+    const slideElements = swiperContainer.querySelectorAll('.swiper-slide');
+    const slidesCount = slideElements.length;
+    const maxSpv = Math.max(mobileSpv, medTabletSpv, tabletSpv, laptopSpv, desktopSpv);
+    const shouldLoop = loopEnabled && slidesCount > 1 && slidesCount >= Math.ceil(maxSpv) * 2;
+
+    const nextBtn =
+      (sliderOuter && sliderOuter.querySelector(`.swiper-button-nexts[data-swiper-id="${uniqueId}"]`)) ||
+      document.querySelector(`.swiper-button-nexts[data-swiper-id="${uniqueId}"]`);
+    const prevBtn =
+      (sliderOuter && sliderOuter.querySelector(`.swiper-button-previ[data-swiper-id="${uniqueId}"]`)) ||
+      document.querySelector(`.swiper-button-previ[data-swiper-id="${uniqueId}"]`);
+
     container.swiper = new Swiper(swiperContainer, {
       slidesPerView: mobileSpv,
       spaceBetween: mobileGap,
       centeredSlides: centeredEnabled,
       centeredSlidesBounds: centeredEnabled,
-      loop: loopEnabled,
+      loop: shouldLoop,
       initialSlide: 0,
       roundLengths: true,
       observer: true,
@@ -86,10 +98,10 @@
             waitForTransition: true,
           }
         : false,
-      navigation: arrowsEnabled
+      navigation: arrowsEnabled && nextBtn && prevBtn
         ? {
-            nextEl: `.swiper-button-nexts[data-swiper-id="${uniqueId}"]`,
-            prevEl: `.swiper-button-previ[data-swiper-id="${uniqueId}"]`,
+            nextEl: nextBtn,
+            prevEl: prevBtn,
           }
         : false,
       pagination: dotsEnabled && paginationEl
@@ -126,6 +138,10 @@
         },
       },
     });
+
+    if (container.swiper && typeof container.swiper.update === 'function') {
+      container.swiper.update();
+    }
   }
 
   function checkScreenSizeAndInitSwipers() {

@@ -580,6 +580,7 @@
   margin-bottom: -28px !important;
   padding-left: 6px !important;
   padding-right: 6px !important;
+  box-sizing: border-box !important;
 }
 .new-swiper-container .swiper-slide {
   height: auto !important;

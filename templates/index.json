@@ -1048,7 +1048,7 @@
         "dots_option": "only-mobile",
         "autoplay_enabled": false,
         "autoplay_delay": 4000,
-        "loop_enabled": true,
+        "loop_enabled": false,
         "card_bg_color": "#ffffff",
         "card_border_color": "#efeae2",
         "card_border_radius": 24,
