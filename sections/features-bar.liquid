@@ -3,12 +3,18 @@
   if color_scheme == blank
     assign color_scheme = 'scheme-1'
   endif
+
+  assign has_custom_bg = false
+  if section.settings.custom_bg_color != blank and section.settings.custom_bg_color != 'rgba(0,0,0,0)' and section.settings.custom_bg_color != 'transparent'
+    assign has_custom_bg = true
+    render 'contrast-override', background_color: section.settings.custom_bg_color, section_id: section.id
+  endif
 %}
 
 <div
-  class="features-bar-section features-bar--{{ section.id }} color-{{ color_scheme }}"
+  class="features-bar-section features-bar--{{ section.id }} color-{{ color_scheme }}{% if has_custom_bg %} color-custom-{{ section.id }}{% endif %}"
   style="
-    {%- if section.settings.custom_bg_color != blank and section.settings.custom_bg_color != 'rgba(0,0,0,0)' and section.settings.custom_bg_color != 'transparent' -%}
+    {%- if has_custom_bg -%}
       --features-bar-bg: {{ section.settings.custom_bg_color }};
     {%- else -%}
       --features-bar-bg: var(--color-background);
@@ -183,8 +189,12 @@
 </div>
 
 <style>
+  .shopify-section:has(.features-bar--{{ section.id }}) {
+    position: relative;
+    isolation: isolate;
+  }
   .features-bar--{{ section.id }} {
-    background-color: var(--features-bar-bg);
+    background-color: var(--features-bar-bg) !important;
     color: var(--features-bar-text-color);
     padding-top: var(--features-bar-pt);
     padding-bottom: var(--features-bar-pb);

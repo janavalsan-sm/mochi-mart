@@ -1,48 +1,92 @@
 {%- comment -%}
   Customer Reviews Section — Mochi Mart
-  Fully customizable Swiper slider showcasing customer reviews & testimonials with Lovable aesthetic.
+  Fully customizable slider showcasing customer reviews & testimonials with Lovable aesthetic.
+  Supports both Swiper slider & responsive grid layouts with mobile/desktop controls.
 {%- endcomment -%}
+
+{% assign unique_id = 'customer-reviews-' | append: section.id %}
+{{ 'slider-styles.css' | asset_url | stylesheet_tag }}
 
 {%- liquid
   assign color_scheme = section.settings.color_scheme.id | default: section.settings.color_scheme
   if color_scheme == blank
     assign color_scheme = 'scheme-1'
   endif
+
+  assign has_custom_bg = false
+  if section.settings.custom_bg_color != blank and section.settings.custom_bg_color != 'rgba(0,0,0,0)' and section.settings.custom_bg_color != 'transparent'
+    assign has_custom_bg = true
+    render 'contrast-override', background_color: section.settings.custom_bg_color, section_id: section.id
+  endif
+
+  assign is_full_slider = false
+  if section.settings.layout_mode == 'slider' or section.settings.enable_full_slider == true
+    assign is_full_slider = true
+  endif
+
+  assign desktop_slider = false
+  if is_full_slider or section.settings.enable_desktop_slider == true
+    assign desktop_slider = true
+  endif
+
+  assign mobile_slider = false
+  if section.settings.enable_custom_slider != false
+    if is_full_slider or section.settings.enable_mobile_slider != false
+      assign mobile_slider = true
+    endif
+  endif
+
+  assign arrow_opt = section.settings.arrow_option
+  if is_full_slider and section.settings.arrow_option == 'arrow-only-mobile'
+    assign arrow_opt = 'arrow-show-both'
+  endif
 -%}
 
+<div class="section-background color-{{ color_scheme }}{% if has_custom_bg %} color-custom-{{ section.id }}{% endif %}"></div>
+
 <div
-  class="customer-reviews-section color-{{ color_scheme }}"
+  class="
+    section
+    customer-reviews-section
+    section--{{ section.settings.section_width }}
+    color-{{ color_scheme }}
+    {% if has_custom_bg %}color-custom-{{ section.id }}{% endif %}
+  "
   id="CustomerReviewsSection-{{ section.id }}"
   data-section-id="{{ section.id }}"
   style="
-    {%- if section.settings.custom_bg_color != blank and section.settings.custom_bg_color != 'rgba(0,0,0,0)' and section.settings.custom_bg_color != 'transparent' -%}
+    {%- if has_custom_bg -%}
       --reviews-bg: {{ section.settings.custom_bg_color }};
     {%- else -%}
       --reviews-bg: var(--color-background);
     {%- endif -%}
-    --reviews-pt: {{ section.settings.padding_top }}px;
-    --reviews-pb: {{ section.settings.padding_bottom }}px;
+    --reviews-pt: {{ section.settings.padding_top | default: 48 }}px;
+    --reviews-pb: {{ section.settings.padding_bottom | default: 48 }}px;
     --reviews-eyebrow-color: {{ section.settings.eyebrow_color | default: '#d32f2f' }};
-    --reviews-heading-color: {{ section.settings.heading_color | default: '#2c221e' }};
-    --reviews-heading-size: {{ section.settings.heading_size }}px;
-    --reviews-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+    --reviews-heading-color: {{ section.settings.heading_color | default: 'var(--color-foreground-heading, var(--color-foreground, #2c221e))' }};
+    --reviews-heading-size: {{ section.settings.heading_size | default: 44 }}px;
+    --reviews-heading-size-mobile: {{ section.settings.heading_size_mobile | default: 30 }}px;
     --reviews-card-bg: {{ section.settings.card_bg_color | default: '#ffffff' }};
-    --reviews-card-radius: {{ section.settings.card_border_radius }}px;
+    --reviews-card-radius: {{ section.settings.card_border_radius | default: 24 }}px;
     --reviews-card-border: {{ section.settings.card_border_color | default: '#efeae2' }};
     --reviews-star-color: {{ section.settings.star_color | default: '#d32f2f' }};
     --reviews-quote-color: {{ section.settings.quote_color | default: '#2c2523' }};
-    --reviews-quote-size: {{ section.settings.quote_size }}px;
+    --reviews-quote-size: {{ section.settings.quote_size | default: 16 }}px;
     --reviews-author-color: {{ section.settings.author_color | default: '#78716c' }};
     --reviews-disclaimer-color: {{ section.settings.disclaimer_color | default: '#9ca3af' }};
-    --reviews-arrow-bg: {{ section.settings.arrow_bg_color | default: '#ffffff' }};
-    --reviews-arrow-color: {{ section.settings.arrow_color | default: '#2c221e' }};
-    --reviews-dot-color: {{ section.settings.dot_color | default: '#d6d3d1' }};
-    --reviews-dot-active: {{ section.settings.dot_active_color | default: '#d32f2f' }};
+    --desktop-columns: {{ section.settings.columns | default: 3 }};
+    --laptop-columns: {{ section.settings.columns_laptop | default: 3 }};
+    --tablet-columns: {{ section.settings.columns_tablet | default: 2 }};
+    --mobile-columns: {{ section.settings.mobile_columns | default: 1 }};
+    --desktop-col-gap: {{ section.settings.slide_columns_gap | default: 24 }}px;
+    --desktop-row-gap: {{ section.settings.slide_row_gap | default: 24 }}px;
+    --mobile-col-gap: {{ section.settings.slide_mobile_columns_gap | default: 16 }}px;
+    --mobile-row-gap: {{ section.settings.slide_mobile_row_gap | default: 16 }}px;
   "
 >
   <div class="customer-reviews__wrapper customer-reviews__wrapper--{{ section.settings.section_width }}">
     {%- if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.description != blank -%}
-      <div class="customer-reviews__header customer-reviews__header--{{ section.settings.heading_alignment }}">
+      <div class="customer-reviews__header customer-reviews__header--{{ section.settings.heading_alignment | default: 'center' }}">
         {%- if section.settings.eyebrow != blank -%}
           <div class="customer-reviews__eyebrow">
             {{ section.settings.eyebrow }}
@@ -63,24 +107,41 @@
       </div>
     {%- endif -%}
 
-    <div class="customer-reviews__slider-container">
-      {%- if section.settings.show_arrows and section.blocks.size > 1 -%}
-        <button
-          type="button"
-          class="customer-reviews__arrow customer-reviews__arrow--prev"
-          id="ReviewsPrev-{{ section.id }}"
-          aria-label="Previous review"
+    <div class="slider-outer {{ section.settings.arrow_position | default: 'arrows-left-and-right' }} {{ section.settings.dots_option | default: 'only-mobile' }} {{ arrow_opt }}{% if desktop_slider %} is-desktop-slider{% else %} is-desktop-grid{% endif %}{% if mobile_slider %} is-mobile-slider{% else %} is-mobile-grid{% endif %}">
+      <div
+        id="new-swiper-{{ unique_id }}"
+        class="slider-btn new-swiper-container swiper"
+        data-id="{{ unique_id }}"
+        data-mobile-slider="{{ mobile_slider }}"
+        data-tablet-slider="{{ mobile_slider }}"
+        data-desktop-slider="{{ desktop_slider }}"
+        data-slides-per-view-desktop="{{ section.settings.slides_per_view_desktop | default: 3 }}"
+        data-space-between-desktop="{{ section.settings.space_between_desktop | default: 24 }}"
+        data-slides-per-view-laptop="{{ section.settings.slides_per_view_laptop | default: section.settings.slides_per_view_desktop | default: 3 }}"
+        data-space-between-laptop="{{ section.settings.space_between_laptop | default: section.settings.space_between_desktop | default: 24 }}"
+        data-slides-per-view-tablet="{{ section.settings.slides_per_view_tablet | default: 2 }}"
+        data-space-between-tablet="{{ section.settings.space_between_tablet | default: section.settings.space_between_mobile | default: 16 }}"
+        data-slides-per-view-medium-tablet="{{ section.settings.slides_per_view_medium_tablet | default: 2 }}"
+        data-space-between-medium-tablet="{{ section.settings.space_between_medium_tablet | default: section.settings.space_between_mobile | default: 16 }}"
+        data-slides-per-view-mobile="{{ section.settings.slides_per_view_mobile | default: 1.15 }}"
+        data-space-between-mobile="{{ section.settings.space_between_mobile | default: 16 }}"
+        data-arrows-enabled="{{ section.settings.arrows_enabled }}"
+        data-autoplay-enabled="{{ section.settings.autoplay_enabled }}"
+        data-autoplay-delay="{{ section.settings.autoplay_delay | default: 4000 }}"
+        data-loop-enabled="{{ section.settings.loop_enabled }}"
+        data-dots-enabled="{{ section.settings.dots_enabled }}"
+      >
+        <div
+          id="{{ unique_id }}"
+          class="
+            customer-reviews__container
+            {% if desktop_slider or mobile_slider %} swiper-wrapper {% endif %}
+            {% if desktop_slider != true %} desktop-grid laptop-grid {% endif %}
+            {% if mobile_slider != true %} mobile-grid {% endif %}
+          "
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
-      {%- endif -%}
-
-      <div class="swiper customer-reviews__swiper" id="CustomerReviewsSwiper-{{ section.id }}">
-        <div class="swiper-wrapper">
           {%- for block in section.blocks -%}
-            <div class="swiper-slide customer-reviews__slide" {{ block.shopify_attributes }}>
+            <div class="{% if desktop_slider or mobile_slider %}swiper-slide{% endif %} customer-reviews__slide" {{ block.shopify_attributes }}>
               <div class="customer-reviews__card">
                 <div class="customer-reviews__stars" aria-label="{{ block.settings.rating }} out of 5 stars">
                   {%- assign rating_val = block.settings.rating | default: 5 -%}
@@ -119,23 +180,21 @@
             </div>
           {%- endfor -%}
         </div>
-
-        {%- if section.settings.show_dots and section.blocks.size > 1 -%}
-          <div class="swiper-pagination customer-reviews__pagination" id="ReviewsPagination-{{ section.id }}"></div>
-        {%- endif -%}
       </div>
 
-      {%- if section.settings.show_arrows and section.blocks.size > 1 -%}
-        <button
-          type="button"
-          class="customer-reviews__arrow customer-reviews__arrow--next"
-          id="ReviewsNext-{{ section.id }}"
-          aria-label="Next review"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </button>
+      {%- if section.settings.dots_enabled and section.blocks.size > 1 -%}
+        <div class="pagination-container {{ section.settings.dots_option }}">
+          <div class="swiper-pagination"></div>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.arrows_enabled and section.blocks.size > 1 -%}
+        <span class="swipwer--btn swiper-button-previ" data-swiper-id="{{ unique_id }}" aria-label="Previous">
+          {% render 'slider-arrow-left' %}
+        </span>
+        <span class="swipwer--btn swiper-button-nexts" data-swiper-id="{{ unique_id }}" aria-label="Next">
+          {% render 'slider-arrow-right' %}
+        </span>
       {%- endif -%}
     </div>
 
@@ -147,29 +206,44 @@
   </div>
 </div>
 
+<script src="{{ 'arrow-out-slider.js' | asset_url }}" defer="defer"></script>
+
 <style>
-  #CustomerReviewsSection-{{ section.id }} {
-    background-color: var(--reviews-bg);
+  .shopify-section:has(.customer-reviews-section) {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .customer-reviews-section {
+    position: relative;
+    z-index: 1;
+    background-color: transparent !important;
     padding-top: var(--reviews-pt);
     padding-bottom: var(--reviews-pb);
     font-family: var(--font-body--family, "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif);
-    position: relative;
-    overflow: hidden;
+    overflow: visible;
   }
 
-  #CustomerReviewsSection-{{ section.id }} .customer-reviews__wrapper--page-width {
+  .customer-reviews-section .section-background {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--reviews-bg);
+  }
+
+  .customer-reviews__wrapper--page-width {
     max-width: var(--page-width, 1320px);
     margin: 0 auto;
     padding: 0 20px;
   }
 
-  #CustomerReviewsSection-{{ section.id }} .customer-reviews__wrapper--full-width {
+  .customer-reviews__wrapper--full-width {
     width: 100%;
     padding: 0 24px;
   }
 
   @media (min-width: 768px) {
-    #CustomerReviewsSection-{{ section.id }} .customer-reviews__wrapper--page-width {
+    .customer-reviews__wrapper--page-width {
       padding: 0 32px;
     }
   }
@@ -192,9 +266,9 @@
   }
 
   .customer-reviews__eyebrow {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--reviews-eyebrow-color);
     margin-bottom: 12px;
@@ -227,21 +301,120 @@
     display: inline-block;
   }
 
-  /* Slider Container */
-  .customer-reviews__slider-container {
-    position: relative;
-    width: 100%;
+  /* Grid Layout (Desktop fallback when desktop slider is disabled) */
+  @media (min-width: 1025px) {
+    .customer-reviews__container.desktop-grid {
+      display: grid !important;
+      grid-template-columns: repeat(var(--desktop-columns, 3), 1fr) !important;
+      column-gap: var(--desktop-col-gap, 24px) !important;
+      row-gap: var(--desktop-row-gap, 24px) !important;
+      width: 100% !important;
+      transform: none !important;
+    }
+    .customer-reviews__container.desktop-grid .swiper-slide,
+    .customer-reviews__container.desktop-grid .customer-reviews__slide {
+      width: auto !important;
+      margin-right: 0 !important;
+      transform: none !important;
+    }
+    .slider-outer.is-desktop-grid.arrows-bottom {
+      padding-bottom: 0 !important;
+    }
+    .slider-outer.is-desktop-grid .swipwer--btn,
+    .slider-outer.is-desktop-grid .swiper-button-previ,
+    .slider-outer.is-desktop-grid .swiper-button-nexts,
+    .slider-outer.is-desktop-grid .pagination-container,
+    .slider-outer.is-desktop-grid .swiper-pagination {
+      display: none !important;
+    }
   }
 
-  .customer-reviews__swiper {
-    width: 100%;
-    padding: 10px 4px 18px !important;
-    overflow: hidden;
+  /* Desktop Swiper Layout */
+  @media (min-width: 1025px) {
+    .new-swiper-container[data-desktop-slider="true"] {
+      overflow: hidden !important;
+      width: 100% !important;
+    }
+    .new-swiper-container[data-desktop-slider="true"] .swiper-wrapper {
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      width: 100% !important;
+    }
+    .new-swiper-container[data-desktop-slider="true"] .swiper-slide {
+      height: auto !important;
+      display: flex !important;
+      flex-shrink: 0 !important;
+    }
+  }
+
+  /* Grid Layout (Laptop/Tablet fallback when slider is disabled) */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .customer-reviews__container.laptop-grid:not(.swiper-wrapper) {
+      display: grid !important;
+      grid-template-columns: repeat(var(--laptop-columns, 2), 1fr) !important;
+      column-gap: var(--desktop-col-gap, 24px) !important;
+      row-gap: var(--desktop-row-gap, 24px) !important;
+      width: 100% !important;
+      transform: none !important;
+    }
+    .customer-reviews__container.laptop-grid:not(.swiper-wrapper) .swiper-slide,
+    .customer-reviews__container.laptop-grid:not(.swiper-wrapper) .customer-reviews__slide {
+      width: auto !important;
+      margin-right: 0 !important;
+    }
+  }
+
+  /* Grid Layout (Mobile fallback when slider is disabled) */
+  @media (max-width: 768px) {
+    .customer-reviews__container.mobile-grid:not(.swiper-wrapper) {
+      display: grid !important;
+      grid-template-columns: repeat(var(--mobile-columns, 1), 1fr) !important;
+      column-gap: var(--mobile-col-gap, 16px) !important;
+      row-gap: var(--mobile-row-gap, 16px) !important;
+      width: 100% !important;
+      transform: none !important;
+    }
+    .customer-reviews__container.mobile-grid:not(.swiper-wrapper) .swiper-slide,
+    .customer-reviews__container.mobile-grid:not(.swiper-wrapper) .customer-reviews__slide {
+      width: auto !important;
+      margin-right: 0 !important;
+    }
+  }
+
+  /* Mobile & Tablet Swiper Layout */
+  @media (max-width: 1024px) {
+    .new-swiper-container[data-mobile-slider="true"],
+    .new-swiper-container[data-tablet-slider="true"] {
+      overflow: hidden !important;
+      width: 100% !important;
+    }
+    .new-swiper-container[data-mobile-slider="true"] .swiper-wrapper,
+    .new-swiper-container[data-tablet-slider="true"] .swiper-wrapper {
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      width: 100% !important;
+    }
+    .new-swiper-container[data-mobile-slider="true"] .swiper-slide,
+    .new-swiper-container[data-tablet-slider="true"] .swiper-slide {
+      height: auto !important;
+      display: flex !important;
+      flex-shrink: 0 !important;
+    }
+    .slider-outer.is-mobile-slider .swipwer--btn,
+    .slider-outer.is-mobile-slider .swiper-button-previ,
+    .slider-outer.is-mobile-slider .swiper-button-nexts {
+      display: flex !important;
+    }
+    .slider-outer.is-mobile-slider .pagination-container,
+    .slider-outer.is-mobile-slider .swiper-pagination {
+      display: flex !important;
+    }
   }
 
   .customer-reviews__slide {
     height: auto;
     display: flex;
+    box-sizing: border-box;
   }
 
   /* Card */
@@ -278,63 +451,55 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    color: var(--reviews-star-color);
-    margin-bottom: 18px;
+    margin-bottom: 16px;
   }
 
   .customer-reviews__star {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
+    width: 17px;
+    height: 17px;
+  }
+
+  .customer-reviews__star--filled {
+    color: var(--reviews-star-color);
   }
 
   .customer-reviews__star--empty {
-    opacity: 0.25;
+    color: #e5e0d8;
   }
 
   /* Quote */
   .customer-reviews__quote {
     font-size: var(--reviews-quote-size);
-    font-weight: 500;
     line-height: 1.5;
     color: var(--reviews-quote-color);
-    margin-bottom: 20px;
-    letter-spacing: -0.01em;
-  }
-
-  .customer-reviews__quote p {
-    margin: 0;
-  }
-
-  @media (max-width: 767px) {
-    .customer-reviews__quote {
-      font-size: calc(var(--reviews-quote-size) - 1px);
-    }
+    margin: 0 0 18px;
+    flex-grow: 1;
+    font-style: normal;
+    font-weight: 450;
   }
 
   /* Author */
   .customer-reviews__author {
-    margin-top: auto;
     font-size: 13.5px;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--reviews-author-color);
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 6px;
+    letter-spacing: 0.01em;
   }
 
   .customer-reviews__author-dash {
-    color: var(--reviews-author-color);
-    opacity: 0.8;
+    opacity: 0.6;
   }
 
   .customer-reviews__verified-badge {
     display: inline-flex;
     align-items: center;
-    width: 14px;
-    height: 14px;
-    color: #10b981;
-    margin-left: 2px;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    color: #16a34a;
   }
 
   .customer-reviews__verified-badge svg {
@@ -342,82 +507,43 @@
     height: 100%;
   }
 
-  /* Navigation Arrows */
-  .customer-reviews__arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 44px;
-    height: 44px;
-    border-radius: 999px;
-    border: 1px solid var(--reviews-card-border);
-    background-color: var(--reviews-arrow-bg);
-    color: var(--reviews-arrow-color);
-    cursor: pointer;
+  /* Swiper Button Styling */
+  .customer-reviews-section .swipwer--btn {
+    background-color: var(--primary, #d32f2f) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 14px rgba(211, 47, 47, 0.28);
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
     z-index: 10;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
   }
-
-  .customer-reviews__arrow:hover {
-    transform: translateY(-50%) scale(1.08);
-    background-color: #fff;
+  .customer-reviews-section .swipwer--btn:hover {
+    background-color: #b71c1c !important;
+    transform: scale(1.1);
+    box-shadow: 0 6px 18px rgba(211, 47, 47, 0.38);
   }
-
-  .customer-reviews__arrow svg {
-    width: 20px;
-    height: 20px;
+  .customer-reviews-section .swipwer--btn svg {
+    width: 14px;
+    height: 14px;
   }
-
-  .customer-reviews__arrow--prev {
-    left: -22px;
+  .customer-reviews-section .swipwer--btn svg path {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
   }
-
-  .customer-reviews__arrow--next {
-    right: -22px;
+  .customer-reviews-section .swipwer--btn[aria-disabled="true"] {
+    background-color: #f1f1f1 !important;
+    opacity: 0.45;
+    cursor: not-allowed;
   }
-
-  .customer-reviews__arrow.swiper-button-disabled {
-    opacity: 0.3;
-    pointer-events: none;
-  }
-
-  @media (max-width: 1100px) {
-    .customer-reviews__arrow {
-      display: none !important;
-    }
-  }
-
-  /* Pagination Dots */
-  .customer-reviews__pagination {
-    position: relative !important;
-    margin-top: 18px !important;
-    bottom: auto !important;
-    left: auto !important;
-    width: 100% !important;
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-  }
-
-  .customer-reviews__pagination .swiper-pagination-bullet {
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background-color: var(--reviews-dot-color);
-    opacity: 0.7;
-    transition: width 0.25s ease, background-color 0.25s ease, opacity 0.25s ease;
-    margin: 0 !important;
-  }
-
-  .customer-reviews__pagination .swiper-pagination-bullet-active {
-    width: 22px;
-    border-radius: 999px;
-    background-color: var(--reviews-dot-active);
-    opacity: 1;
+  .customer-reviews-section .swipwer--btn[aria-disabled="true"] svg path {
+    fill: #888888 !important;
+    stroke: #888888 !important;
   }
 
   /* Disclaimer */
@@ -434,77 +560,6 @@
   }
 </style>
 
-<script>
-  (function () {
-    function initReviewsSlider() {
-      if (typeof Swiper === 'undefined') {
-        setTimeout(initReviewsSlider, 60);
-        return;
-      }
-
-      var sliderEl = document.getElementById('CustomerReviewsSwiper-{{ section.id }}');
-      if (!sliderEl) return;
-
-      if (sliderEl.swiper) {
-        sliderEl.swiper.destroy(true, true);
-      }
-
-      var slidesMobile = parseFloat('{{ section.settings.slides_per_view_mobile | default: "1.15" }}');
-
-      var swiperOptions = {
-        slidesPerView: slidesMobile,
-        spaceBetween: {{ section.settings.space_between_mobile | default: 16 }},
-        grabCursor: true,
-        watchOverflow: true,
-        loop: {{ section.settings.loop_enabled | default: true }},
-        {%- if section.settings.autoplay_enabled -%}
-        autoplay: {
-          delay: {{ section.settings.autoplay_delay | default: 4000 }},
-          disableOnInteraction: false,
-          pauseOnMouseEnter: true
-        },
-        {%- endif -%}
-        {%- if section.settings.show_arrows -%}
-        navigation: {
-          prevEl: '#ReviewsPrev-{{ section.id }}',
-          nextEl: '#ReviewsNext-{{ section.id }}'
-        },
-        {%- endif -%}
-        {%- if section.settings.show_dots -%}
-        pagination: {
-          el: '#ReviewsPagination-{{ section.id }}',
-          clickable: true
-        },
-        {%- endif -%}
-        breakpoints: {
-          640: {
-            slidesPerView: {{ section.settings.slides_per_view_tablet | default: 2 }},
-            spaceBetween: {{ section.settings.space_between_desktop | default: 24 }}
-          },
-          1024: {
-            slidesPerView: {{ section.settings.slides_per_view_desktop | default: 3 }},
-            spaceBetween: {{ section.settings.space_between_desktop | default: 24 }}
-          }
-        }
-      };
-
-      new Swiper(sliderEl, swiperOptions);
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initReviewsSlider);
-    } else {
-      initReviewsSlider();
-    }
-
-    document.addEventListener('shopify:section:load', function (e) {
-      if (e.target && e.target.getAttribute('data-section-id') === '{{ section.id }}') {
-        initReviewsSlider();
-      }
-    });
-  })();
-</script>
-
 {% schema %}
 {
   "name": "Customer Reviews",
@@ -518,19 +573,19 @@
     {
       "type": "text",
       "id": "eyebrow",
-      "label": "Eyebrow / Subheading",
+      "label": "Small heading (Eyebrow)",
       "default": "A PREVIEW OF HAPPY MOMENTS"
     },
     {
-      "type": "text",
+      "type": "inline_richtext",
       "id": "heading",
-      "label": "Heading",
+      "label": "Main heading",
       "default": "The sweet word is out."
     },
     {
       "type": "range",
       "id": "heading_size",
-      "label": "Heading font size (Desktop)",
+      "label": "Heading size (Desktop)",
       "min": 24,
       "max": 64,
       "step": 2,
@@ -540,10 +595,10 @@
     {
       "type": "range",
       "id": "heading_size_mobile",
-      "label": "Heading font size (Mobile)",
+      "label": "Heading size (Mobile)",
       "min": 20,
-      "max": 42,
-      "step": 1,
+      "max": 44,
+      "step": 2,
       "unit": "px",
       "default": 30
     },
@@ -581,12 +636,40 @@
     },
     {
       "type": "header",
-      "content": "Slider Settings (Swiper)"
+      "content": "Layout Mode"
+    },
+    {
+      "type": "select",
+      "id": "layout_mode",
+      "label": "Layout mode",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Grid on desktop, Slider on mobile & tablet"
+        },
+        {
+          "value": "slider",
+          "label": "Completely Slider (carousel on all screens)"
+        }
+      ],
+      "default": "slider",
+      "info": "Switch between multi-row grid or continuous slider carousel"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_full_slider",
+      "label": "Make completely slider",
+      "default": true,
+      "info": "Enable full carousel slider on both desktop and mobile/tablet"
+    },
+    {
+      "type": "header",
+      "content": "Grid Settings"
     },
     {
       "type": "range",
-      "id": "slides_per_view_desktop",
-      "label": "Reviews per row (Desktop)",
+      "id": "columns",
+      "label": "Desktop columns",
       "min": 1,
       "max": 4,
       "step": 1,
@@ -594,8 +677,17 @@
     },
     {
       "type": "range",
-      "id": "slides_per_view_tablet",
-      "label": "Reviews per row (Tablet)",
+      "id": "columns_laptop",
+      "label": "Laptop columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Tablet columns",
       "min": 1,
       "max": 3,
       "step": 1,
@@ -603,69 +695,222 @@
     },
     {
       "type": "select",
-      "id": "slides_per_view_mobile",
-      "label": "Reviews per row (Mobile)",
+      "id": "mobile_columns",
+      "label": "Mobile columns (when slider disabled)",
       "options": [
-        { "value": "1", "label": "1 slide" },
-        { "value": "1.15", "label": "1 slide + peek next (1.15)" },
-        { "value": "1.25", "label": "1 slide + wide peek (1.25)" },
-        { "value": "2", "label": "2 slides" }
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
       ],
-      "default": "1.15"
+      "default": "1"
     },
     {
       "type": "range",
-      "id": "space_between_desktop",
-      "label": "Space between reviews (Desktop)",
-      "min": 12,
-      "max": 40,
+      "id": "slide_columns_gap",
+      "label": "Desktop horizontal gap",
+      "min": 0,
+      "max": 60,
       "step": 2,
       "unit": "px",
       "default": 24
     },
     {
       "type": "range",
-      "id": "space_between_mobile",
-      "label": "Space between reviews (Mobile)",
-      "min": 8,
-      "max": 24,
+      "id": "slide_row_gap",
+      "label": "Desktop vertical gap",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "slide_mobile_columns_gap",
+      "label": "Mobile horizontal gap",
+      "min": 0,
+      "max": 40,
       "step": 2,
       "unit": "px",
       "default": 16
     },
     {
+      "type": "range",
+      "id": "slide_mobile_row_gap",
+      "label": "Mobile vertical gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Slider Settings"
+    },
+    {
       "type": "checkbox",
-      "id": "loop_enabled",
-      "label": "Enable infinite loop",
+      "id": "enable_custom_slider",
+      "label": "Enable Custom Slider System",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mobile_slider",
+      "label": "Enable Mobile & Tablet Slider",
+      "default": true,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_desktop_slider",
+      "label": "Enable Desktop Slider",
+      "default": true,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_desktop",
+      "label": "Desktop items per view",
+      "min": 1,
+      "max": 4,
+      "step": 0.1,
+      "default": 3,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_laptop",
+      "label": "Laptop items per view",
+      "min": 1,
+      "max": 4,
+      "step": 0.1,
+      "default": 3,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_tablet",
+      "label": "Tablet items per view",
+      "min": 1,
+      "max": 3,
+      "step": 0.1,
+      "default": 2,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_medium_tablet",
+      "label": "Medium Tablet items per view",
+      "min": 1,
+      "max": 3,
+      "step": 0.1,
+      "default": 2,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_mobile",
+      "label": "Mobile items per view",
+      "min": 1,
+      "max": 3,
+      "step": 0.1,
+      "default": 1.2,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "range",
+      "id": "space_between_desktop",
+      "label": "Desktop space between slides",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "range",
+      "id": "space_between_mobile",
+      "label": "Mobile space between slides",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "arrows_enabled",
+      "label": "Enable arrows",
+      "default": true,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "select",
+      "id": "arrow_position",
+      "options": [
+        { "value": "arrows-bottom", "label": "Bottom" },
+        { "value": "arrows-left-and-right", "label": "Left & Right" }
+      ],
+      "default": "arrows-left-and-right",
+      "label": "Arrow position",
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "select",
+      "id": "arrow_option",
+      "options": [
+        { "value": "arrow-only-mobile", "label": "Show arrows on mobile" },
+        { "value": "arrow-only-desktop", "label": "Show arrows on desktop" },
+        { "value": "arrow-show-both", "label": "Show arrows on both mobile & desktop" }
+      ],
+      "default": "arrow-show-both",
+      "label": "Show arrows",
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "dots_enabled",
+      "label": "Enable dots / pagination",
+      "default": true,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
+    },
+    {
+      "type": "select",
+      "id": "dots_option",
+      "options": [
+        { "value": "only-mobile", "label": "Show dots on mobile" },
+        { "value": "only-desktop", "label": "Show dots on desktop" },
+        { "value": "show-both", "label": "Show dots on both mobile & desktop" }
+      ],
+      "default": "only-mobile",
+      "label": "Show dots",
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
     },
     {
       "type": "checkbox",
       "id": "autoplay_enabled",
-      "label": "Enable auto-slide",
-      "default": false
+      "label": "Enable autoplay",
+      "default": false,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
     },
     {
       "type": "range",
       "id": "autoplay_delay",
-      "label": "Auto-slide speed (ms)",
-      "min": 2000,
-      "max": 8000,
+      "label": "Autoplay delay (ms)",
+      "min": 1000,
+      "max": 9000,
       "step": 500,
-      "unit": "ms",
-      "default": 4000
+      "default": 4000,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
     },
     {
       "type": "checkbox",
-      "id": "show_arrows",
-      "label": "Show navigation arrows",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_dots",
-      "label": "Show pagination dots",
-      "default": true
+      "id": "loop_enabled",
+      "label": "Enable loop",
+      "default": true,
+      "visible_if": "{{ section.settings.enable_custom_slider == true }}"
     },
     {
       "type": "header",
@@ -711,19 +956,19 @@
     },
     {
       "type": "header",
-      "content": "Colors"
+      "content": "Colors & Background"
     },
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "Color scheme",
+      "label": "t:settings.color_scheme",
       "default": "scheme-1"
     },
     {
       "type": "color",
       "id": "custom_bg_color",
       "label": "Custom section background",
-      "info": "Leave blank to inherit from color scheme"
+      "info": "Optional custom background override. Leave empty to use the selected color scheme."
     },
     {
       "type": "color",
@@ -760,30 +1005,6 @@
       "id": "disclaimer_color",
       "label": "Disclaimer text color",
       "default": "#9ca3af"
-    },
-    {
-      "type": "color",
-      "id": "arrow_bg_color",
-      "label": "Arrow background",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "arrow_color",
-      "label": "Arrow icon color",
-      "default": "#2c221e"
-    },
-    {
-      "type": "color",
-      "id": "dot_color",
-      "label": "Inactive dot color",
-      "default": "#d6d3d1"
-    },
-    {
-      "type": "color",
-      "id": "dot_active_color",
-      "label": "Active dot color",
-      "default": "#d32f2f"
     },
     {
       "type": "header",

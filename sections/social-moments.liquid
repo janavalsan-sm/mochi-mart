@@ -9,10 +9,23 @@
   if color_scheme == blank
     assign color_scheme = 'scheme-1'
   endif
+
+  assign has_custom_outer_bg = false
+  if section.settings.custom_outer_bg_color != blank and section.settings.custom_outer_bg_color != 'rgba(0,0,0,0)' and section.settings.custom_outer_bg_color != 'transparent'
+    assign has_custom_outer_bg = true
+    render 'contrast-override', background_color: section.settings.custom_outer_bg_color, section_id: section.id
+  endif
 -%}
 
+<div class="section-background color-{{ color_scheme }}{% if has_custom_outer_bg %} color-custom-{{ section.id }}{% endif %}"></div>
+
 <div
-  class="social-moments-section color-{{ color_scheme }}"
+  class="
+    section
+    social-moments-section
+    color-{{ color_scheme }}
+    {% if has_custom_outer_bg %}color-custom-{{ section.id }}{% endif %}
+  "
   id="SocialMoments-{{ section.id }}"
   style="
     --sm-bg: {{ section.settings.panel_bg_color | default: '#ffe8ec' }};
@@ -156,7 +169,15 @@
 </div>
 
 <style>
+  .shopify-section:has(.social-moments-section) {
+    position: relative;
+    isolation: isolate;
+  }
+
   .social-moments-section {
+    position: relative;
+    z-index: 1;
+    background-color: transparent !important;
     padding-top: var(--sm-pt);
     padding-bottom: var(--sm-pb);
     font-family: var(--font-body--family, "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif);
@@ -514,6 +535,12 @@
       "id": "color_scheme",
       "label": "Color scheme",
       "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "custom_outer_bg_color",
+      "label": "Custom outer background color",
+      "info": "Optional custom outer background. Leave empty to use the selected color scheme."
     },
     {
       "type": "color",

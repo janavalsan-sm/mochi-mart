@@ -353,6 +353,20 @@
 
   .section-slideshow-wrapper {
     position: relative;
+    isolation: isolate;
+  }
+
+  .section-slideshow-wrapper .section-background {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-color: var(--color-background);
+  }
+
+  .section-slideshow-wrapper .section {
+    position: relative;
+    z-index: 1;
+    background: transparent !important;
   }
 
   .section-with-background {
@@ -414,9 +428,22 @@
   </style>
 {%- endfor -%}
 
-<div class="section-slideshow-wrapper bs section-{{ section.id }}-padding">
-  <div class="section-background color-{{ section.settings.color_scheme }}"></div>
-  <div class="section--{{ section.settings.section_width }} section color-{{ section.settings.color_scheme }}">
+{% liquid
+  assign color_scheme = section.settings.color_scheme.id | default: section.settings.color_scheme
+  if color_scheme == blank
+    assign color_scheme = 'scheme-1'
+  endif
+
+  assign has_custom_bg = false
+  if section.settings.background_color != blank and section.settings.background_color != 'rgba(0,0,0,0)' and section.settings.background_color != 'transparent'
+    assign has_custom_bg = true
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+%}
+
+<div class="section-slideshow-wrapper bs section-{{ section.id }}-padding color-{{ color_scheme }}{% if has_custom_bg %} color-custom-{{ section.id }}{% endif %}">
+  <div class="section-background color-{{ color_scheme }}{% if has_custom_bg %} color-custom-{{ section.id }}{% endif %}"></div>
+  <div class="section--{{ section.settings.section_width }} section color-{{ color_scheme }}{% if has_custom_bg %} color-custom-{{ section.id }}{% endif %}">
     <div
       id="swiper-{{ unique_id }}"
       class="swiper-container swiper slideshow__swiper  {{ section.settings.arrow_position }} {{ section.settings.dots_option }} {{ section.settings.arrow_option }}"
@@ -795,6 +822,12 @@
       "id": "color_scheme",
       "label": "t:settings.color_scheme",
       "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Custom background color",
+      "info": "Optional custom background override. Leave empty to use the selected color scheme."
     },
     {
       "type": "select",

@@ -6,7 +6,11 @@
 
 {%- style -%}
   #site-footer-{{ section.id }} {
-    --footer-outer-bg: {{ section.settings.outer_bg_color | default: 'var(--butter, #FDE8A5)' }};
+    {% if section.settings.outer_bg_color != blank and section.settings.outer_bg_color != 'rgba(0,0,0,0)' and section.settings.outer_bg_color != 'transparent' %}
+      --footer-outer-bg: {{ section.settings.outer_bg_color }};
+    {% else %}
+      --footer-outer-bg: var(--color-background);
+    {% endif %}
     --footer-outer-radius: {{ section.settings.outer_border_radius | default: 36 }}px;
     --footer-card-radius: 28px;
     --footer-primary: var(--color-primary-button-background, var(--primary, #D32F2F));
@@ -17,7 +21,7 @@
     --footer-social-color: var(--color-foreground, #2E2E2E);
     --footer-bottom-color: var(--color-foreground-muted, #7A6A4E);
     width: 100% !important;
-    /* background-color: transparent !important; */
+    background-color: transparent !important;
     margin: 0 !important;
     padding: 56px 12px 20px !important;
     box-sizing: border-box !important;
@@ -371,7 +375,14 @@
   }
 {%- endstyle -%}
 
-<div id="site-footer-{{ section.id }}" class="site-footer color-{{ section.settings.color_scheme | default: 'scheme-1' }}">
+{%- liquid
+  assign color_scheme = section.settings.color_scheme.id | default: section.settings.color_scheme
+  if color_scheme == blank
+    assign color_scheme = 'scheme-1'
+  endif
+-%}
+
+<div id="site-footer-{{ section.id }}" class="site-footer color-{{ color_scheme }}">
   <div class="site-footer-panel">
     <div class="site-footer-grid">
       <!-- Card 1: Brand Info -->
@@ -633,8 +644,8 @@
     {
       "type": "color",
       "id": "outer_bg_color",
-      "label": "Butter yellow background",
-      "default": "#FDE8A5"
+      "label": "Custom panel background color",
+      "info": "Optional custom background override. Leave empty to use the selected color scheme."
     },
     {
       "type": "range",

@@ -46,19 +46,31 @@
   {{ section.shopify_attributes }}
 >
   {% liquid
-    if section.settings.background_color != blank
-      render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+    assign color_scheme = section.settings.color_scheme.id | default: section.settings.color_scheme
+    if color_scheme == blank
+      assign color_scheme = 'scheme-1'
+    endif
+
+    assign has_custom_bg = false
+    if section.settings.background_color != blank and section.settings.background_color != 'rgba(0,0,0,0)' and section.settings.background_color != 'transparent'
+      unless section.settings.background_color contains '{'
+        if section.settings.background_color.alpha != 0
+          assign has_custom_bg = true
+          render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+        endif
+      endunless
     endif
   %}
 
   <div
-    class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+    class="section-background color-{{ color_scheme }}{% if has_custom_bg %} color-custom-{{ section.id }}{% endif %}"
   ></div>
   <div
     class="
       section
       section--{{ section.settings.section_width }}
-      {% if section.settings.background_color != blank %}color-custom-{{ section.id }}{% endif %}
+      color-{{ color_scheme }}
+      {% if has_custom_bg %}color-custom-{{ section.id }}{% endif %}
       section-resource-list
       spacing-style
       gap-style
@@ -422,6 +434,12 @@
       "step": 1,
       "unit": "px",
       "default": 12
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
     },
     {
       "type": "color",

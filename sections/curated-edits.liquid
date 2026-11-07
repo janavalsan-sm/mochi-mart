@@ -8,8 +8,21 @@
 {{ 'slider-styles.css' | asset_url | stylesheet_tag }}
 
 {% liquid
+  assign color_scheme = section.settings.color_scheme.id | default: section.settings.color_scheme
+  if color_scheme == blank
+    assign color_scheme = 'scheme-1'
+  endif
+
+  assign has_custom_outer_bg = false
+  if section.settings.custom_outer_bg_color != blank and section.settings.custom_outer_bg_color != 'rgba(0,0,0,0)' and section.settings.custom_outer_bg_color != 'transparent'
+    assign has_custom_outer_bg = true
+    render 'contrast-override', background_color: section.settings.custom_outer_bg_color, section_id: section.id
+  endif
+
   assign bg_color = '#fff1cc'
   case section.settings.color_preset
+    when 'theme'
+      assign bg_color = 'var(--color-background)'
     when 'butter'
       assign bg_color = '#fff1cc'
     when 'blush'
@@ -28,8 +41,10 @@
   assign mobile_slider = section.settings.enable_mobile_slider
 %}
 
+<div class="section-background color-{{ color_scheme }}{% if has_custom_outer_bg %} color-custom-{{ section.id }}{% endif %}"></div>
+
 <div
-  class="section curated-edits-section section-{{ section.id }}"
+  class="section curated-edits-section section-{{ section.id }} color-{{ color_scheme }}{% if has_custom_outer_bg %} color-custom-{{ section.id }}{% endif %}"
   id="CuratedEdits-{{ section.id }}"
   style="
     padding-top: {{ section.settings.padding_top | default: 40 }}px;
@@ -255,6 +270,15 @@
 <script src="{{ 'arrow-out-slider.js' | asset_url }}" defer="defer"></script>
 
 {% style %}
+  .shopify-section:has(.curated-edits-section) {
+    position: relative;
+    isolation: isolate;
+  }
+  .curated-edits-section {
+    position: relative;
+    z-index: 1;
+    background-color: transparent !important;
+  }
   .curated-edits__panel-outer {
     margin: 10px clamp(12px, 2.2vw, 28px);
   }
@@ -640,6 +664,18 @@
       "content": "Panel Style"
     },
     {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings.color_scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "custom_outer_bg_color",
+      "label": "Custom outer background color",
+      "info": "Optional custom outer background. Leave empty to use the selected color scheme."
+    },
+    {
       "type": "select",
       "id": "section_width",
       "label": "Section container style",
@@ -654,6 +690,7 @@
       "id": "color_preset",
       "label": "Background color preset",
       "options": [
+        { "value": "theme", "label": "Match section color scheme" },
         { "value": "butter", "label": "Butter (Soft Yellow #FFF1CC)" },
         { "value": "blush", "label": "Blush (Soft Pink #FFE8EC)" },
         { "value": "sage", "label": "Sage (Soft Green #E4EFE7)" },
