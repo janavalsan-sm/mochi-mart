@@ -41,7 +41,13 @@
     {%- endif -%}
   </div>
 
-  {% if settings.show_cart_note or settings.show_add_discount_code %}
+  {% assign show_actions = false %}
+  {% if section_id != 'cart-drawer-section' %}
+    {% if settings.show_cart_note or settings.show_add_discount_code %}
+      {% assign show_actions = true %}
+    {% endif %}
+  {% endif %}
+  {% if show_actions %}
     <div class="cart-actions">
       {% if settings.show_cart_note %}
         <script
@@ -220,7 +226,9 @@
   {% endif %}
 
   {%- liquid
-    if settings.currency_code_enabled_cart_total
+    if section_id == 'cart-drawer-section'
+      assign total_price = cart.total_price | money
+    elsif settings.currency_code_enabled_cart_total
       assign total_price = cart.total_price | money_with_currency
     else
       assign total_price = cart.total_price | money
@@ -232,7 +240,13 @@
       class="cart-totals__item cart-totals__total"
       role="status"
     >
-      <span class="cart-totals__total-label cart-primary-typography">{{ 'content.cart_estimated_total' | t }}</span>
+      <span class="cart-totals__total-label cart-primary-typography">
+        {%- if section_id == 'cart-drawer-section' -%}
+          Subtotal
+        {%- else -%}
+          {{ 'content.cart_estimated_total' | t }}
+        {%- endif -%}
+      </span>
       <text-component
         ref="cartTotal"
         value="{{ total_price | strip_html }}"
@@ -252,7 +266,11 @@
       </span>
     {% endif %}
     <div class="cart-totals__item cart-totals__tax-note cart-primary-typography">
-      {% render 'tax-info', has_discounts_enabled: settings.show_add_discount_code %}
+      {%- if section_id == 'cart-drawer-section' -%}
+        <small>Shipping and taxes are not calculated in this preview.</small>
+      {%- else -%}
+        {% render 'tax-info', has_discounts_enabled: settings.show_add_discount_code %}
+      {%- endif -%}
     </div>
   </div>
 </div>
@@ -269,7 +287,11 @@
     form="cart-form"
   >
     <span class="button-text">
-      {{ 'content.checkout' | t }}
+      {%- if section_id == 'cart-drawer-section' -%}
+        Place Order →
+      {%- else -%}
+        {{ 'content.checkout' | t }}
+      {%- endif -%}
     </span>
   </button>
 

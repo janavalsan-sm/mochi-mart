@@ -149,6 +149,9 @@
                 id="CartItem-{{ item.key }}"
                 role="row"
                 class="cart-items__table-row{% if item.parent_relationship.parent != null %} cart-items__nested-line{% endif %}{% if context == 'drawer' %}{% unless item.unit_price_measurement %} cart-items__table-row--full-width-variants{% endunless %}{% endif %}"
+                {% if context == 'drawer' %}
+                  style="display: grid !important; grid-template-columns: 84px minmax(0, 1fr) !important; grid-template-areas: 'media details' 'media controls' 'media error' !important; column-gap: 16px !important; row-gap: 6px !important; padding: 0 0 20px 0 !important; margin: 0 0 20px 0 !important; border: none !important; border-bottom: 1px solid #f0eae1 !important; width: 100% !important; box-sizing: border-box !important;"
+                {% endif %}
                 ref="cartItemRows[]"
                 data-parent-key="{{ item.parent_relationship.parent.key }}"
                 data-key="{{ item.key }}"
@@ -157,10 +160,16 @@
                   class="cart-items__media"
                   role="cell"
                   headers="productImage"
+                  {% if context == 'drawer' %}
+                    style="grid-area: media !important; width: 84px !important; min-width: 84px !important; max-width: 84px !important; height: 84px !important; padding: 0 !important; margin: 0 !important;"
+                  {% endif %}
                 >
                   {% if item.image -%}
                     {% liquid
                       assign ratio = 1
+                      assign pastel_palette = '#dfd7f5,#fde8e6,#faeee5,#e3def7,#fcf1e5,#e8e0f5,#f8e2e9,#eaf3e9' | split: ','
+                      assign bg_index = forloop.index0 | modulo: 8
+                      assign pastel_bg = pastel_palette[bg_index]
                       assign border_opacity = settings.cart_thumbnail_border_opacity | divided_by: 100.0
                       assign border_override = '--border-width: [cart_thumbnail_border_width]px; --border-style: [cart_thumbnail_border_style]; --border-color: rgb(var(--color-border-rgb) / [cart_thumbnail_border_opacity]); --border-radius: [cart_thumbnail_border_radius]px;' | replace: '[cart_thumbnail_border_width]', settings.cart_thumbnail_border_width | replace: '[cart_thumbnail_border_style]', settings.cart_thumbnail_border | replace: '[cart_thumbnail_border_opacity]', border_opacity | replace: '[cart_thumbnail_border_radius]', settings.cart_thumbnail_border_radius
 
@@ -173,21 +182,34 @@
                         assign ratio = item.image.aspect_ratio
                       endif
                     %}
-                    <a
-                      href="{{ item.url }}"
-                      class="cart-items__media-container"
-                      style="--ratio:{{ ratio }};"
-                    >
-                      {%- liquid
-                        echo item.image | image_url: width: 250 | image_tag: class: 'cart-items__media-image border-style', style: border_override
-                      -%}
-                    </a>
+                    {%- if context == 'drawer' -%}
+                      <a
+                        href="{{ item.url }}"
+                        class="cart-items__media-container cart-items__media-container--drawer"
+                        style="width: 84px !important; min-width: 84px !important; max-width: 84px !important; height: 84px !important; min-height: 84px !important; max-height: 84px !important; border-radius: 18px !important; background-color: {{ pastel_bg }} !important; overflow: hidden !important; display: flex !important; align-items: center !important; justify-content: center !important; aspect-ratio: 1 / 1 !important; flex-shrink: 0 !important; border: none !important; box-shadow: none !important;"
+                      >
+                        {{- item.image | image_url: width: 250, height: 250, crop: 'center' | image_tag: class: 'cart-items__media-image', style: 'width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 18px !important; border: none !important; display: block !important;' -}}
+                      </a>
+                    {%- else -%}
+                      <a
+                        href="{{ item.url }}"
+                        class="cart-items__media-container"
+                        style="--ratio:{{ ratio }}; --card-media-bg: {{ pastel_bg }};"
+                      >
+                        {%- liquid
+                          echo item.image | image_url: width: 250 | image_tag: class: 'cart-items__media-image border-style', style: border_override
+                        -%}
+                      </a>
+                    {%- endif -%}
                   {%- endif %}
                 </td>
                 <td
                   class="cart-items__details cart-primary-typography"
                   role="cell"
                   headers="productInformation"
+                  {% if context == 'drawer' %}
+                    style="grid-area: details !important; display: flex !important; flex-direction: column !important; padding: 0 !important; margin: 0 !important; min-width: 0 !important;"
+                  {% endif %}
                 >
                   <div class="cart-items__product-info">
                     {%- liquid
@@ -300,7 +322,9 @@
                     {%- endif -%}
                   </div>
 
-                  <div class="cart-items__unit-price-wrapper">
+                  <div
+                    class="cart-items__unit-price-wrapper"
+                  >
                     <div>
                       {% if item.original_price != item.final_price %}
                         <span class="visually-hidden">{{ 'content.price_sale' | t }}</span>
@@ -340,12 +364,20 @@
                   class="cart-items__quantity"
                   role="cell"
                   headers="quantity"
+                  {% if context == 'drawer' %}
+                    style="grid-area: controls !important; padding: 0 !important; margin: 0 !important; width: 100% !important;"
+                  {% endif %}
                 >
                   {% # Here I want to pass some arguments to the quantity block so it knows which value should the input be set to. Though quantity block could be a snippet instead %}
                   {% assign can_update_quantity = item.instructions.can_update_quantity
                     | default: true, allow_false: true
                   %}
-                  <div class="cart-items__quantity-controls">
+                  <div
+                    class="cart-items__quantity-controls"
+                    {% if context == 'drawer' %}
+                      style="display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; margin: 0 !important; gap: 8px !important;"
+                    {% endif %}
+                  >
                     {% render 'volume-pricing-info',
                       variant: item.variant,
                       unique_id: item.index,
@@ -369,6 +401,9 @@
                       {% assign can_remove = item.instructions.can_remove | default: true, allow_false: true %}
                       {% if can_remove == false %}
                         hidden
+                      {% endif %}
+                      {% if context == 'drawer' %}
+                        style="background: transparent !important; border: none !important; box-shadow: none !important; color: #8a837c !important; width: 32px !important; height: 32px !important; min-width: 32px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important; margin: 0 0 0 auto !important; cursor: pointer !important; border-radius: 50% !important;"
                       {% endif %}
                     >
                       {{- 'icon-delete.svg' | inline_asset_content -}}
@@ -408,6 +443,9 @@
                   class="cart-items__price cart-secondary-typography"
                   role="cell"
                   headers="productTotal"
+                  {% if context == 'drawer' %}
+                    style="display: none !important;"
+                  {% endif %}
                 >
                   <text-component value="{{ price | strip_html }}"
                     ><bdi>{{ price }}</bdi></text-component

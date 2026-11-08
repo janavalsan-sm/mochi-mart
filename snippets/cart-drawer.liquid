@@ -24,19 +24,26 @@
 
   {% capture empty_cart_drawer_content %}
     <div
-      class="cart-drawer__content"
+      class="cart-drawer__content cart-drawer__empty-wrap"
       aria-label="{{ 'accessibility.cart' | t }}"
     >
+      <div class="cart-drawer__empty-emoji">🧸</div>
       <h2
-        class="theme-drawer__title h4"
+        class="theme-drawer__title cart-drawer__empty-title"
         id="cart-drawer-heading"
       >
-        {{ 'content.your_cart_is_empty' | t }}
+        Your cart is empty
       </h2>
+      <p class="cart-drawer__empty-subtitle">Let's find something cute!</p>
 
-      <div class="cart-drawer__items">
-        {% render 'cart-products', force_empty: true, context: 'drawer' %}
-      </div>
+      <a
+        class="button cart-items__empty-button cart-drawer__start-shopping"
+        href="{{ settings.empty_cart_button_link | default: routes.all_products_collection_url }}"
+      >
+        <span class="button-text">
+          Start shopping →
+        </span>
+      </a>
     </div>
   {% endcapture %}
 
@@ -49,6 +56,7 @@
       class="theme-drawer__dialog color-custom-drawer"
       aria-labelledby="cart-drawer-heading"
       cart-summary-sticky="true"
+      style="height: 100dvh !important; max-height: 100dvh !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; padding: 0 !important; background-color: #fffdfa !important; z-index: 10000; box-shadow: -12px 0 40px rgba(0, 0, 0, 0.12) !important; width: min(440px, 100vw) !important; max-width: 100vw !important;"
     >
       <cart-drawer-component
         {% if settings.auto_open_cart_drawer and template.name != 'cart' %}
@@ -62,6 +70,7 @@
         <div
           class="cart-drawer__inner{% if cart.empty? %} cart-drawer--empty{% endif %}"
           data-hydration-key="cart-drawer-inner"
+          style="height: 100% !important; max-height: 100% !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; flex: 1 1 auto !important; min-height: 0 !important;"
         >
           {%- if cart.empty? -%}
             <div class="theme-drawer__header">
@@ -78,24 +87,12 @@
             </div>
           {%- else -%}
             {% capture cart_badge_html %}
-              <span
-                class="theme-drawer__badge{% if cart.item_count == 0 %} visually-hidden{% endif %}"
-                aria-hidden="true"
-                {% if cart.item_count <= 99 %}
-                  data-maintain-ratio
-                {% endif %}
-              >
-                {{- cart.item_count -}}
-              </span>
-              {% if cart.item_count > 0 %}
-                <span class="visually-hidden">
-                  {{ 'accessibility.cart_count' | t }}: {{ cart.item_count }}
-                </span>
-              {% endif %}
+              <span class="cart-drawer__count-badge">(<span class="cart-drawer__count-red">{{ cart.item_count }}</span>)</span>
             {% endcapture %}
-            {% assign cart_drawer_title = 'content.cart_title' | t %}
+            {% assign cart_drawer_title = 'Your little bag' %}
             {% render 'theme-drawer-header',
               title: cart_drawer_title,
+              subtitle: 'Your chosen little finds.',
               drawer_id: 'cart-drawer',
               heading_id: 'cart-drawer-heading',
               title_append: cart_badge_html
@@ -109,12 +106,19 @@
               <scroll-hint
                 class="cart-drawer__content"
                 aria-label="{{ 'accessibility.cart' | t }}"
+                style="height: 100% !important; max-height: 100% !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; flex: 1 1 auto !important; min-height: 0 !important; background-color: transparent !important;"
               >
-                <scroll-hint class="cart-drawer__items">
+                <scroll-hint
+                  class="cart-drawer__items"
+                  style="flex: 1 1 auto !important; min-height: 0 !important; overflow-y: auto !important; overflow-x: hidden !important; padding: 12px 24px 20px 24px !important; box-sizing: border-box !important;"
+                >
                   {% render 'cart-products', context: 'drawer' %}
                 </scroll-hint>
 
-                <div class="cart-drawer__summary">
+                <div
+                  class="cart-drawer__summary"
+                  style="flex-shrink: 0 !important; margin-top: auto !important; position: sticky !important; bottom: 0 !important; z-index: 10 !important; background-color: #fffdfa !important; border-top: 1px solid #f1ece4 !important; padding: 22px 24px 26px 24px !important; box-sizing: border-box !important;"
+                >
                   {% render 'cart-summary', section_id: 'cart-drawer-section' %}
                 </div>
               </scroll-hint>
@@ -135,144 +139,3 @@
   {% endif %}
 {%- endif -%}
 
-{% stylesheet %}
-  cart-drawer-component {
-    --cart-drawer-padding: var(--theme-drawer-padding);
-    --font-paragraph--line-height: 1;
-    display: contents;
-  }
-
-  .cart-drawer__inner {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .cart-drawer__inner > .cart-items-component {
-    flex: 1;
-    min-height: 0;
-    height: auto;
-  }
-
-  .cart-drawer__content {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    background-color: var(--color-background);
-    flex-grow: 1;
-    overflow-y: auto;
-  }
-
-  .cart-drawer__items {
-    display: flex;
-    flex-direction: column;
-    padding-inline: var(--cart-drawer-padding);
-    overflow-y: auto;
-  }
-
-  .cart-drawer__items .cart-items__table-row {
-    padding-bottom: var(--gap-xl);
-    border-bottom: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
-    margin-bottom: var(--gap-xl);
-  }
-
-  .cart-drawer__items .cart-items__table-row:has(+ .cart-items__nested-line) {
-    border-bottom: none;
-    margin-bottom: 0;
-  }
-
-  .cart-drawer__items .cart-items__table-row:last-child {
-    border-bottom: none;
-    padding-block-end: 0;
-    margin-block-end: 0;
-  }
-
-  .cart-drawer__close-button--empty {
-    margin-inline-start: auto;
-  }
-
-  .cart-drawer__summary {
-    --cart-drawer-summary-padding: var(--padding-lg);
-
-    position: sticky;
-    bottom: 0;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--gap-xl);
-    padding: var(--cart-drawer-summary-padding);
-    margin-top: auto;
-    background-color: var(--color-background);
-    /* stylelint-disable-next-line color-named */
-    mask-image: linear-gradient(to bottom, transparent, black var(--cart-drawer-summary-padding));
-
-    @media screen and (min-width: 750px) {
-      --cart-drawer-summary-padding: var(--padding-2xl);
-    }
-  }
-
-  .theme-drawer__dialog[cart-summary-sticky='false'] .cart-drawer__summary {
-    position: static;
-    mask-image: none;
-  }
-
-  .theme-drawer__dialog[cart-summary-sticky='false'] .cart-drawer__items {
-    overflow: unset;
-  }
-
-  .cart-actions summary {
-    padding-inline: 0;
-    padding-block: var(--padding-sm);
-    line-height: 1.2;
-    min-height: var(--minimum-touch-target);
-  }
-
-  .cart-drawer__summary .cart__summary-totals:not(:has(.cart__subtotal-container:empty)) {
-    border-block-start: var(--style-border-width) solid rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
-    padding-block-start: var(--padding-2xl);
-  }
-
-  .cart-drawer__summary .cart-note {
-    @media screen and (min-width: 750px) {
-      margin-block-start: var(--margin-3xs);
-    }
-  }
-
-  .cart-drawer--empty .cart-drawer__content {
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    min-height: auto;
-  }
-
-  .cart-drawer--empty .cart-drawer__items {
-    padding-inline: 0;
-  }
-
-  cart-drawer-component:not(:has(.cart-form)) .cart-drawer__content {
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-  }
-
-  cart-drawer-component:not(:has(.cart-form)) .cart-drawer__items {
-    padding-inline: 0;
-  }
-
-  @media screen and (prefers-reduced-motion: no-preference) {
-    html:active-view-transition-type(empty-cart-drawer) {
-      .theme-drawer__close-button {
-        view-transition-name: cart-drawer-close-button;
-      }
-    }
-  }
-
-  :active-view-transition {
-    .cart-drawer__header,
-    .cart-drawer__content {
-      background: transparent;
-    }
-  }
-{% endstylesheet %}
