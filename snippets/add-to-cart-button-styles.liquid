@@ -154,6 +154,17 @@
     }
   }
 
+  @media screen and (max-width: 749px) {
+    .add-to-cart-button[data-added='true'] .add-to-cart-text {
+      filter: none;
+      clip-path: none;
+      opacity: 0;
+    }
+    .add-to-cart-button[data-added='true'] .check {
+      filter: none;
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .add-to-cart-button[data-added='true'] {
       .check {
@@ -195,6 +206,31 @@
   .add-to-cart-text {
     /* stylelint-disable-next-line plugin/no-unsupported-browser-features */
     clip-path: circle(100% at 50% 50%);
+  }
+
+  /* Guaranteed reset to normal state when data-added is not active */
+  .add-to-cart-button:not([data-added='true']) {
+    color: inherit;
+  }
+
+  .add-to-cart-button:not([data-added='true']) .add-to-cart-text {
+    opacity: 1 !important;
+    clip-path: circle(100% at 50% 50%) !important;
+    translate: 0 0 !important;
+    filter: none !important;
+  }
+
+  .add-to-cart-button:not([data-added='true']) .checkmark-burst {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .checkmark-burst .check,
+    .add-to-cart-button[data-added='true'] .add-to-cart-text,
+    .add-to-cart-button[data-added='true'] .check {
+      filter: none !important;
+    }
   }
 
   @keyframes atc-slide {

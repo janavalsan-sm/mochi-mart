@@ -678,34 +678,10 @@ button.swiper-pagination-bullet {
   height: auto;
 }
 
-/* 2 Overlay ONLY before swiper initializes */
-.swiper-container:not(.top-bar-swiper):not(.swiper-initialized) .swiper-slide::before,
-.new-swiper-container:not(.top-bar-swiper):not(.swiper-initialized) .swiper-slide::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: var(--color-background);
-  z-index: 9999;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-
-}
-
-/* 3 After swiper loads → fade out overlay */
-.swiper-container.swiper-initialized .swiper-slide::before,
-.new-swiper-container.swiper-initialized .swiper-slide::before {
-  opacity: 0;
-}
-
-/* 4 NEVER show overlay in grid layouts */
-.desktop-grid .swiper-slide::before,
-.mobile-grid .swiper-slide::before {
+/* Overlay disabled to prevent blank sections and slow loading on scroll/reload */
+.swiper-container .swiper-slide::before,
+.new-swiper-container .swiper-slide::before {
   display: none !important;
-}
-.swiper-container.swiper-initialized .swiper-slide::before,
-.new-swiper-container.swiper-initialized .swiper-slide::before {
-  opacity: 0;
-  transition-delay: 0.15s;
 }
 
 

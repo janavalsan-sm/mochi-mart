@@ -312,11 +312,6 @@
     transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
   }
 
-  .social-moments__tile:hover {
-    transform: translateY(-4px) rotate(-1deg);
-    box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.14);
-  }
-
   .social-moments__tile-link,
   .social-moments__tile-inner {
     display: block;
@@ -339,8 +334,23 @@
     transition: transform 0.5s ease;
   }
 
-  .social-moments__tile:hover .social-moments__tile-img {
-    transform: scale(1.04);
+  @media (min-width: 750px) and (hover: hover) {
+    .social-moments__tile:hover {
+      transform: translateY(-4px) rotate(-1deg);
+      box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.14);
+    }
+    .social-moments__tile:hover .social-moments__tile-img {
+      transform: scale(1.04);
+    }
+  }
+
+  @media (max-width: 749px) {
+    .social-moments__tile,
+    .social-moments__tile:hover,
+    .social-moments__tile-img,
+    .social-moments__tile:hover .social-moments__tile-img {
+      transform: none !important;
+    }
   }
 
   @media (max-width: 1024px) {

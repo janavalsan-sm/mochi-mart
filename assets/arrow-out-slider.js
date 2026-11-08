@@ -198,12 +198,10 @@
   document.addEventListener('shopify:section:deselect', debouncedResize);
   document.addEventListener('shopify:section:reorder', debouncedResize);
 
-  // Delay initial call to let Horizon finish its own deferred rendering
+  // Fast initial call so sections appear immediately without blank delay
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      setTimeout(checkScreenSizeAndInitSwipers, 150);
-    });
+    document.addEventListener('DOMContentLoaded', checkScreenSizeAndInitSwipers);
   } else {
-    setTimeout(checkScreenSizeAndInitSwipers, 150);
+    checkScreenSizeAndInitSwipers();
   }
 })();

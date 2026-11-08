@@ -130,6 +130,7 @@ export class AddToCartComponent extends Component {
    */
   animateAddToCart = async function () {
     const { addToCartButton } = this.refs;
+    if (!addToCartButton) return;
 
     // Initialize the array if it doesn't exist
     if (!this.#resetTimeouts) {
@@ -144,22 +145,30 @@ export class AddToCartComponent extends Component {
       addToCartButton.dataset.added = 'true';
     }
 
-    // The onAnimationEnd can trigger a style recalculation so we yield to the main thread first.
-    await yieldToMainThread();
-    await onAnimationEnd(addToCartButton);
-
-    // Create new timeout and store it in the array
+    // Guaranteed timeout so the button state is ALWAYS reset and never gets stuck
     const timeoutId = setTimeout(() => {
       addToCartButton.removeAttribute('data-added');
-
-      // Remove this timeout from the array
+      addToCartButton.blur?.();
       const index = this.#resetTimeouts.indexOf(timeoutId);
       if (index > -1) {
         this.#resetTimeouts.splice(index, 1);
       }
-    }, 800);
+    }, 700);
 
     this.#resetTimeouts.push(timeoutId);
+
+    try {
+      await yieldToMainThread();
+      await Promise.race([
+        onAnimationEnd(addToCartButton),
+        new Promise((resolve) => setTimeout(resolve, 600)),
+      ]);
+    } catch (_) {
+      // ignore
+    } finally {
+      addToCartButton.removeAttribute('data-added');
+      addToCartButton.blur?.();
+    }
   };
 }
 

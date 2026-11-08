@@ -183,12 +183,15 @@ class StickyAddToCartComponent extends Component {
       this.refs.addToCartButton.dataset.added = 'true';
     }
 
-    if (!cartIcon || !this.refs.addToCartButton || !this.refs.productImage) return;
     if (this.#resetTimeout) clearTimeout(this.#resetTimeout);
+    this.#resetTimeout = setTimeout(() => {
+      this.refs.addToCartButton.removeAttribute('data-added');
+      this.refs.addToCartButton.blur?.();
+    }, 700);
+
+    if (!cartIcon || !this.refs.addToCartButton || !this.refs.productImage) return;
 
     const flyToCartElement = /** @type {FlyToCart} */ (document.createElement('fly-to-cart'));
-    const sourceStyles = getComputedStyle(this.refs.productImage);
-
     flyToCartElement.classList.add('fly-to-cart--sticky');
     flyToCartElement.style.setProperty('background-image', `url(${this.refs.productImage.src})`);
     flyToCartElement.useSourceSize = 'true';
@@ -197,10 +200,17 @@ class StickyAddToCartComponent extends Component {
 
     document.body.appendChild(flyToCartElement);
 
-    await onAnimationEnd([this.refs.addToCartButton, flyToCartElement]);
-    this.#resetTimeout = setTimeout(() => {
+    try {
+      await Promise.race([
+        onAnimationEnd([this.refs.addToCartButton, flyToCartElement]),
+        new Promise((resolve) => setTimeout(resolve, 600)),
+      ]);
+    } catch (_) {
+      // ignore
+    } finally {
       this.refs.addToCartButton.removeAttribute('data-added');
-    }, 800);
+      this.refs.addToCartButton.blur?.();
+    }
   };
 
   /**

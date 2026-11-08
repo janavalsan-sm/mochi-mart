@@ -460,11 +460,11 @@
 }
 @media screen and (max-width: 860px) {
   .slider-outer:not(.arrows-bottom) .swiper-button-nexts {
-    right: 4px !important;
+    right: -10px !important;
     left: auto !important;
   }
   .slider-outer:not(.arrows-bottom) .swiper-button-previ {
-    left: 4px !important;
+    left: -10px !important;
     right: auto !important;
   }
 }

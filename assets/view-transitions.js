@@ -1,11 +1,7 @@
 (function () {
-  // In-app WebViews (Android Facebook, Instagram, TikTok, etc.) ship a Chromium
-  // WebView build that fails to paint during cross-document (MPA) View
-  // Transitions and can freeze or white-screen the storefront on navigation.
-  // June 2026 testing. Remove check if ever resolved.
-  if (shouldDisableCrossDocumentViewTransitions()) {
-    disableCrossDocumentViewTransitions();
-  }
+  // Always disable cross-document View Transitions and remove render blocker
+  // to avoid blank screens, delayed paints, and scroll stutter across all devices.
+  disableCrossDocumentViewTransitions();
 
   const viewTransitionRenderBlocker = document.getElementById('view-transition-render-blocker');
   const activation = window.navigation?.activation;

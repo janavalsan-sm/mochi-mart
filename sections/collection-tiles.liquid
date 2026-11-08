@@ -352,17 +352,31 @@
   }
 
   /* Hover Effects */
-  .cat-tile:hover .collection-tiles__hover--tilt {
-    transform: translateY(-6px) rotate(-1.5deg);
-    box-shadow: 0 16px 32px -8px rgba(60, 40, 30, 0.18);
+  @media (min-width: 750px) and (hover: hover) {
+    .cat-tile:hover .collection-tiles__hover--tilt {
+      transform: translateY(-6px) rotate(-1.5deg);
+      box-shadow: 0 16px 32px -8px rgba(60, 40, 30, 0.18);
+    }
+    .cat-tile:hover .collection-tiles__hover--lift {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 32px -8px rgba(60, 40, 30, 0.18);
+    }
+    .cat-tile:hover .collection-tiles__hover--zoom img,
+    .cat-tile:hover .collection-tiles__hover--tilt img {
+      transform: scale(1.05);
+    }
   }
-  .cat-tile:hover .collection-tiles__hover--lift {
-    transform: translateY(-6px);
-    box-shadow: 0 16px 32px -8px rgba(60, 40, 30, 0.18);
-  }
-  .cat-tile:hover .collection-tiles__hover--zoom img,
-  .cat-tile:hover .collection-tiles__hover--tilt img {
-    transform: scale(1.05);
+
+  @media (max-width: 749px) {
+    .cat-tile .collection-tiles__hover--tilt,
+    .cat-tile .collection-tiles__hover--lift,
+    .cat-tile:hover .collection-tiles__hover--tilt,
+    .cat-tile:hover .collection-tiles__hover--lift,
+    .cat-tile:hover .collection-tiles__hover--zoom img,
+    .cat-tile:hover .collection-tiles__hover--tilt img {
+      transform: none !important;
+      box-shadow: none !important;
+    }
   }
 
   .cat-tile .title {

@@ -436,11 +436,20 @@
   }
 
   {%- if section.settings.card_hover_lift -%}
-  .customer-reviews__card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.08);
+  @media (min-width: 750px) and (hover: hover) {
+    .customer-reviews__card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px -10px rgba(0, 0, 0, 0.08);
+    }
   }
   {%- endif -%}
+
+  @media (max-width: 749px) {
+    .customer-reviews__card,
+    .customer-reviews__card:hover {
+      transform: none !important;
+    }
+  }
 
   @media (max-width: 767px) {
     .customer-reviews__card {

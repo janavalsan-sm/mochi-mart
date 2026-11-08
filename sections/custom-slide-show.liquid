@@ -584,7 +584,7 @@
                 or block.settings.subheading != blank
                 or block.settings.button_label != blank
               -%}
-                <div class="slideshow-text-wrapper banner-content-{{ block.settings.box_align }} {% if block.settings.show_text_box == false %} banner-desktop-transparent{% endif %}{% if settings.animations_reveal_on_scroll and forloop.index == 1 %} scroll-trigger animate--slide-in{% endif %}">
+                <div class="slideshow-text-wrapper banner-content-{{ block.settings.box_align }} {% if block.settings.show_text_box == false %} banner-desktop-transparent{% endif %}">
                   <div class="slideshow-text banner-box  content-container-full-width-mobile color-{{ block.settings.color_scheme }} gradient slideshow-text-{{ block.settings.text_alignment }} slideshow-text-mobile-{{ block.settings.text_alignment_mobile }}">
                     {%- if block.settings.heading != blank -%}
                       <h2 class="banner-heading inline-richtext {{ block.settings.heading_size }}">
@@ -659,7 +659,7 @@
     </div>
 
     {% if section.settings.title != blank %}
-      <h2 class="title inline-richtext slideshow_title  {{ section.settings.heading_weight }} {{ section.settings.heading_family }} {{ section.settings.heading_size }} {% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+      <h2 class="title inline-richtext slideshow_title  {{ section.settings.heading_weight }} {{ section.settings.heading_family }} {{ section.settings.heading_size }}">
         {{ section.settings.title }}
       </h2>
     {% endif %}
@@ -667,13 +667,13 @@
     {% if section.settings.description_1 != blank or section.settings.description_2 != blank %}
       <div class="brand-desc">
         {%- if section.settings.description_1 != blank -%}
-          <div class="brand__description {{ section.settings.description_style }} rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+          <div class="brand__description {{ section.settings.description_style }} rte">
             {{ section.settings.description_1 -}}
           </div>
         {%- endif %}
 
         {% if section.settings.description_2 != blank %}
-          <div class="brand__description {{ section.settings.description_style }} rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+          <div class="brand__description {{ section.settings.description_style }} rte">
             {{ section.settings.description_2 -}}
           </div>
         {% endif %}

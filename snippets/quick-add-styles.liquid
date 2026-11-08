@@ -172,6 +172,20 @@
     color: var(--quick-add-foreground, var(--color-foreground));
   }
 
+  /* Reset back to normal when not data-added */
+  .quick-add__button:not([data-added='true']) {
+    color: var(--quick-add-foreground, var(--color-foreground));
+  }
+
+  .quick-add__button:not([data-added='true']) > .add-to-cart-icon {
+    opacity: 1 !important;
+  }
+
+  .quick-add__button:not([data-added='true']) .add-to-cart__added {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     button.quick-add__button {
       transition-property: scale, translate, opacity, width;

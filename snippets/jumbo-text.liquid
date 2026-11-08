@@ -158,21 +158,22 @@
 
     /* Reveal effect */
     .ready[data-text-effect='reveal'] {
-      overflow: hidden;
+      overflow: visible;
     }
 
     .ready[data-text-effect='reveal'] .jumbo-text-line {
-      transform: translateY(100%);
+      transform: none !important;
+      opacity: 1 !important;
+      transition: none !important;
     }
 
     .jumbo-text-visible[data-text-effect='reveal'] .jumbo-text-line {
-      transition: transform 0.5s var(--animation-timing-fade-in) calc(var(--line-index) * 0.05s);
-      transform: translateY(0);
+      transform: none !important;
+      opacity: 1 !important;
     }
 
     .jumbo-text-visible[data-text-effect='reveal'] {
       overflow: visible;
-      transition: overflow 0s linear 0.75s;
     }
   }
 {% endstylesheet %}

@@ -153,32 +153,77 @@
   .site-footer-card--menus .footer-links {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 20px;
     height: 100%;
-  }
-
-  @media screen and (max-width: 599px) {
-    .site-footer-card--menus .footer-links {
-      grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
-      gap: 12px;
-    }
+    width: 100%;
   }
 
   .footer-menu-col {
     display: flex;
     flex-direction: column;
     min-width: 0;
+    width: 100%;
+  }
+
+  .footer-menu-accordion {
+    display: block;
+    width: 100%;
+  }
+
+  .footer-menu-details {
+    display: block;
+    width: 100%;
+  }
+
+  .footer-menu-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 0 10px 0;
+    margin: 0 0 14px 0;
+    border-bottom: 1px solid var(--footer-divider-color);
+    cursor: default;
+    pointer-events: none;
+    list-style: none;
+    background: transparent;
+    box-sizing: border-box;
+  }
+
+  .footer-menu-summary::-webkit-details-marker,
+  .footer-menu-summary::marker {
+    display: none;
+    content: "";
   }
 
   .footer-col-title {
     font-size: 0.8125rem;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--footer-heading-color);
-    margin: 0 0 10px 0;
+    margin: 0;
     line-height: 1.2;
     font-family: var(--font-heading--family);
+  }
+
+  .footer-menu-summary .icon-caret {
+    display: none !important;
+  }
+
+  .footer-menu-content {
+    display: block;
+    width: 100%;
+  }
+
+  @media screen and (min-width: 750px) {
+    .footer-menu-details::details-content,
+    .footer-menu-details .details-content {
+      block-size: auto !important;
+      opacity: 1 !important;
+      overflow-y: visible !important;
+      display: block !important;
+    }
   }
 
   .footer-divider {
@@ -205,11 +250,96 @@
     transition: color 0.2s ease, transform 0.2s ease;
     display: inline-block;
     word-break: break-word;
+    font-family: var(--font-body--family);
+    font-weight: 400;
   }
 
-  .footer-menu-link:hover {
-    color: var(--footer-primary, #D32F2F);
-    transform: translateX(2px);
+  @media (min-width: 750px) and (hover: hover) {
+    .footer-menu-link:hover {
+      color: var(--footer-primary, #D32F2F);
+      transform: translateX(2px);
+    }
+  }
+
+  @media (hover: none) {
+    .footer-menu-link:active {
+      color: var(--footer-primary, #D32F2F);
+    }
+  }
+
+  /* Responsive Mobile Accordion */
+  @media screen and (max-width: 749px) {
+    .site-footer-card--menus .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      height: auto;
+    }
+
+    .footer-menu-col {
+      width: 100%;
+    }
+
+    .footer-menu-summary {
+      padding: 15px 0;
+      margin: 0;
+      cursor: pointer;
+      pointer-events: auto;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.2s ease;
+    }
+
+    .footer-menu-summary:focus-visible {
+      outline: 2px solid var(--footer-primary, #D32F2F);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    .footer-menu-summary:focus:not(:focus-visible) {
+      outline: none;
+    }
+
+    .footer-col-title {
+      font-size: 0.875rem;
+      letter-spacing: 0.06em;
+    }
+
+    .footer-menu-summary .icon-caret {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      color: var(--footer-heading-color);
+      margin-inline-start: auto;
+      flex-shrink: 0;
+    }
+
+    .footer-menu-summary .icon-caret svg {
+      width: 13px;
+      height: 13px;
+      display: block;
+      transition: transform var(--animation-speed, 0.25s) var(--animation-easing, ease);
+    }
+
+    .footer-menu-details[open] > .footer-menu-summary .icon-caret svg {
+      transform: rotate(180deg);
+    }
+
+    .footer-menu-content {
+      padding: 14px 0 20px 0;
+    }
+
+    .footer-menu-list {
+      gap: 12px;
+    }
+
+    .footer-menu-link {
+      font-size: 0.9375rem;
+      line-height: 1.5;
+    }
   }
 
   /* Card 3: Newsletter */
@@ -466,83 +596,126 @@
       <!-- Card 2: Menus (Configured via Shopify Admin Navigation Menu blocks) -->
       <div class="site-footer-card site-footer-card--menus">
         <div class="footer-links">
+          {%- assign open_mobile = false -%}
+          {%- if section.settings.collapse_menus_mobile == false -%}
+            {%- assign open_mobile = true -%}
+          {%- endif -%}
+
           {%- assign menu_blocks = section.blocks | where: 'type', 'menu' -%}
           {%- if menu_blocks.size > 0 -%}
             {%- for block in menu_blocks -%}
               {%- assign menu_handle = block.settings.menu -%}
               {%- assign menu_obj = linklists[menu_handle] -%}
+              {%- capture menu_heading -%}
+                {%- if block.settings.heading != blank -%}
+                  {{ block.settings.heading }}
+                {%- elsif menu_obj != blank and menu_obj.title != blank -%}
+                  {{ menu_obj.title | upcase }}
+                {%- else -%}
+                  MENU
+                {%- endif -%}
+              {%- endcapture -%}
               <div class="footer-menu-col" {{ block.shopify_attributes }}>
-                <h4 class="footer-col-title">
-                  {%- if block.settings.heading != blank -%}
-                    {{ block.settings.heading }}
-                  {%- elsif menu_obj != blank and menu_obj.title != blank -%}
-                    {{ menu_obj.title | upcase }}
-                  {%- else -%}
-                    MENU
-                  {%- endif -%}
-                </h4>
-                <div class="footer-divider"></div>
-                <ul class="footer-menu-list" role="list">
-                  {%- if menu_obj != blank and menu_obj.links.size > 0 -%}
-                    {%- for link in menu_obj.links -%}
-                      <li>
-                        <a href="{{ link.url }}" class="footer-menu-link">
-                          {{ link.title }}
-                        </a>
-                      </li>
-                    {%- endfor -%}
-                  {%- else -%}
-                    <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Shop all</a></li>
-                    <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">New arrivals</a></li>
-                    <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Best sellers</a></li>
-                  {%- endif -%}
-                </ul>
+                {%- capture accordion_children -%}
+                  <details
+                    class="footer-menu-details"
+                    {% if open_mobile %}
+                      open
+                    {% endif %}
+                  >
+                    <summary class="footer-menu-summary">
+                      <span class="footer-col-title">{{ menu_heading | strip }}</span>
+                      <span class="svg-wrapper icon-caret icon-animated" aria-hidden="true">
+                        {{- 'icon-caret.svg' | inline_asset_content -}}
+                      </span>
+                    </summary>
+                    <div class="details-content footer-menu-content">
+                      <ul class="footer-menu-list" role="list">
+                        {%- if menu_obj != blank and menu_obj.links.size > 0 -%}
+                          {%- for link in menu_obj.links -%}
+                            <li>
+                              <a href="{{ link.url }}" class="footer-menu-link">
+                                {{ link.title }}
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        {%- else -%}
+                          <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Shop all</a></li>
+                          <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">New arrivals</a></li>
+                          <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Best sellers</a></li>
+                        {%- endif -%}
+                      </ul>
+                    </div>
+                  </details>
+                {%- endcapture -%}
+                {% render 'accordion-custom-component',
+                  children: accordion_children,
+                  open_by_default_on_desktop: true,
+                  open_by_default_on_mobile: open_mobile,
+                  disable_on_desktop: true,
+                  class: 'footer-menu-accordion'
+                %}
               </div>
             {%- endfor -%}
           {%- else -%}
             {%- comment -%} Default fallback if no blocks have been added yet {%- endcomment -%}
-            <div class="footer-menu-col">
-              <h4 class="footer-col-title">SHOP</h4>
-              <div class="footer-divider"></div>
-              <ul class="footer-menu-list" role="list">
-                {%- if linklists.footer != blank and linklists.footer.links.size > 0 -%}
-                  {%- for link in linklists.footer.links -%}
-                    <li><a href="{{ link.url }}" class="footer-menu-link">{{ link.title }}</a></li>
-                  {%- endfor -%}
-                {%- else -%}
-                  <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Shop all</a></li>
-                  <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">New arrivals</a></li>
-                  <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Best sellers</a></li>
-                  <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Gift sets</a></li>
-                {%- endif -%}
-              </ul>
-            </div>
-
-            <div class="footer-menu-col">
-              <h4 class="footer-col-title">MORE</h4>
-              <div class="footer-divider"></div>
-              <ul class="footer-menu-list" role="list">
-                {%- if linklists.main-menu != blank and linklists.main-menu.links.size > 0 -%}
-                  {%- for link in linklists.main-menu.links -%}
-                    <li><a href="{{ link.url }}" class="footer-menu-link">{{ link.title }}</a></li>
-                  {%- endfor -%}
-                {%- else -%}
-                  <li><a href="{{ routes.root_url }}pages/about-us" class="footer-menu-link">Our story</a></li>
-                  <li><a href="{{ routes.root_url }}pages/contact" class="footer-menu-link">Contact</a></li>
-                  <li><a href="{{ routes.root_url }}pages/faqs" class="footer-menu-link">FAQs</a></li>
-                {%- endif -%}
-              </ul>
-            </div>
-
-            <div class="footer-menu-col">
-              <h4 class="footer-col-title">SUPPORT</h4>
-              <div class="footer-divider"></div>
-              <ul class="footer-menu-list" role="list">
-                <li><a href="{{ routes.root_url }}policies/shipping-policy" class="footer-menu-link">Shipping & returns</a></li>
-                <li><a href="{{ routes.root_url }}pages/contact" class="footer-menu-link">Order help</a></li>
-                <li><a href="{{ routes.root_url }}pages/contact" class="footer-menu-link">Say hello</a></li>
-              </ul>
-            </div>
+            {%- assign default_menus = 'SHOP,MORE,SUPPORT' | split: ',' -%}
+            {%- for def_title in default_menus -%}
+              <div class="footer-menu-col">
+                {%- capture accordion_children -%}
+                  <details
+                    class="footer-menu-details"
+                    {% if open_mobile %}
+                      open
+                    {% endif %}
+                  >
+                    <summary class="footer-menu-summary">
+                      <span class="footer-col-title">{{ def_title }}</span>
+                      <span class="svg-wrapper icon-caret icon-animated" aria-hidden="true">
+                        {{- 'icon-caret.svg' | inline_asset_content -}}
+                      </span>
+                    </summary>
+                    <div class="details-content footer-menu-content">
+                      <ul class="footer-menu-list" role="list">
+                        {%- if def_title == 'SHOP' -%}
+                          {%- if linklists.footer != blank and linklists.footer.links.size > 0 -%}
+                            {%- for link in linklists.footer.links -%}
+                              <li><a href="{{ link.url }}" class="footer-menu-link">{{ link.title }}</a></li>
+                            {%- endfor -%}
+                          {%- else -%}
+                            <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Shop all</a></li>
+                            <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">New arrivals</a></li>
+                            <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Best sellers</a></li>
+                            <li><a href="{{ routes.all_products_collection_url }}" class="footer-menu-link">Gift sets</a></li>
+                          {%- endif -%}
+                        {%- elsif def_title == 'MORE' -%}
+                          {%- if linklists.main-menu != blank and linklists.main-menu.links.size > 0 -%}
+                            {%- for link in linklists.main-menu.links -%}
+                              <li><a href="{{ link.url }}" class="footer-menu-link">{{ link.title }}</a></li>
+                            {%- endfor -%}
+                          {%- else -%}
+                            <li><a href="{{ routes.root_url }}pages/about-us" class="footer-menu-link">Our story</a></li>
+                            <li><a href="{{ routes.root_url }}pages/contact" class="footer-menu-link">Contact</a></li>
+                            <li><a href="{{ routes.root_url }}pages/faqs" class="footer-menu-link">FAQs</a></li>
+                          {%- endif -%}
+                        {%- elsif def_title == 'SUPPORT' -%}
+                          <li><a href="{{ routes.root_url }}policies/shipping-policy" class="footer-menu-link">Shipping & returns</a></li>
+                          <li><a href="{{ routes.root_url }}pages/contact" class="footer-menu-link">Order help</a></li>
+                          <li><a href="{{ routes.root_url }}pages/contact" class="footer-menu-link">Say hello</a></li>
+                        {%- endif -%}
+                      </ul>
+                    </div>
+                  </details>
+                {%- endcapture -%}
+                {% render 'accordion-custom-component',
+                  children: accordion_children,
+                  open_by_default_on_desktop: true,
+                  open_by_default_on_mobile: open_mobile,
+                  disable_on_desktop: true,
+                  class: 'footer-menu-accordion'
+                %}
+              </div>
+            {%- endfor -%}
           {%- endif -%}
         </div>
       </div>
@@ -691,6 +864,17 @@
       "id": "email",
       "label": "Contact email",
       "default": "hello@mochimart.com"
+    },
+    {
+      "type": "header",
+      "content": "Navigation Menus (Card 2)"
+    },
+    {
+      "type": "checkbox",
+      "id": "collapse_menus_mobile",
+      "label": "Collapse menus by default on mobile",
+      "default": true,
+      "info": "When checked, menus start collapsed on mobile and can be toggled like an accordion."
     },
     {
       "type": "header",

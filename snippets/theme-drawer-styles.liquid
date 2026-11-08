@@ -37,6 +37,9 @@
     border-inline-start: var(--style-border-drawer);
     background-color: var(--color-background);
     color: var(--color-foreground);
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   .theme-drawer__dialog[open] {
@@ -53,6 +56,10 @@
     animation: drawer-slide-in var(--animation-speed) var(--animation-timing-fade-in);
   }
 
+  [dir='rtl'] .theme-drawer__dialog--opening {
+    animation-name: drawer-slide-in-rtl;
+  }
+
   .theme-drawer__dialog--opening-inline-start {
     animation: drawer-slide-in-inline-start var(--animation-speed) var(--animation-timing-fade-in);
   }
@@ -61,25 +68,56 @@
     animation: drawer-slide-out var(--animation-speed) var(--animation-timing-fade-out) forwards;
   }
 
+  [dir='rtl'] .theme-drawer__dialog--closing {
+    animation-name: drawer-slide-out-rtl;
+  }
+
   .theme-drawer__dialog-instant {
     animation: none;
   }
 
   @keyframes drawer-slide-in {
     from {
-      inset-inline-end: calc(-1 * var(--theme-drawer-width, var(--sidebar-width)));
+      transform: translate3d(100%, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes drawer-slide-in-rtl {
+    from {
+      transform: translate3d(-100%, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
     }
   }
 
   @keyframes drawer-slide-in-inline-start {
     from {
-      inset-inline-end: calc(var(--theme-drawer-width, var(--sidebar-width)) / 2);
+      transform: translate3d(-100%, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
     }
   }
 
   @keyframes drawer-slide-out {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
     to {
-      inset-inline-end: calc(-1 * var(--theme-drawer-width, var(--sidebar-width)));
+      transform: translate3d(100%, 0, 0);
+    }
+  }
+
+  @keyframes drawer-slide-out-rtl {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-100%, 0, 0);
     }
   }
 
@@ -87,6 +125,13 @@
     background: rgba(0, 0, 0, 0.45);
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
+  }
+
+  @media screen and (max-width: 749px) {
+    .theme-drawer__dialog::backdrop {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
   }
 
   /* Exclude open drawers from the page navigation cross-fade so they

@@ -22,7 +22,7 @@
       --hover-subtle-zoom-amount: 1.015;
     }
 
-    @media (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
+    @media screen and (min-width: 750px) and (hover: hover) and (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
       {% if active_hover_effect == 'lift' %}
         .card-hover-effect-lift .product-card:hover,
         .card-hover-effect-lift .collection-card:hover,
@@ -54,6 +54,17 @@
           transform: scale(var(--hover-subtle-zoom-amount));
         }
       {% endif %}
+    }
+
+    @media screen and (max-width: 749px) {
+      .product-card,
+      .collection-card,
+      .predictive-search-results__card,
+      .product-card:hover,
+      .collection-card:hover,
+      .predictive-search-results__card:hover {
+        transform: none !important;
+      }
     }
   {% endstyle %}
 {% endif %}

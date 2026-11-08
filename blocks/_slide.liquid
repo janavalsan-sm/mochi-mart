@@ -133,17 +133,8 @@
     height: 100%;
     position: relative;
     z-index: var(--layer-flat);
-
-    @supports (animation-timeline: auto) {
-      opacity: 0;
-      animation: slide-reveal both linear;
-      animation-timeline: var(--slideshow-timeline);
-    }
-
-    @media (prefers-reduced-motion) {
-      opacity: 1;
-      animation: none;
-    }
+    opacity: 1 !important;
+    animation: none !important;
   }
 
   .slide__content > * {

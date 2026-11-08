@@ -17,61 +17,77 @@ class FlyToCart extends Component {
 
   connectedCallback() {
     super.connectedCallback();
-    const intersectionObserver = new IntersectionObserver((entries) => {
-      /** @type {DOMRectReadOnly | null} */
-      let sourceRect = null;
-      /** @type {DOMRectReadOnly | null} */
-      let destinationRect = null;
 
-      entries.forEach((entry) => {
-        if (entry.target === this.source) {
-          sourceRect = entry.boundingClientRect;
-        } else if (entry.target === this.destination) {
-          destinationRect = entry.boundingClientRect;
-        }
-      });
+    if (!this.source) {
+      this.remove();
+      return;
+    }
 
-      if (sourceRect && destinationRect) {
-        this.#animate(sourceRect, destinationRect);
-      }
+    // Direct synchronous rect measurement — never hangs when cart icon is scrolled out of view
+    const sourceRect = this.source.getBoundingClientRect();
+    const destinationRect = this.destination ? this.destination.getBoundingClientRect() : null;
 
-      intersectionObserver.disconnect();
-    });
-    intersectionObserver.observe(this.source);
-    intersectionObserver.observe(this.destination);
+    if (sourceRect && sourceRect.width > 0) {
+      this.#animate(sourceRect, destinationRect);
+    } else {
+      this.remove();
+    }
   }
 
   /**
-   * Animates the flying thingy along the bezier curve.
+   * Animates the flying thingy along the curve.
    * @param {DOMRectReadOnly} sourceRect - The bounding client rect of the source.
-   * @param {DOMRectReadOnly} destinationRect - The bounding client rect of the destination.
+   * @param {DOMRectReadOnly | null} destinationRect - The bounding client rect of the destination.
    */
   #animate = async (sourceRect, destinationRect) => {
-    //Define bezier curve points
-    const startPoint = {
-      x: sourceRect.left + sourceRect.width / 2,
-      y: sourceRect.top + sourceRect.height / 2,
-    };
+    // Guaranteed cleanup fallback so element never gets stuck in the DOM
+    const safetyTimer = setTimeout(() => {
+      this.remove();
+    }, 750);
 
-    const endPoint = {
-      x: destinationRect.left + destinationRect.width / 2,
-      y: destinationRect.top + destinationRect.height / 2,
-    };
+    try {
+      const startPoint = {
+        x: sourceRect.left + sourceRect.width / 2,
+        y: sourceRect.top + sourceRect.height / 2,
+      };
 
-    // Position the flying thingy back to the start point
-    if (this.useSourceSize) {
-      this.style.setProperty('--width', `${sourceRect.width}px`);
-      this.style.setProperty('--height', `${sourceRect.height}px`);
+      // Destination coordinates — if cart icon is scrolled offscreen or hidden, fly to top-right
+      const destLeft = destinationRect ? destinationRect.left : 0;
+      const destTop = destinationRect ? destinationRect.top : 0;
+      const destWidth = destinationRect ? destinationRect.width : 0;
+      const destHeight = destinationRect ? destinationRect.height : 0;
+
+      const endPoint = {
+        x: (destWidth > 0 && destLeft > 0) ? destLeft + destWidth / 2 : window.innerWidth - 28,
+        y: (destHeight > 0 && destTop >= 0) ? destTop + destHeight / 2 : 24,
+      };
+
+      if (this.useSourceSize) {
+        this.style.setProperty('--width', `${sourceRect.width}px`);
+        this.style.setProperty('--height', `${sourceRect.height}px`);
+      }
+      this.style.setProperty('--start-x', `${startPoint.x}px`);
+      this.style.setProperty('--start-y', `${startPoint.y}px`);
+      this.style.setProperty('--travel-x', `${endPoint.x - startPoint.x}px`);
+      this.style.setProperty('--travel-y', `${endPoint.y - startPoint.y}px`);
+
+      await yieldToMainThread();
+
+      const animations = this.getAnimations();
+      if (animations.length > 0) {
+        await Promise.race([
+          Promise.allSettled(animations.map((a) => a.finished)),
+          new Promise((resolve) => setTimeout(resolve, 600)),
+        ]);
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 550));
+      }
+    } catch (_) {
+      // ignore
+    } finally {
+      clearTimeout(safetyTimer);
+      this.remove();
     }
-    this.style.setProperty('--start-x', `${startPoint.x}px`);
-    this.style.setProperty('--start-y', `${startPoint.y}px`);
-    this.style.setProperty('--travel-x', `${endPoint.x - startPoint.x}px`);
-    this.style.setProperty('--travel-y', `${endPoint.y - startPoint.y}px`);
-
-    await yieldToMainThread();
-
-    await Promise.allSettled(this.getAnimations().map((a) => a.finished));
-    this.remove();
   };
 }
 
