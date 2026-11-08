@@ -9,11 +9,6 @@
   }
 
   function initSwiper(container) {
-    if (typeof Swiper === 'undefined') {
-      setTimeout(function () { initSwiper(container); }, 50);
-      return;
-    }
-
     const uniqueId = container.getAttribute('data-id');
     const arrowsEnabled = container.getAttribute('data-arrows-enabled') === 'true';
     const autoplayEnabled = container.getAttribute('data-autoplay-enabled') === 'true';
@@ -22,170 +17,68 @@
     const dotsEnabled = container.getAttribute('data-dots-enabled') === 'true';
     const centeredEnabled = container.getAttribute('data-centered-enabled') === 'true';
 
-    const swiperContainer = document.getElementById(`new-swiper-${uniqueId}`) || container;
+    const swiperContainer = document.getElementById(`new-swiper-${uniqueId}`);
     if (!swiperContainer) return;
 
     if (container.swiper && !container.swiper.destroyed) {
       container.swiper.destroy(true, true);
     }
 
-    const sliderOuter = container.closest('.slider-outer');
-    const paginationEl =
-      (sliderOuter && sliderOuter.querySelector('.swiper-pagination')) ||
-      container.querySelector('.swiper-pagination');
-
-    const mobileSpv = parseFloat(container.getAttribute('data-slides-per-view-mobile')) || 2.2;
-    const mobileGap = parseInt(container.getAttribute('data-space-between-mobile'), 10) || 12;
-
-    const medTabletSpv =
-      parseFloat(container.getAttribute('data-slides-per-view-medium-tablet')) ||
-      parseFloat(container.getAttribute('data-slides-per-view-tablet')) ||
-      2.5;
-    const medTabletGap =
-      parseInt(container.getAttribute('data-space-between-medium-tablet'), 10) ||
-      parseInt(container.getAttribute('data-space-between-mobile'), 10) ||
-      12;
-
-    const tabletSpv =
-      parseFloat(container.getAttribute('data-slides-per-view-tablet')) ||
-      parseFloat(container.getAttribute('data-slides-per-view-medium-tablet')) ||
-      3;
-    const tabletGap =
-      parseInt(container.getAttribute('data-space-between-tablet'), 10) ||
-      parseInt(container.getAttribute('data-space-between-desktop'), 10) ||
-      16;
-
-    const laptopSpv =
-      parseFloat(container.getAttribute('data-slides-per-view-laptop')) ||
-      parseFloat(container.getAttribute('data-slides-per-view-desktop')) ||
-      4;
-    const laptopGap =
-      parseInt(container.getAttribute('data-space-between-laptop'), 10) ||
-      parseInt(container.getAttribute('data-space-between-desktop'), 10) ||
-      16;
-
-    const desktopSpv = parseFloat(container.getAttribute('data-slides-per-view-desktop')) || 5;
-    const desktopGap = parseInt(container.getAttribute('data-space-between-desktop'), 10) || 16;
-
-    const slideElements = swiperContainer.querySelectorAll('.swiper-slide');
-    const slidesCount = slideElements.length;
-    const maxSpv = Math.max(mobileSpv, medTabletSpv, tabletSpv, laptopSpv, desktopSpv);
-    const shouldLoop = loopEnabled && slidesCount > 1 && slidesCount >= Math.ceil(maxSpv) * 2;
-
-    const nextBtn =
-      (sliderOuter && sliderOuter.querySelector(`.swiper-button-nexts[data-swiper-id="${uniqueId}"]`)) ||
-      document.querySelector(`.swiper-button-nexts[data-swiper-id="${uniqueId}"]`);
-    const prevBtn =
-      (sliderOuter && sliderOuter.querySelector(`.swiper-button-previ[data-swiper-id="${uniqueId}"]`)) ||
-      document.querySelector(`.swiper-button-previ[data-swiper-id="${uniqueId}"]`);
-
     container.swiper = new Swiper(swiperContainer, {
-      slidesPerView: mobileSpv,
-      spaceBetween: mobileGap,
+      slidesPerView: 'auto',
       centeredSlides: centeredEnabled,
       centeredSlidesBounds: centeredEnabled,
-      loop: shouldLoop,
+      spaceBetween: 0,
+      loop: loopEnabled,
       initialSlide: 0,
       roundLengths: true,
       observer: true,
       observeParents: true,
       observeSlideChildren: true,
-      grabCursor: true,
-      autoplay: autoplayEnabled
-        ? {
-            delay: autoplayDelay,
-            disableOnInteraction: false,
-            waitForTransition: true,
-          }
-        : false,
-      navigation: arrowsEnabled && nextBtn && prevBtn
-        ? {
-            nextEl: nextBtn,
-            prevEl: prevBtn,
-          }
-        : false,
-      pagination: dotsEnabled && paginationEl
-        ? {
-            el: paginationEl,
-            clickable: true,
-          }
-        : false,
+      autoplay: autoplayEnabled ? {
+        delay: autoplayDelay,
+        disableOnInteraction: false,
+        waitForTransition: true,
+      } : false,
+      navigation: arrowsEnabled ? {
+        nextEl: `.swiper-button-nexts[data-swiper-id="${uniqueId}"]`,
+        prevEl: `.swiper-button-previ[data-swiper-id="${uniqueId}"]`,
+      } : false,
+      pagination: dotsEnabled ? {
+        el: `#new-swiper-${uniqueId} .swiper-pagination`,
+        clickable: true,
+      } : false,
       breakpoints: {
-        0: {
-          slidesPerView: mobileSpv,
-          spaceBetween: mobileGap,
-          centeredSlides: centeredEnabled,
-        },
-        600: {
-          slidesPerView: medTabletSpv,
-          spaceBetween: medTabletGap,
-          centeredSlides: centeredEnabled,
-        },
-        768: {
-          slidesPerView: tabletSpv,
-          spaceBetween: tabletGap,
-          centeredSlides: centeredEnabled,
-        },
-        1025: {
-          slidesPerView: laptopSpv,
-          spaceBetween: laptopGap,
-          centeredSlides: centeredEnabled,
-        },
-        1440: {
-          slidesPerView: desktopSpv,
-          spaceBetween: desktopGap,
-          centeredSlides: centeredEnabled,
-        },
+        0:    { slidesPerView: parseFloat(container.getAttribute('data-slides-per-view-mobile'))        || 1, spaceBetween: parseInt(container.getAttribute('data-space-between-mobile'),        10) || 0, centeredSlides: centeredEnabled },
+        680:  { slidesPerView: parseFloat(container.getAttribute('data-slides-per-view-medium-tablet')) || 1, spaceBetween: parseInt(container.getAttribute('data-space-between-medium-tablet'), 10) || 0, centeredSlides: centeredEnabled },
+        880:  { slidesPerView: parseFloat(container.getAttribute('data-slides-per-view-tablet'))        || 1, spaceBetween: parseInt(container.getAttribute('data-space-between-tablet'),        10) || 0, centeredSlides: centeredEnabled },
+        1280: { slidesPerView: parseFloat(container.getAttribute('data-slides-per-view-laptop'))        || 1, spaceBetween: parseInt(container.getAttribute('data-space-between-laptop'),        10) || 0, centeredSlides: centeredEnabled },
+        1680: { slidesPerView: parseFloat(container.getAttribute('data-slides-per-view-desktop'))       || 1, spaceBetween: parseInt(container.getAttribute('data-space-between-desktop'),       10) || 0, centeredSlides: centeredEnabled },
       },
     });
-
-    if (container.swiper && typeof container.swiper.update === 'function') {
-      container.swiper.update();
-    }
   }
 
   function checkScreenSizeAndInitSwipers() {
-    if (typeof Swiper === 'undefined') {
-      setTimeout(checkScreenSizeAndInitSwipers, 50);
-      return;
-    }
-
     const width = window.innerWidth;
-    const isDesktop = width >= 1025;
-    const isTablet = width <= 1024 && width >= 768;
-    const isMobile = width < 768;
+    const islaptop = width >= 1025;
+    const isTablet = width <= 1024;
 
     document.querySelectorAll('.new-swiper-container').forEach(container => {
-      const desktopSlider = container.getAttribute('data-desktop-slider') === 'true';
-      const tabletSlider =
-        container.getAttribute('data-tablet-slider') === 'true' ||
-        container.getAttribute('data-mobile-slider') === 'true';
-      const mobileSlider = container.getAttribute('data-mobile-slider') === 'true';
-
       const isSliderEnabled =
-        (isDesktop && desktopSlider) ||
-        (isTablet && tabletSlider) ||
-        (isMobile && mobileSlider);
+        (islaptop && container.getAttribute('data-desktop-slider') === 'true') ||
+        (isTablet && container.getAttribute('data-tablet-slider') === 'true') ||
+        (isTablet && container.getAttribute('data-mobile-slider') === 'true');
 
-      if (!isSliderEnabled) {
-        if (container.swiper && !container.swiper.destroyed) {
-          container.swiper.destroy(true, true);
-          delete container.swiper;
-        }
-        return;
-      }
+      if (!isSliderEnabled) return;
 
-      // If already initialized and not destroyed, update dimensions
-      if (container.swiper && !container.swiper.destroyed) {
-        container.swiper.update();
-        return;
-      }
+      // Skip if already properly initialized
+      if (container.swiper && !container.swiper.destroyed) return;
 
       initSwiper(container);
     });
   }
 
-  const debouncedResize = debounce(checkScreenSizeAndInitSwipers, 200);
+  const debouncedResize = debounce(checkScreenSizeAndInitSwipers, 300);
 
   window.addEventListener('resize', debouncedResize);
 
@@ -198,10 +91,41 @@
   document.addEventListener('shopify:section:deselect', debouncedResize);
   document.addEventListener('shopify:section:reorder', debouncedResize);
 
-  // Fast initial call so sections appear immediately without blank delay
+  // Delay initial call to let Horizon finish its own deferred rendering
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', checkScreenSizeAndInitSwipers);
+    document.addEventListener('DOMContentLoaded', function () {
+      setTimeout(checkScreenSizeAndInitSwipers, 150);
+    });
   } else {
-    checkScreenSizeAndInitSwipers();
+    setTimeout(checkScreenSizeAndInitSwipers, 150);
   }
+
+  // Instant click delegation so buttons NEVER get stuck if clicked immediately on visit/refresh
+  document.addEventListener('click', function (e) {
+    const nextBtn = e.target.closest('.swiper-button-nexts');
+    const prevBtn = e.target.closest('.swiper-button-previ');
+    if (nextBtn) {
+      const id = nextBtn.getAttribute('data-swiper-id');
+      const container = document.querySelector(`.new-swiper-container[data-id="${id}"]`);
+      if (container) {
+        if (!container.swiper || container.swiper.destroyed) {
+          initSwiper(container);
+        }
+        if (container.swiper) {
+          container.swiper.slideNext();
+        }
+      }
+    } else if (prevBtn) {
+      const id = prevBtn.getAttribute('data-swiper-id');
+      const container = document.querySelector(`.new-swiper-container[data-id="${id}"]`);
+      if (container) {
+        if (!container.swiper || container.swiper.destroyed) {
+          initSwiper(container);
+        }
+        if (container.swiper) {
+          container.swiper.slidePrev();
+        }
+      }
+    }
+  });
 })();
