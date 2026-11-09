@@ -89,6 +89,7 @@
     max-width: 100% !important;
     height: auto !important;
     object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
   }
 
   .site-footer-card--brand .footer-logo-text {
@@ -519,25 +520,34 @@
         <div class="footer-brand-header">
           {%- assign footer_logo = section.settings.logo | default: settings.logo -%}
           {%- assign footer_logo_width = section.settings.logo_width | default: 110 -%}
-          {%- assign footer_logo_2x = footer_logo_width | times: 2 | at_least: 220 -%}
+          {%- assign footer_logo_1x = footer_logo_width | at_least: 120 -%}
+          {%- assign footer_logo_2x = footer_logo_width | times: 2 | at_least: 240 -%}
+          {%- assign footer_logo_3x = footer_logo_width | times: 3 | at_least: 360 -%}
+          {%- capture footer_logo_srcset -%}
+            {{ footer_logo | image_url: width: footer_logo_1x }} 1x,
+            {{ footer_logo | image_url: width: footer_logo_2x }} 2x,
+            {{ footer_logo | image_url: width: footer_logo_3x }} 3x
+          {%- endcapture -%}
           {%- if footer_logo != blank -%}
-            <a href="{{ routes.root_url }}" class="footer-logo-link">
+            <a href="{{ routes.root_url }}" class="footer-logo-link" aria-label="{{ shop.name }}">
               {{
                 footer_logo
-                | image_url: width: footer_logo_2x
+                | image_url: width: footer_logo_3x
                 | image_tag:
                   class: 'footer-logo',
+                  srcset: footer_logo_srcset,
                   width: footer_logo_width,
-                  alt: shop.name
+                  alt: shop.name,
+                  loading: 'lazy'
               }}
             </a>
           {%- else -%}
-            <a href="{{ routes.root_url }}" class="footer-logo-link">
+            <a href="{{ routes.root_url }}" class="footer-logo-link" aria-label="{{ shop.name }}">
               <img
                 src="{{ 'mochi-logo.png' | asset_url }}"
                 alt="{{ shop.name }}"
                 width="{{ footer_logo_width }}"
-                height="40"
+                height="auto"
                 class="footer-logo"
                 loading="lazy"
               >

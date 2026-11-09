@@ -43,18 +43,19 @@
       ],
       "settings": {
         "color_scheme": "scheme-1",
-        "outer_bg_color": "#FBE6A3",
+        "outer_bg_color": "#fbe6a3",
         "outer_border_radius": 36,
+        "logo": "shopify://shop_images/mochi-mart-logo-BQBusI9F.png",
         "logo_width": 80,
         "blurb": "Mochi Mart is a happy little corner for plush pals, playful pens, cute stationery, and gifts that say \"I thought of you.\"",
         "instagram_url": "https://instagram.com",
         "email": "hello@mochimart.com",
+        "collapse_menus_mobile": true,
         "newsletter_heading": "JOIN THE HAPPY LIST",
         "newsletter_text": "Be the first to know about new drops, little treats, and happy offers. Signups are not connected in this preview.",
         "newsletter_placeholder": "Enter your email",
         "bottom_left_text": "© 2026 Mochi Mart. Made with a little extra love.",
-        "show_payment_icons": true,
-        "collapse_menus_mobile": true
+        "show_payment_icons": true
       }
     }
   },

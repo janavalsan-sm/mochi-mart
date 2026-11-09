@@ -12,12 +12,16 @@
     "collection_hero": {
       "type": "collection-hero",
       "settings": {
+        "title": "",
         "show_dot": true,
+        "dot_color": "#d2272b",
+        "description": "",
+        "eyebrow": "",
         "color_preset": "blush",
-        "custom_bg_color": "#FFE5E3",
-        "title_color": "#2C1E19",
-        "description_color": "#6F5D57",
-        "outer_bg_color": "#FEFAF1",
+        "custom_bg_color": "#ffe5e3",
+        "title_color": "#2c1e19",
+        "description_color": "#6f5d57",
+        "outer_bg_color": "#fefaf1",
         "panel_radius": 36,
         "padding_top": 12,
         "padding_bottom": 12
@@ -140,16 +144,16 @@
       "settings": {
         "layout_type": "grid",
         "product_card_size": "medium",
-        "mobile_product_card_size": "small",
+        "mobile_product_card_size": "large",
         "enable_infinite_scroll": true,
         "products_per_page": 24,
         "product_grid_width": "centered",
-        "full_width_on_mobile": true,
+        "full_width_on_mobile": false,
         "columns_gap_horizontal": 16,
         "columns_gap_vertical": 24,
         "padding-inline-start": 0,
         "padding-inline-end": 0,
-        "background_color": "#FEFAF1",
+        "background_color": "#fefaf1",
         "padding-block-start": 0,
         "padding-block-end": 32
       }
