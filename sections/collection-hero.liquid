@@ -1,0 +1,297 @@
+{%- comment -%}
+  Collection Hero Section - Mochi Mart
+  Renders a soft pastel pill card with collection heading and bottom description text,
+  matching the Lovable soft-panel design and Mochi Mart aesthetic.
+{%- endcomment -%}
+
+{% liquid
+  assign bg_color = '#ffe5e3'
+  case section.settings.color_preset
+    when 'blush'
+      assign bg_color = '#ffe5e3'
+    when 'butter'
+      assign bg_color = '#fff1cc'
+    when 'sage'
+      assign bg_color = '#e4efe7'
+    when 'sky'
+      assign bg_color = '#e3f0fb'
+    when 'white'
+      assign bg_color = '#ffffff'
+    when 'custom'
+      assign bg_color = section.settings.custom_bg_color | default: '#ffe5e3'
+  endcase
+
+  assign heading_text = section.settings.title
+  if heading_text == blank
+    assign heading_text = collection.title | default: 'Collection'
+  endif
+
+  if section.settings.show_dot
+    assign heading_len = heading_text | size
+    assign last_char = heading_text | slice: -1
+    if last_char == '.'
+      assign heading_len_minus = heading_len | minus: 1
+      assign heading_text = heading_text | slice: 0, heading_len_minus
+    endif
+  endif
+
+  assign description_content = section.settings.description
+  if description_content == blank
+    assign description_content = collection.description
+  endif
+%}
+
+{% style %}
+  .collection-hero-section-{{ section.id }} {
+    position: relative;
+    background-color: {{ section.settings.outer_bg_color | default: '#FEFAF1' }};
+    padding-top: {{ section.settings.padding_top | default: 12 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 12 }}px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .collection-hero__panel-{{ section.id }} {
+    margin: 10px clamp(12px, 2.2vw, 28px);
+    border-radius: {{ section.settings.panel_radius | default: 36 }}px;
+    background-color: {{ bg_color }};
+    overflow: hidden;
+    position: relative;
+    padding: clamp(38px, 4.5vw, 56px) clamp(20px, 3.5vw, 48px);
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .collection-hero__panel-{{ section.id }} .collection-hero__eyebrow {
+    display: inline-block;
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: {{ section.settings.dot_color | default: '#D2272B' }};
+    margin-bottom: 12px;
+  }
+
+  .collection-hero__panel-{{ section.id }} .collection-hero__title {
+    font-family: 'Fredoka', 'DM Sans', system-ui, sans-serif;
+    font-size: clamp(34px, 4.5vw, 56px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: {{ section.settings.title_color | default: '#2C1E19' }};
+    margin: 0;
+    padding: 0;
+    word-break: break-word;
+  }
+
+  .collection-hero__panel-{{ section.id }} .collection-hero__dot {
+    color: {{ section.settings.dot_color | default: '#D2272B' }};
+    display: inline;
+  }
+
+  .collection-hero__panel-{{ section.id }} .collection-hero__description {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: clamp(15px, 1.2vw, 16.5px);
+    font-weight: 400;
+    line-height: 1.55;
+    color: {{ section.settings.description_color | default: '#6F5D57' }};
+    max-width: 580px;
+    margin: 12px auto 0;
+    padding: 0;
+  }
+
+  .collection-hero__panel-{{ section.id }} .collection-hero__description p {
+    margin: 0;
+  }
+
+  .collection-hero__panel-{{ section.id }} .collection-hero__description p + p {
+    margin-top: 8px;
+  }
+
+  @media (max-width: 749px) {
+    .collection-hero__panel-{{ section.id }} {
+      margin: 8px 12px;
+      border-radius: {{ section.settings.panel_radius | default: 36 | at_most: 28 }}px;
+      padding: 34px 18px;
+    }
+
+    .collection-hero__panel-{{ section.id }} .collection-hero__title {
+      font-size: clamp(28px, 6.5vw, 36px);
+    }
+
+    .collection-hero__panel-{{ section.id }} .collection-hero__description {
+      font-size: 14.5px;
+      margin-top: 10px;
+    }
+  }
+{% endstyle %}
+
+<div class="collection-hero-section collection-hero-section-{{ section.id }}">
+  <div class="collection-hero__panel collection-hero__panel-{{ section.id }}">
+    {%- if section.settings.eyebrow != blank -%}
+      <span class="collection-hero__eyebrow">{{ section.settings.eyebrow }}</span>
+    {%- endif -%}
+
+    <h1 class="collection-hero__title">
+      {{- heading_text -}}
+      {%- if section.settings.show_dot -%}
+        <span class="collection-hero__dot">.</span>
+      {%- endif -%}
+    </h1>
+
+    {%- if description_content != blank -%}
+      <div class="collection-hero__description rte">
+        {{ description_content }}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection hero",
+  "tag": "section",
+  "class": "section-collection-hero",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading override",
+      "info": "Leave blank to display the collection title"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dot",
+      "label": "Show red dot after heading",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Dot color",
+      "default": "#D2272B"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description override",
+      "info": "Leave blank to display the collection description"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow (optional)",
+      "default": "",
+      "info": "Displays small uppercase text above heading if entered"
+    },
+    {
+      "type": "header",
+      "content": "Style & Colors"
+    },
+    {
+      "type": "select",
+      "id": "color_preset",
+      "label": "Card color preset",
+      "options": [
+        {
+          "value": "blush",
+          "label": "Blush (Pink)"
+        },
+        {
+          "value": "butter",
+          "label": "Butter (Yellow)"
+        },
+        {
+          "value": "sage",
+          "label": "Sage (Mint)"
+        },
+        {
+          "value": "sky",
+          "label": "Sky (Blue)"
+        },
+        {
+          "value": "white",
+          "label": "White"
+        },
+        {
+          "value": "custom",
+          "label": "Custom color"
+        }
+      ],
+      "default": "blush"
+    },
+    {
+      "type": "color",
+      "id": "custom_bg_color",
+      "label": "Custom card background",
+      "default": "#FFE5E3"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Heading color",
+      "default": "#2C1E19"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description color",
+      "default": "#6F5D57"
+    },
+    {
+      "type": "color",
+      "id": "outer_bg_color",
+      "label": "Outer section background",
+      "default": "#FEFAF1"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "panel_radius",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Panel corner radius",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection hero"
+    }
+  ]
+}
+{% endschema %}
+
