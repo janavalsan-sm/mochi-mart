@@ -185,7 +185,7 @@
 %}
 
 {% stylesheet %}
-  /* Price filter */
+  /* Price filter - Mochi Mart Styled */
   .price-facet {
     container-type: inline-size;
     display: flex;
@@ -198,8 +198,10 @@
   .price-facet__inputs-wrapper {
     display: flex;
     flex-direction: row;
-    padding: var(--style-border-width-inputs);
-    gap: calc(var(--gap-sm) + (var(--style-border-width-inputs) * 2));
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 0;
   }
 
   @container (max-width: 199px) {
@@ -208,37 +210,89 @@
     }
   }
 
+  .field.price-facet__field {
+    background: #FFFFFF !important;
+    border: 1.5px solid #E8DFD8 !important;
+    border-radius: 14px !important;
+    height: 44px !important;
+    padding: 0 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+    box-shadow: 0 2px 6px rgba(44, 30, 25, 0.03) !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .field.price-facet__field:focus-within {
+    border-color: #D32F2F !important;
+    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.12) !important;
+  }
+
+  .price-facet__label {
+    position: absolute !important;
+    top: 50% !important;
+    inset-inline-start: 12px !important;
+    transform: translateY(-50%) !important;
+    font-family: 'Fredoka', 'DM Sans', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #8A7A74 !important;
+    padding: 0 !important;
+    pointer-events: none !important;
+    z-index: 1;
+    line-height: 1;
+  }
+
   .price-facet__input {
-    width: 100%;
-    text-align: end;
-    padding-inline-start: calc(2.5 * var(--input-padding-x));
+    width: 100% !important;
+    height: 100% !important;
+    text-align: end !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    font-family: 'Fredoka', 'DM Sans', sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: #2C1E19 !important;
+    padding-inline-start: 22px !important;
+    padding-inline-end: 0 !important;
+    box-shadow: none !important;
+    box-sizing: border-box;
   }
 
   .price-facet__input::placeholder {
-    color: var(--facets-input-label-color);
+    color: #C2B8B2 !important;
+    font-weight: 500 !important;
   }
 
   .price-facet__separator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--font-paragraph--size);
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: 'Fredoka', 'DM Sans', sans-serif !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: #D32F2F !important;
+    background-color: #FFE5E3 !important;
+    border-radius: 999px !important;
+    padding: 4px 10px !important;
+    flex-shrink: 0 !important;
+    line-height: normal !important;
   }
 
   .price-facet__highest-price {
-    color: var(--color-foreground-muted);
-    padding: var(--padding-xs) 0 var(--padding-sm);
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 13px !important;
+    color: #8A7A74 !important;
+    padding: 10px 0 4px !important;
+    margin: 0 !important;
   }
 
   .price-facet__highest-price--horizontal {
     padding: 0 var(--padding-md) var(--padding-xs);
-  }
-
-  .price-facet__label {
-    top: 0;
-    inset-inline-start: 0;
-    color: var(--facets-input-label-color);
-    padding: var(--input-padding-y) var(--input-padding-x);
-    transform: none;
   }
 {% endstylesheet %}
