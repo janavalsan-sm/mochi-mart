@@ -2,7 +2,7 @@
 
 {% assign product = closest.product %}
 
-{% capture children %}
+{% comment %} {% capture children %}
   {% unless product == blank %}
     {%- if product.available == false or product.compare_at_price > product.price -%}
       <div
@@ -30,7 +30,7 @@
       {% render 'quick-add', product: product, section_id: section.id %}
     {% endif %}
   {% endunless %}
-{% endcapture %}
+{% endcapture %} {% endcomment %}
 
 {% render 'card-gallery', children: children %}
 
