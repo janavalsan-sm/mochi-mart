@@ -1,0 +1,917 @@
+{%- comment -%}
+  Contact Page Section - Mochi Mart
+  Renders a soft pastel hero banner, a responsive two-column grid with a cute contact form,
+  contact details, and an interactive "Questions, answered" FAQ accordion.
+{%- endcomment -%}
+
+{% liquid
+  assign bg_color = '#e3f0fb'
+  case section.settings.color_preset
+    when 'sky'
+      assign bg_color = '#e3f0fb'
+    when 'blush'
+      assign bg_color = '#ffe5e3'
+    when 'butter'
+      assign bg_color = '#fff1cc'
+    when 'sage'
+      assign bg_color = '#e4efe7'
+    when 'white'
+      assign bg_color = '#ffffff'
+    when 'custom'
+      assign bg_color = section.settings.custom_bg_color | default: '#e3f0fb'
+  endcase
+
+  assign heading_text = section.settings.title
+  if heading_text == blank
+    assign heading_text = page.title | default: 'Contact us'
+  endif
+
+  if section.settings.show_dot
+    assign heading_len = heading_text | size
+    assign last_char = heading_text | slice: -1
+    if last_char == '.'
+      assign heading_len_minus = heading_len | minus: 1
+      assign heading_text = heading_text | slice: 0, heading_len_minus
+    endif
+  endif
+%}
+
+{% style %}
+  .contact-page-section-{{ section.id }} {
+    position: relative;
+    background-color: {{ section.settings.outer_bg_color | default: '#FEFAF1' }};
+    padding-top: {{ section.settings.padding_top | default: 12 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    width: 100%;
+  }
+
+  /* Hero Banner */
+  .contact-hero-banner-{{ section.id }} {
+    margin: 0 clamp(12px, 2.4vw, 32px);
+    border-radius: {{ section.settings.panel_radius | default: 36 }}px;
+    background-color: {{ bg_color }};
+    padding: clamp(28px, 4.5vw, 48px) clamp(20px, 4vw, 44px);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(44, 30, 25, 0.03);
+  }
+
+  .contact-hero__eyebrow {
+    display: inline-block;
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #D32F2F;
+    margin-bottom: 8px;
+  }
+
+  .contact-hero__title {
+    font-family: 'Fredoka', 'DM Sans', system-ui, sans-serif;
+    font-size: clamp(32px, 5.5vw, 54px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: {{ section.settings.title_color | default: '#2C1E19' }};
+    margin: 0 0 10px 0;
+    letter-spacing: -0.02em;
+  }
+
+  .contact-hero__dot {
+    color: {{ section.settings.dot_color | default: '#D32F2F' }};
+    display: inline;
+  }
+
+  .contact-hero__subtitle {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: clamp(14px, 1.8vw, 17px);
+    line-height: 1.55;
+    color: {{ section.settings.subtitle_color | default: '#6F5D57' }};
+    margin: 0 auto;
+    max-width: 580px;
+  }
+
+  /* Two-column Container */
+  .contact-container {
+    max-width: 1180px;
+    margin: 32px auto 0;
+    padding: 0 clamp(16px, 3vw, 32px);
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(24px, 3vw, 36px);
+    align-items: start;
+    box-sizing: border-box;
+  }
+
+  @media screen and (max-width: 989px) {
+    .contact-container {
+      grid-template-columns: 1fr;
+      margin-top: 24px;
+      gap: 28px;
+    }
+  }
+
+  /* Form Card */
+  .contact-card {
+    background: #FFFFFF;
+    border-radius: 28px;
+    padding: clamp(22px, 3.5vw, 36px);
+    border: 1.5px solid rgba(44, 30, 25, 0.08);
+    box-shadow: 0 10px 30px -22px rgba(60, 40, 30, 0.25);
+    box-sizing: border-box;
+  }
+
+  .contact-card__heading {
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: clamp(20px, 2.4vw, 24px);
+    font-weight: 600;
+    color: #2C1E19;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+  }
+
+  .contact-card__description {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: #6F5D57;
+    margin: 0 0 22px 0;
+  }
+
+  /* Form Elements */
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .contact-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  @media screen and (max-width: 600px) {
+    .contact-form__row {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+
+  .contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+  }
+
+  .contact-form__label {
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #2C1E19;
+    letter-spacing: 0.02em;
+  }
+
+  .contact-form__label .required-star {
+    color: #D32F2F;
+    margin-left: 2px;
+  }
+
+  .contact-form__input,
+  .contact-form__textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: #2C1E19;
+    background-color: #FAF8F5;
+    border: 1.5px solid #E8DFD8;
+    border-radius: 14px;
+    padding: 12px 16px;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .contact-form__input:focus,
+  .contact-form__textarea:focus {
+    background-color: #FFFFFF;
+    border-color: #D32F2F;
+    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.12);
+  }
+
+  .contact-form__textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .contact-form__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #FFFFFF;
+    background-color: #D32F2F;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 34px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(211, 47, 47, 0.28);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s, box-shadow 0.2s;
+    margin-top: 6px;
+    width: fit-content;
+  }
+
+  .contact-form__button:hover {
+    transform: translateY(-2px);
+    background-color: #B71C1C;
+    box-shadow: 0 10px 24px rgba(211, 47, 47, 0.38);
+  }
+
+  .contact-form__button:active {
+    transform: translateY(0);
+  }
+
+  @media screen and (max-width: 600px) {
+    .contact-form__button {
+      width: 100%;
+    }
+  }
+
+  /* Alerts */
+  .contact-alert {
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .contact-alert--success {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+    border: 1.5px solid #C8E6C9;
+  }
+
+  .contact-alert--error {
+    background-color: #FFE5E3;
+    color: #D32F2F;
+    border: 1.5px solid rgba(211, 47, 47, 0.2);
+  }
+
+  /* Info chips inside card */
+  .contact-chips {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1.5px solid rgba(44, 30, 25, 0.08);
+  }
+
+  .contact-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    color: #2C1E19;
+  }
+
+  .contact-chip a {
+    color: #2C1E19;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.15s ease;
+  }
+
+  .contact-chip a:hover {
+    color: #D32F2F;
+  }
+
+  .contact-chip__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #FFE5E3;
+    color: #D32F2F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .contact-chip__icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* FAQ Column */
+  .contact-faq-column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contact-faq__heading {
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: clamp(22px, 2.6vw, 28px);
+    font-weight: 600;
+    color: #2C1E19;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+  }
+
+  .contact-faq__subtitle {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: #6F5D57;
+    margin: 0 0 18px 0;
+  }
+
+  /* FAQ Accordion Item */
+  .contact-faq__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  details.contact-faq-item {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 0 20px;
+    border: 1.5px solid rgba(44, 30, 25, 0.08);
+    box-shadow: 0 4px 16px rgba(44, 30, 25, 0.02);
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+
+  details.contact-faq-item[open] {
+    border-color: rgba(211, 47, 47, 0.25);
+    box-shadow: 0 6px 20px rgba(44, 30, 25, 0.05);
+  }
+
+  details.contact-faq-item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: #2C1E19;
+    gap: 12px;
+    user-select: none;
+  }
+
+  details.contact-faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .contact-faq__icon {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50%;
+    background-color: #FFE5E3;
+    color: #D32F2F;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.25s ease, background-color 0.2s, color 0.2s;
+  }
+
+  .contact-faq__icon svg {
+    width: 13px;
+    height: 13px;
+    display: block;
+    stroke: currentColor;
+    transition: transform 0.25s ease;
+  }
+
+  details.contact-faq-item[open] .contact-faq__icon {
+    background-color: #D32F2F;
+    color: #FFFFFF;
+    transform: none;
+  }
+
+  details.contact-faq-item[open] .contact-faq__icon svg {
+    transform: rotate(180deg);
+  }
+
+  .contact-faq__answer {
+    padding: 0 0 16px 0;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #6F5D57;
+  }
+
+  .contact-faq__answer p {
+    margin: 0 0 10px 0;
+  }
+
+  .contact-faq__answer p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Help Card */
+  .contact-help-box {
+    background: #FFF8E7;
+    border: 1.5px solid rgba(254, 232, 165, 0.8);
+    border-radius: 20px;
+    padding: 18px 20px;
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .contact-help-box__emoji {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .contact-help-box__text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: #6B5210;
+  }
+
+  .contact-help-box__text strong {
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-weight: 600;
+    color: #2C1E19;
+    display: block;
+    margin-bottom: 2px;
+  }
+{% endstyle %}
+
+<div class="contact-page-section-{{ section.id }}">
+  {%- comment -%} Hero Banner Pill {%- endcomment -%}
+  <div class="contact-hero-banner-{{ section.id }}">
+    {% if section.settings.eyebrow != blank %}
+      <span class="contact-hero__eyebrow">{{ section.settings.eyebrow }}</span>
+    {% endif %}
+
+    <h1 class="contact-hero__title">
+      {{ heading_text }}
+      {%- if section.settings.show_dot -%}
+        <span class="contact-hero__dot">.</span>
+      {%- endif -%}
+    </h1>
+
+    {% if section.settings.subtitle != blank %}
+      <p class="contact-hero__subtitle">{{ section.settings.subtitle }}</p>
+    {% endif %}
+  </div>
+
+  {%- comment -%} Two-column Main Container {%- endcomment -%}
+  <div class="contact-container">
+    {%- comment -%} Left Column: Contact Form Card {%- endcomment -%}
+    <div class="contact-card">
+      {% if section.settings.form_heading != blank %}
+        <h2 class="contact-card__heading">{{ section.settings.form_heading }}</h2>
+      {% endif %}
+      {% if section.settings.form_description != blank %}
+        <p class="contact-card__description">{{ section.settings.form_description }}</p>
+      {% endif %}
+
+      {%- form 'contact', id: 'ContactForm' -%}
+        {%- if form.posted_successfully? -%}
+          <div class="contact-alert contact-alert--success" tabindex="-1" autofocus>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span>Thanks! We'll get back to you soon ✿</span>
+          </div>
+        {%- endif -%}
+
+        {%- if form.errors -%}
+          <div class="contact-alert contact-alert--error" tabindex="-1" autofocus>
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            <div>{{ form.errors | default_errors }}</div>
+          </div>
+        {%- endif -%}
+
+        <div class="contact-form">
+          <div class="contact-form__row">
+            <div class="contact-form__field">
+              <label class="contact-form__label" for="ContactForm-name">
+                Name <span class="required-star">*</span>
+              </label>
+              <input
+                class="contact-form__input"
+                type="text"
+                id="ContactForm-name"
+                name="contact[name]"
+                value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                placeholder="Your name"
+                required
+                autocomplete="name"
+              >
+            </div>
+
+            <div class="contact-form__field">
+              <label class="contact-form__label" for="ContactForm-email">
+                Email <span class="required-star">*</span>
+              </label>
+              <input
+                class="contact-form__input"
+                type="email"
+                id="ContactForm-email"
+                name="contact[email]"
+                value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                placeholder="hello@example.com"
+                required
+                autocomplete="email"
+              >
+            </div>
+          </div>
+
+          <div class="contact-form__row">
+            <div class="contact-form__field">
+              <label class="contact-form__label" for="ContactForm-phone">
+                Phone number
+              </label>
+              <input
+                class="contact-form__input"
+                type="tel"
+                id="ContactForm-phone"
+                name="contact[phone]"
+                value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+                placeholder="+91 (optional)"
+                autocomplete="tel"
+              >
+            </div>
+
+            <div class="contact-form__field">
+              <label class="contact-form__label" for="ContactForm-order">
+                Order number
+              </label>
+              <input
+                class="contact-form__input"
+                type="text"
+                id="ContactForm-order"
+                name="contact[order_number]"
+                placeholder="#MM-1001 (optional)"
+              >
+            </div>
+          </div>
+
+          <div class="contact-form__field">
+            <label class="contact-form__label" for="ContactForm-body">
+              Message <span class="required-star">*</span>
+            </label>
+            <textarea
+              class="contact-form__textarea"
+              id="ContactForm-body"
+              name="contact[body]"
+              placeholder="How can we help you today? Leave us a sweet note..."
+              required
+            >{{ form.body }}</textarea>
+          </div>
+
+          <button class="contact-form__button" type="submit">
+            <span>{{ section.settings.submit_button_text | default: 'Send message' }}</span>
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+      {%- endform -%}
+
+      {%- comment -%} Direct Info Chips {%- endcomment -%}
+      {% if section.settings.show_contact_chips %}
+        <div class="contact-chips">
+          {% if section.settings.email_address != blank %}
+            <div class="contact-chip">
+              <div class="contact-chip__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+              </div>
+              <div>
+                <span style="font-size: 11.5px; color: #8A7A74; display: block;">Email us</span>
+                <a href="mailto:{{ section.settings.email_address }}">{{ section.settings.email_address }}</a>
+              </div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.support_hours != blank %}
+            <div class="contact-chip">
+              <div class="contact-chip__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <div>
+                <span style="font-size: 11.5px; color: #8A7A74; display: block;">Support hours</span>
+                <span style="font-weight: 600;">{{ section.settings.support_hours }}</span>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    {%- comment -%} Right Column: FAQ Accordion {%- endcomment -%}
+    <div class="contact-faq-column">
+      {% if section.settings.faq_heading != blank %}
+        <h2 class="contact-faq__heading">{{ section.settings.faq_heading }}</h2>
+      {% endif %}
+      {% if section.settings.faq_subtitle != blank %}
+        <p class="contact-faq__subtitle">{{ section.settings.faq_subtitle }}</p>
+      {% endif %}
+
+      <div class="contact-faq__list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'faq' -%}
+            <details class="contact-faq-item" {{ block.shopify_attributes }}>
+              <summary>
+                <span>{{ block.settings.question }}</span>
+                <span class="contact-faq__icon svg-wrapper icon-caret icon-animated" aria-hidden="true">
+                  {{- 'icon-caret.svg' | inline_asset_content -}}
+                </span>
+              </summary>
+              <div class="contact-faq__answer">
+                {{ block.settings.answer }}
+              </div>
+            </details>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      {% if section.settings.show_help_box %}
+        <div class="contact-help-box">
+          <div class="contact-help-box__emoji">💌</div>
+          <div class="contact-help-box__text">
+            <strong>{{ section.settings.help_box_title | default: 'Need something else?' }}</strong>
+            {{ section.settings.help_box_text | default: 'We are always here to help with special requests, custom orders, or product recommendations.' }}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Contact page",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero banner"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Say hello"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Contact us"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dot",
+      "label": "Show red accent dot",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "We'd love to hear from you. Reach out with any questions or order inquiries."
+    },
+    {
+      "type": "select",
+      "id": "color_preset",
+      "label": "Hero color preset",
+      "options": [
+        { "value": "sky", "label": "Sky blue" },
+        { "value": "blush", "label": "Blush pink" },
+        { "value": "butter", "label": "Butter yellow" },
+        { "value": "sage", "label": "Sage green" },
+        { "value": "white", "label": "Clean white" },
+        { "value": "custom", "label": "Custom color" }
+      ],
+      "default": "sky"
+    },
+    {
+      "type": "color",
+      "id": "custom_bg_color",
+      "label": "Custom hero background",
+      "default": "#e3f0fb"
+    },
+    {
+      "type": "color",
+      "id": "outer_bg_color",
+      "label": "Page background color",
+      "default": "#fefaf1"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#2c1e19"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#6f5d57"
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Accent dot color",
+      "default": "#d32f2f"
+    },
+    {
+      "type": "range",
+      "id": "panel_radius",
+      "label": "Hero corner radius",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Contact form"
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Form heading",
+      "default": "Send us a message"
+    },
+    {
+      "type": "text",
+      "id": "form_description",
+      "label": "Form description",
+      "default": "Fill out the form below and our team will get back to you within 24 hours."
+    },
+    {
+      "type": "text",
+      "id": "submit_button_text",
+      "label": "Submit button text",
+      "default": "Send message"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_contact_chips",
+      "label": "Show contact info chips",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "email_address",
+      "label": "Contact email",
+      "default": "hello@mochimart.com"
+    },
+    {
+      "type": "text",
+      "id": "support_hours",
+      "label": "Support hours",
+      "default": "Mon – Fri: 9:00 AM – 6:00 PM"
+    },
+    {
+      "type": "header",
+      "content": "FAQ section"
+    },
+    {
+      "type": "text",
+      "id": "faq_heading",
+      "label": "FAQ heading",
+      "default": "Questions, answered"
+    },
+    {
+      "type": "text",
+      "id": "faq_subtitle",
+      "label": "FAQ subtitle",
+      "default": "Quick answers to common questions about shipping, tracking, and returns."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_help_box",
+      "label": "Show help box",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "help_box_title",
+      "label": "Help box title",
+      "default": "Need something else?"
+    },
+    {
+      "type": "text",
+      "id": "help_box_text",
+      "label": "Help box text",
+      "default": "We are always here to help with special requests, custom orders, or gift packing."
+    },
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How long does shipping take?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Orders ship in 1–2 business days and usually arrive within 3–6 business days. You will receive a tracking link as soon as your package is dispatched.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact page",
+      "blocks": [
+        {
+          "type": "faq",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "<p>Orders ship in 1–2 business days and usually arrive within 3–6 business days. You will receive a tracking link via email as soon as your package is dispatched.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Do you offer gift wrapping?",
+            "answer": "<p>Yes! Every order comes packed with cute tissue and extra love. If you want a personalized gift note included, just leave a message during checkout.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Can I return or exchange an item?",
+            "answer": "<p>Unused, unopened items in original packaging can be returned within 7 days of delivery. Reach out with your order number and photos to start a return.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "Where do you ship to?",
+            "answer": "<p>We currently ship pan-India with reliable courier partners. Expedited delivery is available in select metro areas.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

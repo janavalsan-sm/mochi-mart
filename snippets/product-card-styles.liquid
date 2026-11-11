@@ -128,6 +128,47 @@
     border-radius: var(--card-radius, 28px) var(--card-radius, 28px) 0 0 !important;
   }
 
+  /* ----------------------------------------------------
+     Space Between Product Card Image and Details
+     (Mobile and Responsive Spacing)
+     ---------------------------------------------------- */
+  .card .media,
+  article.card .media,
+  .product-card .media,
+  .product-card .card-gallery,
+  .card-gallery,
+  .product-card-gallery {
+    margin-bottom: 12px !important;
+  }
+
+  /* Reset inner slideshow elements so they never inherit margin-bottom */
+  .card-gallery slideshow-component,
+  .card-gallery slideshow-slides {
+    margin-bottom: 0 !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .card .media,
+    article.card .media,
+    .product-card .media,
+    .product-card .card-gallery,
+    .card-gallery,
+    .product-card-gallery {
+      margin-bottom: 12px !important;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .card .media,
+    article.card .media,
+    .product-card .media,
+    .product-card .card-gallery,
+    .card-gallery,
+    .product-card-gallery {
+      margin-bottom: 10px !important;
+    }
+  }
+
   .card .media img,
   .card .media .placeholder-svg,
   article.card .media img,
@@ -287,7 +328,12 @@
   article.card h3,
   .product-card h3,
   .product-title h3,
-  .product-title h3 a {
+  .product-title h3 a,
+  .product-card .product-title,
+  .product-card [data-block-id*="product_title"],
+  .product-card a[ref="productTitleLink"],
+  .product-card p[role="heading"],
+  .product-title p {
     font-family: 'Fredoka', 'DM Sans', system-ui, sans-serif !important;
     font-size: 17px !important;
     font-weight: 600 !important;
@@ -303,7 +349,8 @@
   .card h3 a,
   article.card h3 a,
   .product-card h3 a,
-  .product-title a {
+  .product-title a,
+  .product-card a[ref="productTitleLink"] {
     color: inherit !important;
     text-decoration: none !important;
     transition: color 0.2s ease !important;
@@ -506,7 +553,12 @@
     .card h3,
     article.card h3,
     .product-card h3,
-    .product-title h3 {
+    .product-title h3,
+    .product-card .product-title,
+    .product-card [data-block-id*="product_title"],
+    .product-card a[ref="productTitleLink"],
+    .product-card p[role="heading"],
+    .product-title p {
       font-size: 15px !important;
     }
 
