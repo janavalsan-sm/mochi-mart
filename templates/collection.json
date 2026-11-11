@@ -12,11 +12,8 @@
     "collection_hero": {
       "type": "collection-hero",
       "settings": {
-        "title": "",
         "show_dot": true,
         "dot_color": "#d2272b",
-        "description": "",
-        "eyebrow": "",
         "color_preset": "blush",
         "custom_bg_color": "#ffe5e3",
         "title_color": "#2c1e19",
