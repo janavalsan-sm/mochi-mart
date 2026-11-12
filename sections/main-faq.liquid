@@ -1,0 +1,1192 @@
+{% comment %}
+  Section contract: main-faq.liquid
+  Dedicated FAQ page section for Mochi Mart.
+  Includes soft hero banner, instant category filter tabs, interactive search,
+  2-column layout with sticky contact/support card, and signature caret-pill accordions.
+{% endcomment %}
+
+{%- liquid
+  assign bg_color = '#FFF1CC'
+  case section.settings.color_preset
+    when 'blush'
+      assign bg_color = '#FFE5E3'
+    when 'butter'
+      assign bg_color = '#FFF1CC'
+    when 'sage'
+      assign bg_color = '#E4EFE7'
+    when 'sky'
+      assign bg_color = '#E3F0FB'
+    when 'white'
+      assign bg_color = '#FFFFFF'
+    when 'custom'
+      assign bg_color = section.settings.custom_bg_color
+  endcase
+
+  assign outer_bg = section.settings.outer_bg_color
+  assign title_color = section.settings.title_color
+  assign subtitle_color = section.settings.subtitle_color
+  assign dot_color = section.settings.dot_color
+  assign panel_radius = section.settings.panel_radius
+
+  # Collect unique categories from blocks
+  assign raw_categories = ''
+  for block in section.blocks
+    if block.type == 'faq' and block.settings.category != blank
+      assign cat = block.settings.category | strip
+      unless raw_categories contains cat
+        assign raw_categories = raw_categories | append: cat | append: '###'
+      endunless
+    endif
+  endfor
+  assign category_list = raw_categories | split: '###'
+-%}
+
+{%- style -%}
+  .faq-page-{{ section.id }} {
+    background-color: {{ outer_bg }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    color: #2C1E19;
+  }
+
+  .faq-page__wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+
+  /* ── Hero Banner ── */
+  .faq-hero-{{ section.id }} {
+    background-color: {{ bg_color }};
+    border-radius: {{ panel_radius }}px;
+    padding: clamp(32px, 5vw, 56px) clamp(20px, 4vw, 48px);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: clamp(24px, 3.5vw, 40px);
+    border: 1px solid rgba(44, 30, 25, 0.06);
+  }
+
+  .faq-hero__eyebrow {
+    display: inline-block;
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: {{ dot_color }};
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 12px;
+  }
+
+  .faq-hero__heading {
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: clamp(28px, 4.2vw, 46px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: {{ title_color }};
+    margin: 0 auto 12px;
+    max-width: 760px;
+    letter-spacing: -0.01em;
+  }
+
+  .faq-hero__dot {
+    color: {{ dot_color }};
+  }
+
+  .faq-hero__subtitle {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: clamp(14px, 1.6vw, 16.5px);
+    line-height: 1.6;
+    color: {{ subtitle_color }};
+    max-width: 620px;
+    margin: 0 auto 24px;
+  }
+
+  /* ── Hero Search Box ── */
+  .faq-search-wrap {
+    max-width: 520px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .faq-search-input-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .faq-search-input {
+    width: 100%;
+    padding: 14px 44px 14px 46px;
+    border-radius: 100px;
+    border: 1.5px solid rgba(44, 30, 25, 0.12);
+    background: #FFFFFF;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: #2C1E19;
+    box-shadow: 0 4px 16px rgba(44, 30, 25, 0.05);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+
+  .faq-search-input:focus {
+    border-color: #D32F2F;
+    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.12);
+  }
+
+  .faq-search-icon {
+    position: absolute;
+    left: 18px;
+    width: 18px;
+    height: 18px;
+    color: #8A7A74;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .faq-search-clear {
+    position: absolute;
+    right: 14px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: #FFE5E3;
+    color: #D32F2F;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0;
+  }
+
+  .faq-search-clear.is-visible {
+    display: flex;
+  }
+
+  /* ── Main Layout ── */
+  .faq-layout {
+    width: 100%;
+  }
+
+  /* Centered Layout ("Feel Free" Airy Style) */
+  .faq-layout--centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .faq-layout--centered .faq-content {
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  .faq-layout--centered .faq-categories-bar {
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+
+  .faq-layout--centered .faq-sidebar--bottom {
+    width: 100%;
+    max-width: 880px;
+    margin: clamp(40px, 5vw, 60px) auto 0;
+  }
+
+  /* Two Column Layout */
+  .faq-layout--two_column {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: clamp(36px, 5vw, 64px);
+    align-items: start;
+  }
+
+  @media screen and (max-width: 989px) {
+    .faq-layout--two_column {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+
+  /* ── Left Sidebar (Sticky Support Card) ── */
+  .faq-sidebar {
+    position: sticky;
+    top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .faq-support-card {
+    background: #FFFFFF;
+    border-radius: 28px;
+    padding: clamp(24px, 3.5vw, 36px);
+    border: 1.5px solid rgba(44, 30, 25, 0.07);
+    box-shadow: 0 8px 28px -12px rgba(60, 40, 30, 0.1);
+  }
+
+  .faq-support__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #D32F2F;
+    background-color: #FFE5E3;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 12px;
+  }
+
+  .faq-support__heading {
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: clamp(20px, 2.2vw, 24px);
+    font-weight: 600;
+    color: #2C1E19;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .faq-support__text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: #6F5D57;
+    margin: 0 0 20px;
+  }
+
+  .faq-support__chips {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 22px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed rgba(44, 30, 25, 0.12);
+  }
+
+  .faq-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    color: #2C1E19;
+  }
+
+  .faq-chip__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #FFE5E3;
+    color: #D32F2F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .faq-chip__icon svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .faq-chip a {
+    color: #2C1E19;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.15s ease;
+  }
+
+  .faq-chip a:hover {
+    color: #D32F2F;
+  }
+
+  .faq-support__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 22px;
+    background-color: #D32F2F;
+    color: #FFFFFF !important;
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    border-radius: 100px;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(211, 47, 47, 0.28);
+    transition: transform 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .faq-support__button:hover {
+    background-color: #B71C1C;
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 18px rgba(211, 47, 47, 0.35);
+  }
+
+  .faq-support__button svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+  }
+
+  .faq-support__button:hover svg {
+    transform: translateX(3px);
+  }
+
+  /* ── Right Content Area ── */
+  .faq-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* ── Category Filter Pills ── */
+  .faq-categories-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 6px;
+  }
+
+  .faq-category-btn {
+    appearance: none;
+    background: #FFFFFF;
+    border: 1.5px solid rgba(44, 30, 25, 0.1);
+    color: #4A3A35;
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 9px 18px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .faq-category-btn:hover {
+    border-color: #D32F2F;
+    color: #D32F2F;
+    background: #FFF8F7;
+  }
+
+  .faq-category-btn.is-active {
+    background: #D32F2F;
+    border-color: #D32F2F;
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.25);
+  }
+
+  .faq-category-btn__count {
+    font-size: 11px;
+    opacity: 0.85;
+    background: rgba(0, 0, 0, 0.08);
+    padding: 1px 7px;
+    border-radius: 10px;
+  }
+
+  .faq-category-btn.is-active .faq-category-btn__count {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  /* ── FAQ Accordion List (Airy, Spacious & Free) ── */
+  .faq-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  details.faq-item {
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 0 clamp(20px, 3.2vw, 34px);
+    border: 1.5px solid rgba(44, 30, 25, 0.07);
+    box-shadow: 0 4px 18px rgba(44, 30, 25, 0.02);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  }
+
+  details.faq-item:hover {
+    border-color: rgba(211, 47, 47, 0.2);
+    box-shadow: 0 8px 24px rgba(44, 30, 25, 0.04);
+  }
+
+  details.faq-item[open] {
+    border-color: rgba(211, 47, 47, 0.28);
+    box-shadow: 0 8px 28px rgba(44, 30, 25, 0.05);
+  }
+
+  details.faq-item.is-hidden {
+    display: none !important;
+  }
+
+  details.faq-item summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: clamp(18px, 2.4vw, 24px) 0;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: clamp(16px, 1.8vw, 18px);
+    font-weight: 600;
+    color: #2C1E19;
+    gap: 16px;
+    user-select: none;
+    line-height: 1.35;
+  }
+
+  details.faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item__question-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    text-align: left;
+  }
+
+  .faq-item__badge {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #8A7A74;
+    background: #F5EFEB;
+    padding: 3px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  /* Signature Caret Arrow Button */
+  .faq-item__icon {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50%;
+    background-color: #FFE5E3;
+    color: #D32F2F;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .faq-item__icon svg {
+    width: 14px;
+    height: 14px;
+    display: block;
+    stroke: currentColor;
+    transition: transform 0.25s ease;
+  }
+
+  details.faq-item[open] .faq-item__icon {
+    background-color: #D32F2F;
+    color: #FFFFFF;
+  }
+
+  details.faq-item[open] .faq-item__icon svg {
+    transform: rotate(180deg);
+  }
+
+  .faq-item__answer {
+    padding: 0 0 clamp(20px, 2.5vw, 26px) 0;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    color: #6F5D57;
+    border-top: 1px dashed rgba(44, 30, 25, 0.08);
+    padding-top: 16px;
+    margin-top: -2px;
+  }
+
+  .faq-item__answer p {
+    margin: 0 0 12px 0;
+  }
+
+  .faq-item__answer p:last-child {
+    margin-bottom: 0;
+  }
+
+  .faq-item__answer a {
+    color: #D32F2F;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 600;
+  }
+
+  /* ── Empty State ── */
+  .faq-empty-state {
+    display: none;
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 40px 24px;
+    text-align: center;
+    border: 1.5px dashed rgba(44, 30, 25, 0.15);
+  }
+
+  .faq-empty-state.is-visible {
+    display: block;
+  }
+
+  .faq-empty-state__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #FFE5E3;
+    color: #D32F2F;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .faq-empty-state__heading {
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    color: #2C1E19;
+    margin: 0 0 6px;
+  }
+
+  .faq-empty-state__text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: #6F5D57;
+    max-width: 400px;
+    margin: 0 auto 18px;
+  }
+{%- endstyle -%}
+
+<section class="faq-page-{{ section.id }}" data-section-id="{{ section.id }}">
+  <div class="faq-page__wrapper">
+    
+    {%- comment -%} ── Hero Banner ── {%- endcomment -%}
+    <div class="faq-hero-{{ section.id }}">
+      {% if section.settings.eyebrow != blank %}
+        <span class="faq-hero__eyebrow">{{ section.settings.eyebrow }}</span>
+      {% endif %}
+
+      <h1 class="faq-hero__heading">
+        {{ section.settings.title | escape }}
+        {% if section.settings.show_dot %}<span class="faq-hero__dot">.</span>{% endif %}
+      </h1>
+
+      {% if section.settings.subtitle != blank %}
+        <p class="faq-hero__subtitle">{{ section.settings.subtitle }}</p>
+      {% endif %}
+
+      {% if section.settings.enable_search %}
+        <div class="faq-search-wrap">
+          <div class="faq-search-input-box">
+            <span class="faq-search-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+            <input
+              type="text"
+              class="faq-search-input"
+              id="faqSearchInput-{{ section.id }}"
+              placeholder="{{ section.settings.search_placeholder | default: 'Search questions or keywords...' | escape }}"
+              aria-label="Search frequently asked questions"
+              autocomplete="off"
+            >
+            <button
+              type="button"
+              class="faq-search-clear"
+              id="faqSearchClear-{{ section.id }}"
+              aria-label="Clear search"
+            >
+              &#x2715;
+            </button>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    {%- capture support_card_html -%}
+      {% if section.settings.show_support_card %}
+        <div class="faq-support-card">
+          <span class="faq-support__badge">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            Help Desk
+          </span>
+
+          {% if section.settings.support_heading != blank %}
+            <h2 class="faq-support__heading">{{ section.settings.support_heading }}</h2>
+          {% endif %}
+
+          {% if section.settings.support_description != blank %}
+            <p class="faq-support__text">{{ section.settings.support_description }}</p>
+          {% endif %}
+
+          <div class="faq-support__chips">
+            {% if section.settings.support_email != blank %}
+              <div class="faq-chip">
+                <div class="faq-chip__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                </div>
+                <div>
+                  <span style="font-size: 11px; color: #8A7A74; display: block; text-transform: uppercase; font-weight: 600;">Email us</span>
+                  <a href="mailto:{{ section.settings.support_email }}">{{ section.settings.support_email }}</a>
+                </div>
+              </div>
+            {% endif %}
+
+            {% if section.settings.support_hours != blank %}
+              <div class="faq-chip">
+                <div class="faq-chip__icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                </div>
+                <div>
+                  <span style="font-size: 11px; color: #8A7A74; display: block; text-transform: uppercase; font-weight: 600;">Support hours</span>
+                  <span style="font-weight: 600;">{{ section.settings.support_hours }}</span>
+                </div>
+              </div>
+            {% endif %}
+
+            <div class="faq-chip">
+              <div class="faq-chip__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <div>
+                <span style="font-size: 11px; color: #8A7A74; display: block; text-transform: uppercase; font-weight: 600;">Response time</span>
+                <span style="font-weight: 600;">Within 24 hours</span>
+              </div>
+            </div>
+          </div>
+
+          {% if section.settings.support_button_url != blank %}
+            <a href="{{ section.settings.support_button_url }}" class="faq-support__button">
+              <span>{{ section.settings.support_button_text | default: 'Contact Us' }}</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    {%- endcapture -%}
+
+    {%- assign layout_mode = section.settings.layout_style | default: 'centered' -%}
+    <div class="faq-layout faq-layout--{{ layout_mode }}">
+      {% if layout_mode == 'two_column' and section.settings.show_support_card %}
+        <aside class="faq-sidebar">
+          {{ support_card_html }}
+        </aside>
+      {% endif %}
+
+      <div class="faq-content">
+        
+        {% if section.settings.enable_category_filter and category_list.size > 0 %}
+          <div class="faq-categories-bar" role="tablist" aria-label="FAQ Categories">
+            <button
+              type="button"
+              class="faq-category-btn is-active"
+              data-target-category="all"
+              role="tab"
+              aria-selected="true"
+            >
+              <span>{{ section.settings.all_filter_label | default: 'All' }}</span>
+              <span class="faq-category-btn__count">{{ section.blocks.size }}</span>
+            </button>
+
+            {% for cat in category_list %}
+              {% if cat != blank %}
+                {%- liquid
+                  assign count = 0
+                  for b in section.blocks
+                    if b.type == 'faq' and b.settings.category == cat
+                      assign count = count | plus: 1
+                    endif
+                  endfor
+                -%}
+                <button
+                  type="button"
+                  class="faq-category-btn"
+                  data-target-category="{{ cat | escape }}"
+                  role="tab"
+                  aria-selected="false"
+                >
+                  <span>{{ cat }}</span>
+                  <span class="faq-category-btn__count">{{ count }}</span>
+                </button>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="faq-items-list" id="faqItemsList-{{ section.id }}">
+          {% for block in section.blocks %}
+            {% if block.type == 'faq' %}
+              {%- liquid
+                assign is_first = forloop.first
+                assign open_attr = ''
+                if is_first and section.settings.open_first_faq
+                  assign open_attr = 'open'
+                endif
+              -%}
+              <details
+                class="faq-item"
+                data-category="{{ block.settings.category | escape }}"
+                {{ open_attr }}
+                {{ block.shopify_attributes }}
+              >
+                <summary>
+                  <div class="faq-item__question-wrap">
+                    <span>{{ block.settings.question | escape }}</span>
+                    {% if block.settings.category != blank and section.settings.show_category_badge %}
+                      <span class="faq-item__badge">{{ block.settings.category | escape }}</span>
+                    {% endif %}
+                  </div>
+                  <span class="faq-item__icon" aria-hidden="true">
+                    {{- 'icon-caret.svg' | inline_asset_content -}}
+                  </span>
+                </summary>
+                <div class="faq-item__answer">
+                  {{ block.settings.answer }}
+                </div>
+              </details>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        {%- comment -%} Empty State {%- endcomment -%}
+        <div class="faq-empty-state" id="faqEmptyState-{{ section.id }}">
+          <div class="faq-empty-state__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <h3 class="faq-empty-state__heading">No questions found</h3>
+          <p class="faq-empty-state__text">We couldn't find any questions matching your query. Please try another search term or contact our support team.</p>
+          {% if section.settings.support_button_url != blank %}
+            <a href="{{ section.settings.support_button_url }}" class="faq-support__button" style="display: inline-flex; width: auto; padding: 10px 24px;">
+              Contact Support
+            </a>
+          {% endif %}
+        </div>
+
+      </div>
+
+      {% if layout_mode == 'centered' and section.settings.show_support_card %}
+        <div class="faq-sidebar--bottom">
+          {{ support_card_html }}
+        </div>
+      {% endif %}
+
+    </div>
+
+  </div>
+</section>
+
+<script>
+  (function () {
+    const section = document.querySelector('.faq-page-{{ section.id }}');
+    if (!section) return;
+
+    const searchInput = section.querySelector('#faqSearchInput-{{ section.id }}');
+    const searchClear = section.querySelector('#faqSearchClear-{{ section.id }}');
+    const categoryBtns = section.querySelectorAll('.faq-category-btn');
+    const items = section.querySelectorAll('.faq-item');
+    const emptyState = section.querySelector('#faqEmptyState-{{ section.id }}');
+
+    let activeCategory = 'all';
+    let searchQuery = '';
+
+    function filterFaqs() {
+      let visibleCount = 0;
+      const normalizedQuery = searchQuery.trim().toLowerCase();
+
+      items.forEach((item) => {
+        const itemCategory = (item.getAttribute('data-category') || '').trim();
+        const matchesCategory = activeCategory === 'all' || itemCategory.toLowerCase() === activeCategory.toLowerCase();
+
+        let matchesSearch = true;
+        if (normalizedQuery.length > 0) {
+          const text = (item.textContent || '').toLowerCase();
+          matchesSearch = text.includes(normalizedQuery);
+        }
+
+        if (matchesCategory && matchesSearch) {
+          item.classList.remove('is-hidden');
+          visibleCount++;
+        } else {
+          item.classList.add('is-hidden');
+        }
+      });
+
+      if (emptyState) {
+        if (visibleCount === 0) {
+          emptyState.classList.add('is-visible');
+        } else {
+          emptyState.classList.remove('is-visible');
+        }
+      }
+    }
+
+    if (categoryBtns.length > 0) {
+      categoryBtns.forEach((btn) => {
+        btn.addEventListener('click', function () {
+          categoryBtns.forEach((b) => {
+            b.classList.remove('is-active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.classList.add('is-active');
+          btn.setAttribute('aria-selected', 'true');
+          activeCategory = btn.getAttribute('data-target-category') || 'all';
+          filterFaqs();
+        });
+      });
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function (e) {
+        searchQuery = e.target.value;
+        if (searchClear) {
+          if (searchQuery.length > 0) {
+            searchClear.classList.add('is-visible');
+          } else {
+            searchClear.classList.remove('is-visible');
+          }
+        }
+        filterFaqs();
+      });
+
+      if (searchClear) {
+        searchClear.addEventListener('click', function () {
+          searchInput.value = '';
+          searchQuery = '';
+          searchClear.classList.remove('is-visible');
+          searchInput.focus();
+          filterFaqs();
+        });
+      }
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ page",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero Banner"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow badge",
+      "default": "Help Center"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dot",
+      "label": "Show accent dot after title",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Got questions? We're here to help. Explore our most common inquiries below or reach out to our team."
+    },
+    {
+      "type": "select",
+      "id": "color_preset",
+      "label": "Hero color preset",
+      "options": [
+        { "value": "butter", "label": "Butter (Warm Yellow)" },
+        { "value": "blush", "label": "Blush (Soft Pink)" },
+        { "value": "sage", "label": "Sage (Mint Green)" },
+        { "value": "sky", "label": "Sky (Pastel Blue)" },
+        { "value": "white", "label": "Pure White" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "butter"
+    },
+    {
+      "type": "color",
+      "id": "custom_bg_color",
+      "label": "Custom hero background",
+      "default": "#FFF1CC"
+    },
+    {
+      "type": "color",
+      "id": "outer_bg_color",
+      "label": "Outer page background",
+      "default": "#FEFAF1"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Heading color",
+      "default": "#2C1E19"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#6F5D57"
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Accent color",
+      "default": "#D32F2F"
+    },
+    {
+      "type": "range",
+      "id": "panel_radius",
+      "label": "Hero border radius",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout style",
+      "options": [
+        { "value": "centered", "label": "Centered (Spacious & Airy)" },
+        { "value": "two_column", "label": "Two column (Sidebar & FAQs)" }
+      ],
+      "default": "centered"
+    },
+    {
+      "type": "header",
+      "content": "Search & Categories"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_search",
+      "label": "Enable instant search",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "Search questions or keywords..."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_category_filter",
+      "label": "Enable category filter pills",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "all_filter_label",
+      "label": "All filter label",
+      "default": "All Questions"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_category_badge",
+      "label": "Show category badge on items",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first_faq",
+      "label": "Open first FAQ by default",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Support Card"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_support_card",
+      "label": "Show sidebar support card",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "support_heading",
+      "label": "Support heading",
+      "default": "Still need help?"
+    },
+    {
+      "type": "textarea",
+      "id": "support_description",
+      "label": "Support description",
+      "default": "Can't find what you're looking for? Our friendly team is always happy to assist with orders and questions."
+    },
+    {
+      "type": "text",
+      "id": "support_email",
+      "label": "Support email",
+      "default": "hello@mochimart.com"
+    },
+    {
+      "type": "text",
+      "id": "support_hours",
+      "label": "Support hours",
+      "default": "Mon – Fri: 9:00 AM – 6:00 PM"
+    },
+    {
+      "type": "text",
+      "id": "support_button_text",
+      "label": "Support button text",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "support_button_url",
+      "label": "Support button link"
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "category",
+          "label": "Category",
+          "default": "Orders & Shipping"
+        },
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How long does shipping take?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Orders ship in 1–2 business days and usually arrive within 3–6 business days. You will receive a tracking link via email as soon as your package is dispatched.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ page",
+      "blocks": [
+        {
+          "type": "faq",
+          "settings": {
+            "category": "Orders & Shipping",
+            "question": "How long does shipping take?",
+            "answer": "<p>Orders ship in 1–2 business days and usually arrive within 3–6 business days. You will receive a tracking link via email as soon as your package is dispatched.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "category": "Orders & Shipping",
+            "question": "Where do you ship to?",
+            "answer": "<p>We currently ship pan-India with trusted courier partners. Express delivery is available for select metro cities during checkout.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "category": "Returns & Exchanges",
+            "question": "What is your return & exchange policy?",
+            "answer": "<p>Unused, unopened items in original packaging can be returned within 7 days of delivery. Please email us with your order number and photos to start a hassle-free return.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "category": "Products & Quality",
+            "question": "Are your stationery items authentic and safe?",
+            "answer": "<p>Yes! We carefully curate and test every stationery item, pen, tape, and plushie to ensure genuine quality, safety, and utmost cuteness.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "category": "Gifting",
+            "question": "Can I include a personalized gift note?",
+            "answer": "<p>Absolutely! All our packages are wrapped with adorable tissue paper and care. Simply leave your gift message in the order notes during checkout.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

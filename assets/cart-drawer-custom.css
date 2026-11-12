@@ -16,13 +16,11 @@
   z-index: 100;
 }
 
-#cart-drawer .theme-drawer__dialog:not([open]) {
-  display: none !important;
-}
-
+/* NOTE: Do NOT override display here with !important — the native <dialog> element
+   manages its own display via showModal()/close() and the theme-drawer.js animation
+   system. Overriding it breaks the slide-out close animation (dialog hides instantly). */
 #cart-drawer .theme-drawer__dialog[open] {
-  display: flex !important;
-  flex-direction: column !important;
+  flex-direction: column;
 }
 
 

@@ -14,7 +14,6 @@
   // Function to check screen size and initialize the slider accordingly
   function checkScreenSizeAndInitSwipers() {
     const width = window.innerWidth;
-    const isDesktop = width >= 1480;
     const islaptop = width >= 1025;
     const isTablet = width <= 1024;
 
@@ -35,8 +34,6 @@
         return; // Skip initialization if slider is not enabled for this device
       }
 
-      let slidesPerView, spaceBetween;
-
       // Destroy existing Swiper instance if it exists
       if (container.swiper) {
         container.swiper.destroy(true, true);
@@ -47,12 +44,12 @@
       const swiperContainer = document.getElementById(`swiper-${uniqueId}`);
       if (swiperContainer) {
         container.swiper = new Swiper(swiperContainer, {
-          slidesPerView: slidesPerView,
-          spaceBetween: spaceBetween,
           loop: loopEnabled,
-          autoplay: autoplayEnabled ? { delay: autoplayDelay } : false,
+          autoplay: autoplayEnabled ? { delay: autoplayDelay, disableOnInteraction: false, waitForTransition: false } : false,
           roundLengths: true,
-
+          // Navigation handled internally by Swiper via nextEl/prevEl selectors.
+          // The click delegation at the bottom only initialises Swiper if needed —
+          // it never manually calls slideNext/Prev to avoid double-firing.
           navigation: arrowsEnabled ? {
             nextEl: `#swiper-${uniqueId} .swiper-button-next`,
             prevEl: `#swiper-${uniqueId} .swiper-button-prev`,
@@ -72,7 +69,7 @@
               spaceBetween: parseInt(container.getAttribute('data-space-between-medium-tablet'), 10) || 0,
             },
           
-            880: {
+             880: {
               slidesPerView: parseFloat(container.getAttribute('data-slides-per-view-tablet')) || 1,
               spaceBetween: parseInt(container.getAttribute('data-space-between-tablet'), 10) || 0,
             },
@@ -111,30 +108,21 @@
     setTimeout(checkScreenSizeAndInitSwipers, 150);
   }
 
-  // Instant click delegation so buttons NEVER get stuck if clicked immediately on visit/refresh
+  // Click delegation: ONLY initialises Swiper if it hasn't loaded yet when user
+  // clicks a button. Does NOT call slideNext/Prev to avoid double-firing.
   document.addEventListener('click', function (e) {
     const nextBtn = e.target.closest('.swiper-button-next');
     const prevBtn = e.target.closest('.swiper-button-prev');
-    if (nextBtn) {
-      const container = nextBtn.closest('.swiper-container');
-      if (container) {
-        if (!container.swiper || container.swiper.destroyed) {
-          checkScreenSizeAndInitSwipers();
-        }
-        if (container.swiper) {
-          container.swiper.slideNext();
-        }
-      }
-    } else if (prevBtn) {
-      const container = prevBtn.closest('.swiper-container');
-      if (container) {
-        if (!container.swiper || container.swiper.destroyed) {
-          checkScreenSizeAndInitSwipers();
-        }
-        if (container.swiper) {
-          container.swiper.slidePrev();
-        }
-      }
+    const btn = nextBtn || prevBtn;
+    if (!btn) return;
+
+    const container = btn.closest('.swiper-container');
+    if (!container) return;
+
+    if (!container.swiper || container.swiper.destroyed) {
+      checkScreenSizeAndInitSwipers();
+      // Swiper's navigation handler on the same event bubble will
+      // handle the actual slide movement after init.
     }
   });
 })();

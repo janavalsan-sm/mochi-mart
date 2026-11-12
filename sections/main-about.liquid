@@ -722,99 +722,148 @@
     }
   }
 
-  /* ── FAQ Section ─────────────────────────────────── */
+  /* ── FAQ Section (Airy, Spacious & Free) ────────── */
   .about-faq-{{ section.id }} {
-    margin: clamp(20px, 3vw, 36px) clamp(12px, 2.4vw, 32px) 0;
+    margin: clamp(52px, 7vw, 96px) auto clamp(60px, 8vw, 100px);
+    max-width: 1200px;
+    padding: 0 clamp(16px, 3.5vw, 32px);
+    box-sizing: border-box;
+  }
+
+  /* Centered Layout ("Feel Free" Airy Style) */
+  .about-faq-{{ section.id }}.about-faq--centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .about-faq-{{ section.id }}.about-faq--centered .about-faq__header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto clamp(28px, 4vw, 48px);
+  }
+
+  .about-faq-{{ section.id }}.about-faq--centered .about-faq__list {
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  /* Two Column Layout */
+  .about-faq-{{ section.id }}.about-faq--two_column {
     display: grid;
-    grid-template-columns: 1fr 1.3fr;
-    gap: clamp(24px, 3.5vw, 48px);
+    grid-template-columns: 340px 1fr;
+    gap: clamp(36px, 5vw, 64px);
     align-items: start;
   }
 
-  .about-faq__aside {
+  .about-faq-{{ section.id }}.about-faq--two_column .about-faq__header {
     position: sticky;
     top: 24px;
+    text-align: left;
   }
 
-  .about-faq__aside-eyebrow {
+  /* Header elements */
+  .about-faq__eyebrow {
+    display: inline-block;
     font-family: 'Fredoka', 'DM Sans', sans-serif;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: #D32F2F;
-    margin: 0 0 10px;
+    background-color: #FFE5E3;
+    padding: 4px 14px;
+    border-radius: 100px;
+    margin: 0 0 12px;
   }
 
-  .about-faq__aside-heading {
+  .about-faq__heading {
     font-family: 'Fredoka', 'DM Sans', system-ui, sans-serif;
-    font-size: clamp(24px, 3.2vw, 36px);
+    font-size: clamp(26px, 3.6vw, 38px);
     font-weight: 700;
     color: #2C1E19;
     line-height: 1.2;
-    margin: 0 0 14px;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
   }
 
-  .about-faq__aside-text {
+  .about-faq__text {
     font-family: 'DM Sans', system-ui, sans-serif;
-    font-size: 15px;
+    font-size: clamp(14.5px, 1.6vw, 16px);
     color: #6F5D57;
     line-height: 1.65;
-    margin: 0 0 24px;
+    margin: 0 0 20px;
   }
 
-  .about-faq__aside-pill {
+  .about-faq__cta-pill {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     background-color: #FFE5E3;
-    color: #2C1E19;
-    font-family: 'DM Sans', system-ui, sans-serif;
-    font-size: 13.5px;
+    color: #D32F2F;
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: 14px;
     font-weight: 600;
-    padding: 10px 18px;
+    padding: 11px 22px;
     border-radius: 100px;
     text-decoration: none;
-    transition: background-color 0.18s ease;
+    transition: all 0.2s ease;
   }
 
-  .about-faq__aside-pill:hover {
-    background-color: #FFCDD2;
+  .about-faq__cta-pill:hover {
+    background-color: #D32F2F;
+    color: #FFFFFF;
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 16px rgba(211, 47, 47, 0.25);
   }
 
+  .about-faq__footer-cta {
+    margin-top: clamp(32px, 4.5vw, 48px);
+    text-align: center;
+    width: 100%;
+  }
+
+  /* FAQ List & Airy Items ("Feel Free") */
   .about-faq__list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 16px;
   }
 
   details.about-faq-item {
     background: #FFFFFF;
-    border-radius: 20px;
-    padding: 0 20px;
-    border: 1.5px solid rgba(44, 30, 25, 0.08);
-    box-shadow: 0 4px 16px rgba(44, 30, 25, 0.02);
-    transition: box-shadow 0.2s, border-color 0.2s;
+    border-radius: 24px;
+    padding: 0 clamp(20px, 3vw, 32px);
+    border: 1.5px solid rgba(44, 30, 25, 0.07);
+    box-shadow: 0 4px 18px rgba(44, 30, 25, 0.02);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  }
+
+  details.about-faq-item:hover {
+    border-color: rgba(211, 47, 47, 0.2);
+    box-shadow: 0 8px 24px rgba(44, 30, 25, 0.04);
   }
 
   details.about-faq-item[open] {
-    border-color: rgba(211, 47, 47, 0.25);
-    box-shadow: 0 6px 20px rgba(44, 30, 25, 0.05);
+    border-color: rgba(211, 47, 47, 0.28);
+    box-shadow: 0 8px 28px rgba(44, 30, 25, 0.05);
   }
 
   details.about-faq-item summary {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 0;
+    padding: clamp(18px, 2.4vw, 24px) 0;
     cursor: pointer;
     list-style: none;
     font-family: 'Fredoka', 'DM Sans', sans-serif;
-    font-size: 15.5px;
+    font-size: clamp(16px, 1.7vw, 18px);
     font-weight: 600;
     color: #2C1E19;
-    gap: 12px;
+    gap: 16px;
     user-select: none;
+    line-height: 1.35;
   }
 
   details.about-faq-item summary::-webkit-details-marker {
@@ -822,8 +871,8 @@
   }
 
   .about-faq__icon {
-    width: 28px !important;
-    height: 28px !important;
+    width: 32px !important;
+    height: 32px !important;
     border-radius: 50%;
     background-color: #FFE5E3;
     color: #D32F2F;
@@ -835,8 +884,8 @@
   }
 
   .about-faq__icon svg {
-    width: 13px;
-    height: 13px;
+    width: 14px;
+    height: 14px;
     display: block;
     stroke: currentColor;
     transition: transform 0.25s ease;
@@ -852,15 +901,18 @@
   }
 
   .about-faq__answer {
-    padding: 0 0 16px 0;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    line-height: 1.65;
+    padding: 0 0 clamp(20px, 2.5vw, 26px) 0;
+    border-top: 1px dashed rgba(44, 30, 25, 0.08);
+    padding-top: 16px;
+    margin-top: -2px;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
     color: #6F5D57;
   }
 
   .about-faq__answer p {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
   }
 
   .about-faq__answer p:last-child {
@@ -869,11 +921,12 @@
 
   /* ── Responsive ──────────────────────────────────── */
   @media (max-width: 989px) {
-    .about-faq-{{ section.id }} {
+    .about-faq-{{ section.id }}.about-faq--two_column {
       grid-template-columns: 1fr;
+      gap: 28px;
     }
 
-    .about-faq__aside {
+    .about-faq-{{ section.id }}.about-faq--two_column .about-faq__header {
       position: static;
     }
 
@@ -1252,21 +1305,22 @@
   {%- comment -%}── FAQ Section ──{%- endcomment -%}
   {%- assign faq_blocks = section.blocks | where: 'type', 'faq' -%}
   {%- if section.settings.show_faq and faq_blocks.size > 0 -%}
-    <div class="about-faq-{{ section.id }}">
+    {%- assign faq_layout_mode = section.settings.faq_layout | default: 'centered' -%}
+    <div class="about-faq-{{ section.id }} about-faq--{{ faq_layout_mode }}">
 
-      <div class="about-faq__aside">
+      <div class="about-faq__header">
         {%- if section.settings.faq_eyebrow != blank -%}
-          <p class="about-faq__aside-eyebrow">{{ section.settings.faq_eyebrow | escape }}</p>
+          <p class="about-faq__eyebrow">{{ section.settings.faq_eyebrow | escape }}</p>
         {%- endif -%}
         {%- if section.settings.faq_heading != blank -%}
-          <h2 class="about-faq__aside-heading">{{ section.settings.faq_heading | escape }}</h2>
+          <h2 class="about-faq__heading">{{ section.settings.faq_heading | escape }}</h2>
         {%- endif -%}
         {%- if section.settings.faq_subtitle != blank -%}
-          <p class="about-faq__aside-text">{{ section.settings.faq_subtitle | escape }}</p>
+          <p class="about-faq__text">{{ section.settings.faq_subtitle | escape }}</p>
         {%- endif -%}
-        {%- if section.settings.faq_cta_label != blank -%}
+        {%- if section.settings.faq_cta_label != blank and faq_layout_mode == 'two_column' -%}
           {%- assign faq_cta_href = section.settings.faq_cta_link | default: '/pages/contact' -%}
-          <a href="{{ faq_cta_href }}" class="about-faq__aside-pill">
+          <a href="{{ faq_cta_href }}" class="about-faq__cta-pill">
             {{ section.settings.faq_cta_label | escape }}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
           </a>
@@ -1278,7 +1332,7 @@
           <details class="about-faq-item" {{ block.shopify_attributes }}>
             <summary>
               <span>{{ block.settings.question | escape }}</span>
-              <span class="about-faq__icon svg-wrapper icon-caret icon-animated" aria-hidden="true">
+              <span class="about-faq__icon" aria-hidden="true">
                 {{- 'icon-caret.svg' | inline_asset_content -}}
               </span>
             </summary>
@@ -1288,6 +1342,16 @@
           </details>
         {%- endfor -%}
       </div>
+
+      {%- if section.settings.faq_cta_label != blank and faq_layout_mode != 'two_column' -%}
+        <div class="about-faq__footer-cta">
+          {%- assign faq_cta_href = section.settings.faq_cta_link | default: '/pages/contact' -%}
+          <a href="{{ faq_cta_href }}" class="about-faq__cta-pill">
+            {{ section.settings.faq_cta_label | escape }}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+          </a>
+        </div>
+      {%- endif -%}
 
     </div>
   {%- endif -%}
@@ -1910,6 +1974,16 @@
       "id": "show_faq",
       "label": "Show FAQ section",
       "default": true
+    },
+    {
+      "type": "select",
+      "id": "faq_layout",
+      "label": "FAQ layout style",
+      "options": [
+        { "value": "centered", "label": "Centered (Spacious & Airy)" },
+        { "value": "two_column", "label": "Two column (Sidebar & FAQs)" }
+      ],
+      "default": "centered"
     },
     {
       "type": "text",

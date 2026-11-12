@@ -38,8 +38,11 @@
       autoplay: autoplayEnabled ? {
         delay: autoplayDelay,
         disableOnInteraction: false,
-        waitForTransition: true,
+        waitForTransition: false,
       } : false,
+      // Navigation is ONLY registered here — click delegation below only
+      // triggers init when swiper isn't ready yet; it never calls slideNext/Prev
+      // directly (that would double-fire since Swiper handles navigation internally).
       navigation: arrowsEnabled ? {
         nextEl: `.swiper-button-nexts[data-swiper-id="${uniqueId}"]`,
         prevEl: `.swiper-button-previ[data-swiper-id="${uniqueId}"]`,
@@ -100,32 +103,27 @@
     setTimeout(checkScreenSizeAndInitSwipers, 150);
   }
 
-  // Instant click delegation so buttons NEVER get stuck if clicked immediately on visit/refresh
+  // Click delegation: ONLY initialises Swiper if it hasn't loaded yet when user
+  // clicks a button. It does NOT call slideNext/Prev — Swiper's own navigation
+  // handler (registered via nextEl/prevEl above) handles the actual slide movement.
+  // Calling slideNext here too would double-fire and jump 2 slides per click.
   document.addEventListener('click', function (e) {
     const nextBtn = e.target.closest('.swiper-button-nexts');
     const prevBtn = e.target.closest('.swiper-button-previ');
-    if (nextBtn) {
-      const id = nextBtn.getAttribute('data-swiper-id');
-      const container = document.querySelector(`.new-swiper-container[data-id="${id}"]`);
-      if (container) {
-        if (!container.swiper || container.swiper.destroyed) {
-          initSwiper(container);
-        }
-        if (container.swiper) {
-          container.swiper.slideNext();
-        }
-      }
-    } else if (prevBtn) {
-      const id = prevBtn.getAttribute('data-swiper-id');
-      const container = document.querySelector(`.new-swiper-container[data-id="${id}"]`);
-      if (container) {
-        if (!container.swiper || container.swiper.destroyed) {
-          initSwiper(container);
-        }
-        if (container.swiper) {
-          container.swiper.slidePrev();
-        }
-      }
+    const btn = nextBtn || prevBtn;
+    if (!btn) return;
+
+    const id = btn.getAttribute('data-swiper-id');
+    if (!id) return;
+
+    const container = document.querySelector(`.new-swiper-container[data-id="${id}"]`);
+    if (!container) return;
+
+    // If not yet initialised, init now so the button press isn't lost.
+    // After initSwiper() runs, Swiper's navigation listener fires on this same
+    // event bubble, so the slide movement happens automatically — no manual call needed.
+    if (!container.swiper || container.swiper.destroyed) {
+      initSwiper(container);
     }
   });
 })();

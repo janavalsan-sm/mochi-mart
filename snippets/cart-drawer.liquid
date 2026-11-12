@@ -101,25 +101,18 @@
             {%- if cart.empty? -%}
               {{ empty_cart_drawer_content }}
             {%- else -%}
-              <scroll-hint
+              <div
                 class="cart-drawer__content"
                 aria-label="{{ 'accessibility.cart' | t }}"
-                style="height: 100% !important; max-height: 100% !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; flex: 1 1 auto !important; min-height: 0 !important; background-color: transparent !important;"
               >
-                <scroll-hint
-                  class="cart-drawer__items"
-                  style="flex: 1 1 auto !important; min-height: 0 !important; overflow-y: auto !important; overflow-x: hidden !important; padding: 12px 24px 20px 24px !important; box-sizing: border-box !important;"
-                >
+                <div class="cart-drawer__items">
                   {% render 'cart-products', context: 'drawer' %}
-                </scroll-hint>
+                </div>
 
-                <div
-                  class="cart-drawer__summary"
-                  style="flex-shrink: 0 !important; margin-top: auto !important; position: sticky !important; bottom: 0 !important; z-index: 10 !important; background-color: #fffdfa !important; border-top: 1px solid #f1ece4 !important; padding: 22px 24px 26px 24px !important; box-sizing: border-box !important;"
-                >
+                <div class="cart-drawer__summary">
                   {% render 'cart-summary', section_id: 'cart-drawer-section' %}
                 </div>
-              </scroll-hint>
+              </div>
             {%- endif -%}
           {% endcapture %}
           {% render 'cart-items-component',

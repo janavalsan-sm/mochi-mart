@@ -1,0 +1,124 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-faq",
+      "blocks": {
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "category": "Orders & Shipping",
+            "question": "How long does shipping take?",
+            "answer": "<p>Orders are packed with care and shipped within 1–2 business days. Standard delivery usually takes 3–6 business days depending on your location. You will receive an automated tracking link as soon as your parcel ships!</p>"
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "category": "Orders & Shipping",
+            "question": "How do I track my order?",
+            "answer": "<p>Once your order has been dispatched, we'll email and SMS you a tracking link. You can also log into your Mochi Mart account anytime to check the real-time fulfillment status of your package.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "category": "Orders & Shipping",
+            "question": "Where do you ship to?",
+            "answer": "<p>We currently ship pan-India across 19,000+ pin codes. Express courier shipping is available for select metro areas at checkout.</p>"
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "category": "Returns & Exchanges",
+            "question": "What is your return & exchange policy?",
+            "answer": "<p>We want you to love everything you order! If you receive an incorrect, defective, or damaged item, please email us within 7 days of delivery with your order number and photos. Unopened, unused items in original packaging are eligible for return or exchange.</p>"
+          }
+        },
+        "faq_5": {
+          "type": "faq",
+          "settings": {
+            "category": "Returns & Exchanges",
+            "question": "How long do refunds take to process?",
+            "answer": "<p>Once our team inspects your return at our warehouse, approved refunds are credited back to your original payment method within 5–7 business days.</p>"
+          }
+        },
+        "faq_6": {
+          "type": "faq",
+          "settings": {
+            "category": "Products & Quality",
+            "question": "Are your stationery items authentic and high quality?",
+            "answer": "<p>Yes, 100%! We partner directly with premium stationery creators and certified manufacturers. Every gel pen, washi tape, notebook, and sticker sheet is hand-checked for paper weight, ink flow, and durability.</p>"
+          }
+        },
+        "faq_7": {
+          "type": "faq",
+          "settings": {
+            "category": "Products & Quality",
+            "question": "How do I care for my plushies and accessories?",
+            "answer": "<p>Our plushies are best spot-cleaned with a damp cloth and mild soap. For machine washing, place them inside a mesh laundry bag on a gentle cold cycle, then let air dry naturally to keep them super soft and cuddly.</p>"
+          }
+        },
+        "faq_8": {
+          "type": "faq",
+          "settings": {
+            "category": "Gifting",
+            "question": "Can I include a personalized gift note?",
+            "answer": "<p>Yes! Every Mochi Mart order is packaged like a gift with cute pastel tissue paper and stickers. If you want a handwritten gift message included, just leave your message in the order notes box on the cart page!</p>"
+          }
+        },
+        "faq_9": {
+          "type": "faq",
+          "settings": {
+            "category": "Gifting",
+            "question": "Do you offer corporate or bulk event gifting?",
+            "answer": "<p>Yes! We love putting together custom gift sets for birthdays, weddings, celebrations, and corporate events. Drop us a note at hello@mochimart.com and our team will prepare a custom proposal and discounted pricing for you.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5",
+        "faq_6",
+        "faq_7",
+        "faq_8",
+        "faq_9"
+      ],
+      "settings": {
+        "eyebrow": "Help Center",
+        "title": "Frequently Asked Questions",
+        "show_dot": true,
+        "subtitle": "Got questions? We're here to help. Explore our most common inquiries below or reach out to our team.",
+        "color_preset": "butter",
+        "custom_bg_color": "#fff1cc",
+        "outer_bg_color": "#fefaf1",
+        "title_color": "#2c1e19",
+        "subtitle_color": "#6f5d57",
+        "dot_color": "#d32f2f",
+        "panel_radius": 36,
+        "layout_style": "centered",
+        "enable_search": true,
+        "search_placeholder": "Search questions or keywords...",
+        "enable_category_filter": true,
+        "all_filter_label": "All Questions",
+        "show_category_badge": true,
+        "open_first_faq": true,
+        "show_support_card": true,
+        "support_heading": "Still need help?",
+        "support_description": "Can't find what you're looking for? Our friendly team is always happy to assist with orders and questions.",
+        "support_email": "hello@mochimart.com",
+        "support_hours": "Mon – Fri: 9:00 AM – 6:00 PM",
+        "support_button_text": "Contact Us",
+        "support_button_url": "/pages/contact",
+        "padding_top": 24,
+        "padding_bottom": 64
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
