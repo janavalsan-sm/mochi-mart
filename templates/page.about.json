@@ -176,7 +176,6 @@
         "reviews_autoplay_delay": 4000,
         "reviews_loop_enabled": false,
         "show_faq": true,
-        "faq_layout": "centered",
         "faq_eyebrow": "Got questions?",
         "faq_heading": "We've got answers",
         "faq_subtitle": "Quick answers to common questions about orders, shipping, and returns. Can't find what you're looking for?",
