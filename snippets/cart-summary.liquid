@@ -226,13 +226,7 @@
   {% endif %}
 
   {%- liquid
-    if section_id == 'cart-drawer-section'
-      assign total_price = cart.total_price | money
-    elsif settings.currency_code_enabled_cart_total
-      assign total_price = cart.total_price | money_with_currency
-    else
-      assign total_price = cart.total_price | money
-    endif
+    assign total_price = cart.total_price | money | remove: 'INR' | strip
   -%}
 
   <div class="cart-totals__container{% if settings.show_installments %} cart-totals__container--has-installments{% endif %}">

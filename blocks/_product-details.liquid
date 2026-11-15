@@ -27,6 +27,24 @@
       </a>
     </div>
     {% content_for 'blocks' %}
+    <div class="product-details__perks">
+      <div class="product-details__perk-item">
+        <span class="product-details__perk-icon">🚚</span>
+        <span><strong>Free Shipping</strong> on orders over ₹999</span>
+      </div>
+      <div class="product-details__perk-item">
+        <span class="product-details__perk-icon">💖</span>
+        <span><strong>100% Authentic</strong> Cute stationery & plushies</span>
+      </div>
+      <div class="product-details__perk-item">
+        <span class="product-details__perk-icon">✨</span>
+        <span><strong>Packed with Love</strong> & bubble-wrapped safety</span>
+      </div>
+      <div class="product-details__perk-item">
+        <span class="product-details__perk-icon">⚡</span>
+        <span><strong>Fast Dispatch</strong> within 24-48 hours</span>
+      </div>
+    </div>
   {% endcapture %}
 
   {% render 'group',
@@ -71,6 +89,185 @@
     .full-height--desktop .group-block {
       align-self: var(--details-position, 'flex-start');
     }
+  }
+
+  /* Mochi Mart Product Details Styling */
+  .product-details h1,
+  .product-details .product-title {
+    font-family: 'Fredoka', 'DM Sans', sans-serif !important;
+    font-size: clamp(26px, 3.2vw, 36px) !important;
+    font-weight: 700 !important;
+    color: #2C1E19 !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .product-details product-price .price {
+    font-family: 'Fredoka', 'DM Sans', sans-serif !important;
+    font-size: clamp(24px, 2.8vw, 30px) !important;
+    font-weight: 700 !important;
+    color: #D32F2F !important;
+  }
+
+  .product-details product-price .compare-at-price {
+    font-family: 'Fredoka', 'DM Sans', sans-serif !important;
+    font-size: 18px !important;
+    color: #8A7A74 !important;
+    text-decoration: line-through !important;
+    margin-left: 8px !important;
+    opacity: 0.8 !important;
+  }
+
+  /* Variant Picker Pills */
+  .product-details .variant-option--buttons legend {
+    font-family: 'Fredoka', 'DM Sans', sans-serif !important;
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    color: #2C1E19 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    margin-bottom: 8px !important;
+  }
+
+  .product-details .variant-option__button-label {
+    border-radius: 100px !important;
+    font-family: 'Fredoka', 'DM Sans', sans-serif !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    padding: 7px 18px !important;
+    border: 1.5px solid rgba(44, 30, 25, 0.14) !important;
+    background-color: #FFFFFF !important;
+    color: #2C1E19 !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+  }
+
+  .product-details .variant-option__button-label:hover {
+    border-color: #D32F2F !important;
+    color: #D32F2F !important;
+    background-color: #FFF8F7 !important;
+  }
+
+  .product-details .variant-option__button-label:has([data-current-checked='true']),
+  .product-details input:checked + .variant-option__button-label,
+  .product-details .variant-option__button-label[data-selected='true'] {
+    background-color: #D32F2F !important;
+    color: #FFFFFF !important;
+    border-color: #D32F2F !important;
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.25) !important;
+  }
+
+  /* Quantity Selector */
+  .product-details cart-quantity-selector-component,
+  .product-details .quantity-selector {
+    display: inline-flex !important;
+    align-items: center !important;
+    background-color: #FAF7F4 !important;
+    border: 1.5px solid rgba(44, 30, 25, 0.12) !important;
+    border-radius: 100px !important;
+    padding: 4px !important;
+    height: 48px !important;
+    box-sizing: border-box !important;
+  }
+
+  .product-details .quantity-selector__button {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    border: none !important;
+    background: transparent !important;
+    color: #2C1E19 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background 0.15s ease, color 0.15s ease !important;
+  }
+
+  .product-details .quantity-selector__button:hover {
+    background: #FFE5E3 !important;
+    color: #D32F2F !important;
+  }
+
+  .product-details .quantity-selector__input {
+    width: 44px !important;
+    border: none !important;
+    background: transparent !important;
+    text-align: center !important;
+    font-family: 'Fredoka', sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #2C1E19 !important;
+  }
+
+  /* Add to Cart Button */
+  .product-details .add-to-cart-button,
+  .product-details button[name="add"],
+  .product-details .button.add-to-cart-button {
+    background-color: #D32F2F !important;
+    color: #FFFFFF !important;
+    border-radius: 100px !important;
+    border: none !important;
+    height: 50px !important;
+    font-family: 'Fredoka', 'DM Sans', sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em !important;
+    box-shadow: 0 4px 16px rgba(211, 47, 47, 0.28) !important;
+    cursor: pointer !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
+  }
+
+  .product-details .add-to-cart-button:hover,
+  .product-details button[name="add"]:hover {
+    background-color: #B71C1C !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.35) !important;
+  }
+
+  .product-details .shopify-payment-button__button {
+    border-radius: 100px !important;
+    overflow: hidden !important;
+  }
+
+  /* Description */
+  .product-details .rte,
+  .product-details .text-block {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 15px !important;
+    line-height: 1.65 !important;
+    color: #5C4B45 !important;
+  }
+
+  /* Trust Perks Box */
+  .product-details__perks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 18px 22px;
+    background: #FAF7F4;
+    border-radius: 20px;
+    border: 1.5px solid rgba(44, 30, 25, 0.08);
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .product-details__perk-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    color: #4A3A35;
+  }
+
+  .product-details__perk-icon {
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
 {% endstylesheet %}
 

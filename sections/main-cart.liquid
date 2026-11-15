@@ -66,31 +66,6 @@
             {%- content_for 'block', id: 'cart-page-title', type: '_cart-title' %}
           </div>
 
-          {% liquid
-            assign free_shipping_threshold = 99900
-            assign current_subtotal = cart.total_price
-            if current_subtotal >= free_shipping_threshold
-              assign progress_percent = 100
-              assign is_free_shipping = true
-            else
-              assign remaining = free_shipping_threshold | minus: current_subtotal
-              assign progress_percent = current_subtotal | times: 100 | divided_by: free_shipping_threshold
-              assign is_free_shipping = false
-            endif
-          %}
-          <div class="cart-page__free-shipping-card">
-            <div class="cart-page__fs-text">
-              {% if is_free_shipping %}
-                <span>🎉 Yay! You've unlocked <strong>FREE Shipping</strong>!</span>
-              {% else %}
-                <span>Add <strong>{{ remaining | money }}</strong> more to unlock <strong>FREE Shipping</strong>! 🎁</span>
-              {% endif %}
-            </div>
-            <div class="cart-page__fs-track">
-              <div class="cart-page__fs-progress" style="width: {{ progress_percent }}%;"></div>
-            </div>
-          </div>
-
           <div class="cart-page__items">
             {%- content_for 'block', id: 'cart-page-items', type: '_cart-products' %}
           </div>
@@ -192,47 +167,6 @@
     margin: 0 !important;
   }
 
-  /* Free Shipping Banner */
-  .cart-page__free-shipping-card {
-    background: #FFFFFF;
-    border-radius: 20px;
-    padding: 16px 20px;
-    border: 1.5px solid rgba(44, 30, 25, 0.08);
-    box-shadow: 0 4px 16px rgba(44, 30, 25, 0.03);
-    margin-bottom: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .cart-page__fs-text {
-    font-family: 'Fredoka', 'DM Sans', sans-serif;
-    font-size: 14.5px;
-    color: #2C1E19;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .cart-page__fs-text strong {
-    color: #DC2626;
-  }
-
-  .cart-page__fs-track {
-    width: 100%;
-    height: 8px;
-    background: #F5EFEB;
-    border-radius: 100px;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .cart-page__fs-progress {
-    height: 100%;
-    background: linear-gradient(90deg, #FF7B7B, #DC2626);
-    border-radius: 100px;
-    transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  }
 
   /* Items Container Card */
   .cart-page:not(.cart-page--empty) .cart-items__wrapper {
@@ -463,18 +397,174 @@
     gap: 20px !important;
   }
 
+  /* Discount Code Box in Summary */
+  .cart-page .cart-actions {
+    border: none !important;
+    border-top: 1px solid rgba(44, 30, 25, 0.08) !important;
+    border-bottom: 1px solid rgba(44, 30, 25, 0.08) !important;
+    padding: 14px 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .cart-page .cart-discount {
+    width: 100% !important;
+  }
+
+  .cart-page .cart-discount__summary {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    cursor: pointer !important;
+    padding: 2px 0 !important;
+  }
+
+  .cart-page .cart-discount__label {
+    font-family: 'Fredoka', 'DM Sans', sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: #2C1E19 !important;
+  }
+
+  .cart-page .cart-totals__icon {
+    width: 14px !important;
+    height: 14px !important;
+    color: #8A837C !important;
+    transition: transform 0.2s ease !important;
+  }
+
+  .cart-page details.cart-discount[open] .cart-totals__icon {
+    transform: rotate(45deg) !important;
+  }
+
+  .cart-page .cart-discount__content {
+    height: auto !important;
+  }
+
+  .cart-page .cart-discount__form {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-top: 12px !important;
+    padding: 0 !important;
+    height: auto !important;
+    width: 100% !important;
+  }
+
+  .cart-page .cart-discount__input {
+    flex: 1 1 auto !important;
+    height: 42px !important;
+    background-color: #FAF7F4 !important;
+    color: #2C1E19 !important;
+    border: 1.5px solid rgba(44, 30, 25, 0.12) !important;
+    border-radius: 12px !important;
+    padding: 0 14px !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    outline: none !important;
+    box-sizing: border-box !important;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
+  }
+
+  .cart-page .cart-discount__input:focus {
+    border-color: #DC2626 !important;
+    background-color: #FFFFFF !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+  }
+
+  .cart-page .cart-discount__input::placeholder {
+    color: #9E948F !important;
+    font-weight: 400 !important;
+  }
+
+  .cart-page .cart-discount__button {
+    flex-shrink: 0 !important;
+    height: 42px !important;
+    padding: 0 20px !important;
+    background-color: #2C1E19 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-family: 'Fredoka', 'DM Sans', sans-serif !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 8px rgba(44, 30, 25, 0.1) !important;
+  }
+
+  .cart-page .cart-discount__button:hover {
+    background-color: #DC2626 !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .cart-page .cart-discount__pill {
+    background-color: #FFE5E3 !important;
+    color: #DC2626 !important;
+    border: 1px solid rgba(220, 38, 38, 0.2) !important;
+    border-radius: 100px !important;
+    padding: 4px 12px !important;
+    font-family: 'Fredoka', 'DM Sans', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+  }
+
+  /* Estimated Total Row - Clean & Uncongested */
+  .cart-page .cart-totals {
+    width: 100% !important;
+    gap: 16px !important;
+  }
+
+  .cart-page .cart-totals__container {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+
+  .cart-page .cart-totals__total {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    margin-bottom: 2px !important;
+    flex-wrap: nowrap !important;
+    gap: 12px !important;
+  }
+
   .cart-page .cart-totals__total-label {
     font-family: 'Fredoka', 'DM Sans', sans-serif !important;
-    font-size: 22px !important;
-    font-weight: 700 !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
     color: #2C1E19 !important;
+    white-space: nowrap !important;
+    letter-spacing: -0.01em !important;
+    flex-shrink: 0 !important;
   }
 
   .cart-page .cart-totals__total-value {
     font-family: 'Fredoka', 'DM Sans', sans-serif !important;
-    font-size: 24px !important;
+    font-size: 20px !important;
     font-weight: 700 !important;
     color: #2C1E19 !important;
+    white-space: nowrap !important;
+    text-align: right !important;
+    flex-shrink: 0 !important;
+  }
+
+  .cart-page .cart-totals__tax-note,
+  .cart-page .cart-totals__tax-note p,
+  .cart-page .cart-totals__tax-note small {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+    color: #7E726D !important;
+    margin: 4px 0 16px 0 !important;
   }
 
   .cart-page .cart__checkout-button {
