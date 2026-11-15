@@ -305,6 +305,23 @@
       {{ content_for_additional_checkout_buttons }}
     </div>
   {% endif %}
+
+  {%- if section_id != 'cart-drawer-section' -%}
+    <div class="cart-page__trust-badges">
+      <div class="cart-page__trust-item">
+        <span class="cart-page__trust-icon">🔒</span>
+        <span><strong>100% Secure Checkout</strong> — Encrypted & protected</span>
+      </div>
+      <div class="cart-page__trust-item">
+        <span class="cart-page__trust-icon">🚚</span>
+        <span><strong>Pan-India Delivery</strong> — Free shipping over ₹999</span>
+      </div>
+      <div class="cart-page__trust-item">
+        <span class="cart-page__trust-icon">💖</span>
+        <span><strong>Packed with Love</strong> — Authentic cute stationery & plushies</span>
+      </div>
+    </div>
+  {%- endif -%}
 </div>
 
 {% stylesheet %}

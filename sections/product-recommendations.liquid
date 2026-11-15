@@ -135,56 +135,66 @@
         endif
       %}
 
-      <div
-        class="
-          resource-list
-          {% if section.settings.layout_type == 'carousel' %}
-            force-full-width
-          {% endif %}
-          {% if section.settings.carousel_on_mobile and section.settings.layout_type != 'carousel' %}
-            hidden--mobile
-          {% endif %}
-          {{ classes }}
-        "
-        {% if section.settings.layout_type == 'grid' %}
-          data-testid="resource-list-grid"
-        {% endif %}
-        data-has-recommendations="{{ has_recommendations }}"
-      >
-        {% case section.settings.layout_type %}
-          {% when 'grid' %}
-            {{ list_items }}
-          {% when 'carousel' %}
-            {% render 'resource-list-carousel',
-              ref: 'resourceListCarousel',
-              slides: slides,
-              slide_count: recommendations.products.size,
-              settings: section.settings
-            %}
-        {% endcase %}
-      </div>
+      {% assign unique_id = 'rec-slider-' | append: section.id | remove: '-' %}
+      {% if section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' %}
+        <div class="slider-outer">
+          <div
+            id="new-swiper-{{ unique_id }}"
+            class="slider-btn new-swiper-container swiper {{ section.settings.arrow_position | default: 'arrows-bottom' }} {{ section.settings.dots_option | default: 'only-mobile' }} {{ section.settings.arrow_option | default: 'arrow-show-both' }}"
+            data-id="{{ unique_id }}"
+            data-mobile-slider="true"
+            data-desktop-slider="true"
+            data-tablet-slider="true"
+            data-slides-per-view-desktop="{{ section.settings.slides_per_view_desktop | default: 4 }}"
+            data-space-between-desktop="{{ section.settings.space_between_desktop | default: 20 }}"
+            data-slides-per-view-laptop="{{ section.settings.slides_per_view_laptop | default: 3 }}"
+            data-space-between-laptop="{{ section.settings.space_between_laptop | default: 16 }}"
+            data-slides-per-view-tablet="{{ section.settings.slides_per_view_tablet | default: 2.5 }}"
+            data-space-between-tablet="{{ section.settings.space_between_tablet | default: 16 }}"
+            data-slides-per-view-medium-tablet="{{ section.settings.slides_per_view_medium_tablet | default: 2 }}"
+            data-space-between-medium-tablet="{{ section.settings.space_between_medium_tablet | default: 12 }}"
+            data-slides-per-view-mobile="{{ section.settings.slides_per_view_mobile | default: 1.5 }}"
+            data-space-between-mobile="{{ section.settings.space_between_mobile | default: 12 }}"
+            data-arrows-enabled="{{ section.settings.arrows_enabled | default: true }}"
+            data-autoplay-enabled="{{ section.settings.autoplay_enabled | default: false }}"
+            data-autoplay-delay="{{ section.settings.autoplay_delay | default: 3000 }}"
+            data-loop-enabled="{{ section.settings.loop_enabled | default: false }}"
+            data-dots-enabled="{{ section.settings.dots_enabled | default: true }}"
+          >
+            <div id="swiper-wrapper-{{ unique_id }}" class="swiper-wrapper">
+              {% for item in slides %}
+                {% assign clean_item = item | strip %}
+                {% if clean_item != blank %}
+                  <div class="swiper-slide">
+                    {{ clean_item }}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
 
-      {% if section.settings.carousel_on_mobile and section.settings.layout_type != 'carousel' %}
-        {% liquid
-          assign mobile_carousel_gap = section.settings.columns_gap
-        %}
+          {% if section.settings.dots_enabled != false %}
+            <div class="pagination-container">
+              <div class="swiper-pagination"></div>
+            </div>
+          {% endif %}
+
+          {% if section.settings.arrows_enabled != false %}
+            <span class="swipwer--btn swiper-button-previ" data-swiper-id="{{ unique_id }}">
+              {% render 'slider-arrow-left' %}
+            </span>
+            <span class="swipwer--btn swiper-button-nexts" data-swiper-id="{{ unique_id }}">
+              {% render 'slider-arrow-right' %}
+            </span>
+          {% endif %}
+        </div>
+      {% else %}
         <div
-          class="
-            resource-list
-            hidden--desktop
-            force-full-width
-          "
-          style="
-            --resource-list-gap: {{ mobile_carousel_gap }}px;
-            --column-count: {{ section.settings.columns }};
-          "
+          class="resource-list resource-list--grid"
+          data-testid="resource-list-grid"
+          data-has-recommendations="{{ has_recommendations }}"
         >
-          {% render 'resource-list-carousel',
-            ref: 'resourceListCarouselMobile',
-            slides: slides,
-            slide_count: recommendations.products.size,
-            settings: section.settings
-          %}
+          {{ list_items }}
         </div>
       {% endif %}
     {%- else -%}
@@ -201,6 +211,21 @@
     {%- endif -%}
   </div>
 </product-recommendations>
+
+<script>
+  (function() {
+    function initRecSlider() {
+      if (typeof window.checkScreenSizeAndInitSwipers === 'function') {
+        window.checkScreenSizeAndInitSwipers();
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initRecSlider);
+    } else {
+      setTimeout(initRecSlider, 60);
+    }
+  })();
+</script>
 
 {% schema %}
 {
@@ -284,7 +309,225 @@
           "label": "t:options.carousel"
         }
       ],
-      "default": "grid"
+      "default": "carousel"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_custom_slider",
+      "label": "Enable Swiper Slider",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Slider Settings",
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "arrows_enabled",
+      "label": "Enable Arrows",
+      "default": true,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "select",
+      "id": "arrow_position",
+      "options": [
+        {
+          "value": "arrows-bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "arrows-left-and-right",
+          "label": "Left & Right"
+        }
+      ],
+      "default": "arrows-bottom",
+      "label": "Arrow Position",
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "select",
+      "id": "arrow_option",
+      "options": [
+        {
+          "value": "arrow-only-mobile",
+          "label": "Show Arrows On Mobile"
+        },
+        {
+          "value": "arrow-only-desktop",
+          "label": "Show Arrows On Desktop"
+        },
+        {
+          "value": "arrow-show-both",
+          "label": "Show Arrows On Both Mobile & Desktop"
+        }
+      ],
+      "default": "arrow-show-both",
+      "label": "Show Arrows",
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "dots_enabled",
+      "label": "Enable Dots",
+      "default": true,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "select",
+      "id": "dots_option",
+      "options": [
+        {
+          "value": "only-mobile",
+          "label": "Show Dots On Mobile"
+        },
+        {
+          "value": "only-desktop",
+          "label": "Show Dots On Desktop"
+        },
+        {
+          "value": "show-both",
+          "label": "Show Dots On Both Mobile & Desktop"
+        }
+      ],
+      "default": "only-mobile",
+      "label": "Show Dots",
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_enabled",
+      "label": "Autoplay Enabled",
+      "default": false,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_delay",
+      "label": "Autoplay Delay (ms)",
+      "min": 1000,
+      "max": 9000,
+      "step": 100,
+      "default": 3000,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "loop_enabled",
+      "label": "Enable Loop",
+      "default": false,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "header",
+      "content": "Column Counts",
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_desktop",
+      "label": "Desktop Items Per View",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 4,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_laptop",
+      "label": "Laptop Items Per View",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_tablet",
+      "label": "Tablet Items Per View",
+      "min": 1,
+      "max": 10,
+      "step": 0.5,
+      "default": 2.5,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_medium_tablet",
+      "label": "Medium Tablet Items Per View",
+      "min": 1,
+      "max": 10,
+      "step": 0.5,
+      "default": 2,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "slides_per_view_mobile",
+      "label": "Mobile Items Per View",
+      "min": 1,
+      "max": 10,
+      "step": 0.1,
+      "default": 1.5,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "header",
+      "content": "Column Spaces",
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "space_between_desktop",
+      "label": "Desktop Space Between Items",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 20,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "space_between_laptop",
+      "label": "Laptop Space Between Items",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 16,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "space_between_tablet",
+      "label": "Tablet Space Between Items",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 16,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "space_between_medium_tablet",
+      "label": "Medium Tablet Space Between Items",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 12,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "space_between_mobile",
+      "label": "Mobile Space Between Items",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 12,
+      "visible_if": "{{ section.settings.enable_custom_slider == true or section.settings.layout_type == 'carousel' }}"
     },
     {
       "type": "checkbox",

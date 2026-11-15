@@ -126,4 +126,6 @@
       initSwiper(container);
     }
   });
+  window.checkScreenSizeAndInitSwipers = checkScreenSizeAndInitSwipers;
+  window.initSwiper = initSwiper;
 })();

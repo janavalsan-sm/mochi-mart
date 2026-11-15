@@ -58,20 +58,34 @@
   "
 >
   {% if cart.empty? or force_empty %}
-    {%- if shop.customer_accounts_enabled and customer == null -%}
-      <p>
-        {{ 'actions.log_in_html' | t: link: routes.account_login_url }}
-      </p>
-    {%- endif -%}
+    {%- if context != 'drawer' -%}
+      <div class="cart-page__empty-box">
+        <div class="cart-page__empty-emoji">🧸</div>
+        <h2 class="cart-page__empty-title">Your cart is feeling a bit light!</h2>
+        <p class="cart-page__empty-subtitle">Explore our cute stationery, plush pals, and little treats to fill it up.</p>
+        <a
+          class="cart-page__start-shopping-btn"
+          href="{{ settings.empty_cart_button_link | default: routes.all_products_collection_url }}"
+        >
+          <span>Start Shopping →</span>
+        </a>
+      </div>
+    {%- else -%}
+      {%- if shop.customer_accounts_enabled and customer == null -%}
+        <p>
+          {{ 'actions.log_in_html' | t: link: routes.account_login_url }}
+        </p>
+      {%- endif -%}
 
-    <a
-      class="button cart-items__empty-button"
-      href="{{ settings.empty_cart_button_link | default: routes.all_products_collection_url }}"
-    >
-      <span class="button-text">
-        {{ 'actions.continue_shopping' | t }}
-      </span>
-    </a>
+      <a
+        class="button cart-items__empty-button"
+        href="{{ settings.empty_cart_button_link | default: routes.all_products_collection_url }}"
+      >
+        <span class="button-text">
+          {{ 'actions.continue_shopping' | t }}
+        </span>
+      </a>
+    {%- endif -%}
   {%- else -%}
     <span
       class="visually-hidden"
@@ -195,10 +209,10 @@
                       <a
                         href="{{ item.url }}"
                         class="cart-items__media-container"
-                        style="--ratio:{{ ratio }}; --card-media-bg: {{ pastel_bg }};"
+                        style="--ratio:{{ ratio }}; --card-media-bg: {{ pastel_bg }}; background-color: {{ pastel_bg }} !important; border-radius: 20px !important; overflow: hidden !important; display: flex !important; align-items: center !important; justify-content: center !important; aspect-ratio: 1 / 1 !important; border: none !important; box-shadow: none !important;"
                       >
                         {%- liquid
-                          echo item.image | image_url: width: 250 | image_tag: class: 'cart-items__media-image border-style', style: border_override
+                          echo item.image | image_url: width: 250, height: 250, crop: 'center' | image_tag: class: 'cart-items__media-image border-style', style: 'width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 20px !important; border: none !important; display: block !important;'
                         -%}
                       </a>
                     {%- endif -%}

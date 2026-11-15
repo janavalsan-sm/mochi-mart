@@ -97,7 +97,20 @@ class ProductRecommendations extends Component {
 
         if (result.data?.trim().length) {
           this.dataset.recommendationsPerformed = 'true';
-          morphSection(sectionId, result.data, { mode: 'hydration', injectStylesheet: true });
+          const morphPromise = morphSection(sectionId, result.data, { mode: 'hydration', injectStylesheet: true });
+          const triggerSwiper = () => {
+            setTimeout(() => {
+              if (typeof window.checkScreenSizeAndInitSwipers === 'function') {
+                window.checkScreenSizeAndInitSwipers();
+              }
+              document.dispatchEvent(new CustomEvent('shopify:section:load', { detail: { sectionId } }));
+            }, 80);
+          };
+          if (morphPromise && typeof morphPromise.then === 'function') {
+            morphPromise.then(triggerSwiper);
+          } else {
+            triggerSwiper();
+          }
         } else {
           this.#handleError(new Error('No recommendations available'));
         }

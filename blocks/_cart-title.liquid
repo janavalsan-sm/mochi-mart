@@ -23,14 +23,19 @@
   style="{% render 'spacing-style', settings: block_settings %}"
   {{ block.shopify_attributes }}
 >
-  <h1 class="{{ block_settings.type_preset | default: 'h2' }}">
-    {%- if cart.empty? or force_empty -%}
+  {%- if cart.empty? or force_empty -%}
+    <h1 class="{{ block_settings.type_preset | default: 'h2' }}">
       {{ 'content.your_cart_is_empty' | t }}
-    {%- else -%}
-      {{ block_settings.title }}
-      {%- if block_settings.show_count -%}{% render 'cart-bubble' %}{%- endif -%}
-    {%- endif -%}
-  </h1>
+    </h1>
+  {%- else -%}
+    <div class="cart-page__header-wrap">
+      <h1 class="cart-page__heading">
+        {{ block_settings.title | default: 'Your Little Bag' }}
+        <span class="cart-page__item-count-badge">({{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %})</span>
+      </h1>
+      <p class="cart-page__subheading">Review your happy little finds before checkout ✨</p>
+    </div>
+  {%- endif -%}
 </div>
 
 {% stylesheet %}
