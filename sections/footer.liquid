@@ -805,6 +805,42 @@
   </div>
 </div>
 
+<script>
+  (function () {
+    function initFooterAccordion() {
+      const footer = document.querySelector('.site-footer');
+      if (!footer) return;
+
+      const detailsList = footer.querySelectorAll('.footer-menu-details');
+      if (!detailsList.length) return;
+
+      const isMobile = () => window.matchMedia('(max-width: 749px)').matches;
+
+      detailsList.forEach((details) => {
+        if (details.dataset.exclusiveAccordionBound === 'true') return;
+        details.dataset.exclusiveAccordionBound = 'true';
+
+        details.addEventListener('toggle', () => {
+          if (isMobile() && details.open) {
+            detailsList.forEach((other) => {
+              if (other !== details && other.open) {
+                other.open = false;
+              }
+            });
+          }
+        });
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initFooterAccordion);
+    } else {
+      initFooterAccordion();
+    }
+    document.addEventListener('shopify:section:load', initFooterAccordion);
+  })();
+</script>
+
 {% schema %}
 {
   "name": "Footer",

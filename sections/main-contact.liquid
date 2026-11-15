@@ -644,7 +644,7 @@
       <div class="contact-faq__list">
         {%- for block in section.blocks -%}
           {%- if block.type == 'faq' -%}
-            <details class="contact-faq-item" {{ block.shopify_attributes }}>
+            <details class="contact-faq-item" name="contact-faq-{{ section.id }}" {{ block.shopify_attributes }}>
               <summary>
                 <span>{{ block.settings.question }}</span>
                 <span class="contact-faq__icon svg-wrapper icon-caret icon-animated" aria-hidden="true">
@@ -671,6 +671,25 @@
     </div>
   </div>
 </div>
+
+<script>
+  (function () {
+    const list = document.querySelector('.contact-faq__list');
+    if (!list) return;
+    const items = list.querySelectorAll('.contact-faq-item');
+    items.forEach((item) => {
+      item.addEventListener('toggle', () => {
+        if (item.open) {
+          items.forEach((other) => {
+            if (other !== item && other.open) {
+              other.open = false;
+            }
+          });
+        }
+      });
+    });
+  })();
+</script>
 
 {% schema %}
 {

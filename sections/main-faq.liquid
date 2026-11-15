@@ -369,8 +369,46 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     padding-bottom: 6px;
+  }
+
+  /* Responsive Horizontal Slide on Mobile with Two-Side Gap */
+  @media screen and (max-width: 749px) {
+    .faq-categories-bar {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 4px 2px 12px 2px;
+      margin: 0;
+      width: 100%;
+      box-sizing: border-box;
+      justify-content: flex-start !important;
+      gap: 8px;
+    }
+
+    .faq-categories-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .faq-category-btn {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+      white-space: nowrap;
+      font-size: 11.5px !important;
+      padding: 5.5px 11px !important;
+      gap: 5px !important;
+    }
+
+    .faq-category-btn__count {
+      font-size: 9.5px !important;
+      padding: 1px 5px !important;
+    }
   }
 
   .faq-category-btn {
@@ -379,16 +417,18 @@
     border: 1.5px solid rgba(44, 30, 25, 0.1);
     color: #4A3A35;
     font-family: 'Fredoka', 'DM Sans', sans-serif;
-    font-size: 13.5px;
+    font-size: 12px;
     font-weight: 600;
-    padding: 9px 18px;
+    padding: 6px 13px;
     border-radius: 100px;
     cursor: pointer;
     transition: all 0.2s ease;
     user-select: none;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    line-height: 1.2;
+    white-space: nowrap;
   }
 
   .faq-category-btn:hover {
@@ -401,15 +441,17 @@
     background: #D32F2F;
     border-color: #D32F2F;
     color: #FFFFFF;
-    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.25);
+    box-shadow: 0 3px 10px rgba(211, 47, 47, 0.22);
   }
 
   .faq-category-btn__count {
-    font-size: 11px;
-    opacity: 0.85;
+    font-size: 10px;
+    font-weight: 700;
+    opacity: 0.9;
     background: rgba(0, 0, 0, 0.08);
-    padding: 1px 7px;
-    border-radius: 10px;
+    padding: 1px 5px;
+    border-radius: 8px;
+    line-height: 1.2;
   }
 
   .faq-category-btn.is-active .faq-category-btn__count {
@@ -453,13 +495,8 @@
     padding: clamp(18px, 2.4vw, 24px) 0;
     cursor: pointer;
     list-style: none;
-    font-family: 'Fredoka', 'DM Sans', sans-serif;
-    font-size: clamp(16px, 1.8vw, 18px);
-    font-weight: 600;
-    color: #2C1E19;
     gap: 16px;
     user-select: none;
-    line-height: 1.35;
   }
 
   details.faq-item summary::-webkit-details-marker {
@@ -468,29 +505,42 @@
 
   .faq-item__question-wrap {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
     flex: 1;
     text-align: left;
+    min-width: 0;
+  }
+
+  .faq-item__question-text {
+    font-family: 'Fredoka', 'DM Sans', sans-serif;
+    font-size: clamp(16px, 1.8vw, 18px);
+    font-weight: 600;
+    color: #2C1E19;
+    line-height: 1.35;
+    word-break: break-word;
   }
 
   .faq-item__badge {
+    display: inline-block;
     font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     color: #8A7A74;
     background: #F5EFEB;
     padding: 3px 9px;
     border-radius: 6px;
     white-space: nowrap;
     text-transform: uppercase;
+    line-height: 1.2;
   }
 
   /* Signature Caret Arrow Button */
   .faq-item__icon {
-    width: 32px !important;
-    height: 32px !important;
+    width: 28px !important;
+    height: 28px !important;
     border-radius: 50%;
     background-color: #FFE5E3;
     color: #D32F2F;
@@ -502,8 +552,8 @@
   }
 
   .faq-item__icon svg {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     display: block;
     stroke: currentColor;
     transition: transform 0.25s ease;
@@ -772,16 +822,17 @@
               -%}
               <details
                 class="faq-item"
+                name="faq-{{ section.id }}"
                 data-category="{{ block.settings.category | escape }}"
                 {{ open_attr }}
                 {{ block.shopify_attributes }}
               >
                 <summary>
                   <div class="faq-item__question-wrap">
-                    <span>{{ block.settings.question | escape }}</span>
                     {% if block.settings.category != blank and section.settings.show_category_badge %}
                       <span class="faq-item__badge">{{ block.settings.category | escape }}</span>
                     {% endif %}
+                    <span class="faq-item__question-text">{{ block.settings.question | escape }}</span>
                   </div>
                   <span class="faq-item__icon" aria-hidden="true">
                     {{- 'icon-caret.svg' | inline_asset_content -}}
@@ -881,9 +932,27 @@
           btn.setAttribute('aria-selected', 'true');
           activeCategory = btn.getAttribute('data-target-category') || 'all';
           filterFaqs();
+
+          // Smooth scroll active pill into view on mobile
+          if (window.innerWidth < 750) {
+            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
         });
       });
     }
+
+    // Exclusive Accordion: when one FAQ opens, close all other open FAQs
+    items.forEach((item) => {
+      item.addEventListener('toggle', () => {
+        if (item.open) {
+          items.forEach((other) => {
+            if (other !== item && other.open) {
+              other.open = false;
+            }
+          });
+        }
+      });
+    });
 
     if (searchInput) {
       searchInput.addEventListener('input', function (e) {

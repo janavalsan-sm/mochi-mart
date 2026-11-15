@@ -1329,7 +1329,7 @@
 
       <div class="about-faq__list">
         {%- for block in faq_blocks -%}
-          <details class="about-faq-item" {{ block.shopify_attributes }}>
+          <details class="about-faq-item" name="about-faq-{{ section.id }}" {{ block.shopify_attributes }}>
             <summary>
               <span>{{ block.settings.question | escape }}</span>
               <span class="about-faq__icon" aria-hidden="true">
@@ -1357,6 +1357,25 @@
   {%- endif -%}
 
 </section>
+
+<script>
+  (function () {
+    const list = document.querySelector('.about-faq__list');
+    if (!list) return;
+    const items = list.querySelectorAll('.about-faq-item');
+    items.forEach((item) => {
+      item.addEventListener('toggle', () => {
+        if (item.open) {
+          items.forEach((other) => {
+            if (other !== item && other.open) {
+              other.open = false;
+            }
+          });
+        }
+      });
+    });
+  })();
+</script>
 
 <script src="{{ 'arrow-out-slider.js' | asset_url }}" defer="defer"></script>
 
