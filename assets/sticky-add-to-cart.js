@@ -183,13 +183,8 @@ class StickyAddToCartComponent extends Component {
       this.refs.addToCartButton.dataset.added = 'true';
     }
 
-    if (this.#resetTimeout) clearTimeout(this.#resetTimeout);
-    this.#resetTimeout = setTimeout(() => {
-      this.refs.addToCartButton.removeAttribute('data-added');
-      this.refs.addToCartButton.blur?.();
-    }, 700);
-
     if (!cartIcon || !this.refs.addToCartButton || !this.refs.productImage) return;
+    if (this.#resetTimeout) clearTimeout(this.#resetTimeout);
 
     const flyToCartElement = /** @type {FlyToCart} */ (document.createElement('fly-to-cart'));
     flyToCartElement.classList.add('fly-to-cart--sticky');
@@ -200,17 +195,10 @@ class StickyAddToCartComponent extends Component {
 
     document.body.appendChild(flyToCartElement);
 
-    try {
-      await Promise.race([
-        onAnimationEnd([this.refs.addToCartButton, flyToCartElement]),
-        new Promise((resolve) => setTimeout(resolve, 600)),
-      ]);
-    } catch (_) {
-      // ignore
-    } finally {
+    await onAnimationEnd([this.refs.addToCartButton, flyToCartElement]);
+    this.#resetTimeout = setTimeout(() => {
       this.refs.addToCartButton.removeAttribute('data-added');
-      this.refs.addToCartButton.blur?.();
-    }
+    }, 800);
   };
 
   /**

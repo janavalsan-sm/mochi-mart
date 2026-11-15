@@ -137,38 +137,26 @@ export class AddToCartComponent extends Component {
       this.#resetTimeouts = [];
     }
 
-    // Clear all existing timeouts
-    this.#resetTimeouts.forEach(/** @param {number} timeoutId */ (timeoutId) => clearTimeout(timeoutId));
-    this.#resetTimeouts = [];
-
     if (addToCartButton.dataset.added !== 'true') {
       addToCartButton.dataset.added = 'true';
     }
 
-    // Guaranteed timeout so the button state is ALWAYS reset and never gets stuck
+    // The onAnimationEnd can trigger a style recalculation so we yield to the main thread first.
+    await yieldToMainThread();
+    await onAnimationEnd(addToCartButton);
+
+    // Create new timeout and store it in the array
     const timeoutId = setTimeout(() => {
       addToCartButton.removeAttribute('data-added');
-      addToCartButton.blur?.();
+
+      // Remove this timeout from the array
       const index = this.#resetTimeouts.indexOf(timeoutId);
       if (index > -1) {
         this.#resetTimeouts.splice(index, 1);
       }
-    }, 700);
+    }, 800);
 
     this.#resetTimeouts.push(timeoutId);
-
-    try {
-      await yieldToMainThread();
-      await Promise.race([
-        onAnimationEnd(addToCartButton),
-        new Promise((resolve) => setTimeout(resolve, 600)),
-      ]);
-    } catch (_) {
-      // ignore
-    } finally {
-      addToCartButton.removeAttribute('data-added');
-      addToCartButton.blur?.();
-    }
   };
 }
 
@@ -286,11 +274,11 @@ class ProductFormComponent extends Component {
     const variantIdInput = this.#getVariantIdInput();
     if (!variantIdInput) return;
 
-    const cartItem = cart.items.find(
-      /** @param {any} item */
-      (item) => item.variant_id.toString() === variantIdInput.toString()
-    );
-    const cartQty = cartItem ? cartItem.quantity : 0;
+    // Discounts such as Buy X Get Y can split one variant across several cart lines.
+    let cartQty = 0;
+    for (const item of cart.items) {
+      if (item.variant_id.toString() === variantIdInput.toString()) cartQty += item.quantity;
+    }
 
     // Use public API to update quantity selector
     const quantitySelector =
@@ -441,8 +429,8 @@ class ProductFormComponent extends Component {
       if (item instanceof HTMLElement && item.dataset.sectionId) {
         cartItemComponentsSectionIds.push(item.dataset.sectionId);
       }
-      formData.append('sections', cartItemComponentsSectionIds.join(','));
     });
+    formData.append('sections', cartItemComponentsSectionIds.join(','));
 
     const itemCount = Number(formData.get('quantity')) || Number(this.dataset.quantityDefault);
     const deferredEventPromise = CartLinesUpdateEvent.createPromise();

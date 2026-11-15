@@ -32,12 +32,16 @@ import {
  * @extends {Component<Refs>}
  */
 export class CartItemsComponent extends createViewEventElement(Component) {
-  /** @type {Set<Promise<void>>} */
+  /** @type {Set<Promise<boolean>>} */
   static #pendingQuantityUpdates = new Set();
+
+  /** The number of Check out submits that wait for quantity saves, across all cart instances. */
+  static #checkoutHolds = 0;
 
   /**
    * Includes quantity mutations, their section renders, and control cleanup across all cart instances.
-   * @returns {ReadonlyArray<Promise<void>>} A snapshot that cannot modify the shared pending set.
+   * Each promise resolves to true when the store rejected the quantity and the line shows the error.
+   * @returns {ReadonlyArray<Promise<boolean>>} A snapshot that cannot modify the shared pending set.
    */
   static get pendingQuantityUpdates() {
     return Array.from(CartItemsComponent.#pendingQuantityUpdates);
@@ -69,6 +73,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
    * Refreshes this section when a cart AJAX response cannot include rendered section HTML.
    * @param {Object} [options] - Additional section morph options.
    * @param {boolean} [options.injectStylesheet]
+   * @param {(html: string) => boolean} [options.shouldRender] - Return false to keep the current section.
    */
   async #refreshCartSection(options = {}) {
     try {
@@ -126,6 +131,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
         if (sectionsHtml) {
           sectionRenderer.abortRender(this.sectionId);
           morphSection(this.sectionId, sectionsHtml, { mode: this.isDrawer ? 'hydration' : 'full' });
+          this.#updateCartQuantitySelectorButtonStates();
         } else {
           this.#refreshCartSection();
         }
@@ -300,10 +306,11 @@ export class CartItemsComponent extends createViewEventElement(Component) {
   async updateQuantity(config) {
     const cartPerformaceUpdateMarker = cartPerformance.createStartingMarker(`${config.action}:user-action`);
     const deferredUpdatePromise = CartLinesUpdateEvent.createPromise();
+    let rejected = false;
     let completeQuantityUpdate = () => {};
-    /** @type {Promise<void>} */
+    /** @type {Promise<boolean>} */
     const quantityUpdate = new Promise((resolve) => {
-      completeQuantityUpdate = () => resolve();
+      completeQuantityUpdate = () => resolve(rejected);
     });
     CartItemsComponent.#pendingQuantityUpdates.add(quantityUpdate);
 
@@ -352,6 +359,7 @@ export class CartItemsComponent extends createViewEventElement(Component) {
 
       if (parsedResponseText.errors) {
         this.#handleCartError(line, parsedResponseText);
+        rejected = true;
         deferredUpdatePromise.reject(new Error(parsedResponseText.errors));
         return;
       }
@@ -376,7 +384,9 @@ export class CartItemsComponent extends createViewEventElement(Component) {
           },
         });
 
-        await this.#refreshCartSection();
+        // While Check out waits, a failed edit keeps the typed quantity, so the resumed form post carries it.
+        const failedEdit = !response.ok && quantity > 0;
+        await this.#refreshCartSection({ shouldRender: () => !failedEdit || !CartItemsComponent.#checkoutHolds });
         return;
       }
 
@@ -423,6 +433,69 @@ export class CartItemsComponent extends createViewEventElement(Component) {
       }
     }
   }
+
+  /**
+   * Check out waits for a pending quantity save. A quantity edit saves through Ajax after a short wait. A form post
+   * at the same time makes iOS Safari cancel the save, and the store answers the post with no page and no message.
+   * This flushes the wait, cancels the post, and awaits the save. A rejected quantity shows its error on the line
+   * (updateQuantity), and the buyer stays on the cart. Any other result resumes the post. A failed save keeps the
+   * typed quantity in its field (updateQuantity), so the store checks it on the post.
+   * The wait saves only the latest edit. With unsaved edits on two or more lines, the post goes at once, as before,
+   * so that it carries every typed quantity.
+   * While Check out waits, this cancels a new submit, so the wait resumes the post once. After a rejection, a keyboard
+   * submit gets the focus back in its field.
+   * @param {SubmitEvent} event - The submit event on the cart form.
+   */
+  holdCheckoutForQuantitySave = async (event) => {
+    const { submitter } = event;
+    if (!(event.target instanceof HTMLFormElement) || !(submitter instanceof HTMLElement)) return;
+    if (event.defaultPrevented) return;
+    // The wait in progress resumes the post. Cancel this submit, so that only one post goes out.
+    if (CartItemsComponent.#checkoutHolds) {
+      event.preventDefault();
+      return;
+    }
+
+    let edited = 0;
+    for (const input of event.target.querySelectorAll('input[name="updates[]"]')) {
+      if (input instanceof HTMLInputElement && input.value !== input.defaultValue) edited++;
+    }
+    if (edited > 1) return;
+
+    // A keyboard submit leaves the focus in an edited field. The blur queues its save.
+    const active = document.activeElement;
+    const blurred =
+      active instanceof HTMLInputElement && event.target.contains(active) && active.value !== active.defaultValue
+        ? active
+        : null;
+    blurred?.blur();
+    this.#debouncedOnChange.flush();
+
+    let pending = CartItemsComponent.pendingQuantityUpdates;
+    if (!pending.length) return;
+    event.preventDefault();
+
+    let rejected = false;
+    CartItemsComponent.#checkoutHolds++;
+    try {
+      while (pending.length) {
+        rejected = (await Promise.all(pending)).some(Boolean) || rejected;
+        this.#debouncedOnChange.flush();
+        pending = CartItemsComponent.pendingQuantityUpdates;
+      }
+    } finally {
+      CartItemsComponent.#checkoutHolds--;
+    }
+    if (rejected) {
+      // The blur moved the focus to the page. Put it back in the field, unless the buyer moved it during the wait.
+      if (document.activeElement === document.body) blurred?.focus();
+      return;
+    }
+
+    // The save re-rendered the section, so the submitter can be a detached element.
+    const button = submitter.isConnected ? submitter : document.getElementById(submitter.id);
+    button?.click();
+  };
 
   /**
    * Handles the cart error.
@@ -533,15 +606,22 @@ export class CartItemsComponent extends createViewEventElement(Component) {
   #updateQuantitySelectors(updatedCart) {
     if (!updatedCart.items) return;
 
+    // Discounts such as Buy X Get Y can split one variant across several cart lines.
+    /** @type {Map<string, number>} */
+    const quantitiesByVariant = new Map();
     for (const item of updatedCart.items) {
       const variantId = item.variant_id.toString();
+      quantitiesByVariant.set(variantId, (quantitiesByVariant.get(variantId) ?? 0) + item.quantity);
+    }
+
+    for (const [variantId, quantity] of quantitiesByVariant) {
       const selectors = document.querySelectorAll(`quantity-selector-component[data-variant-id="${variantId}"]`);
 
       for (const selector of selectors) {
         const input = selector.querySelector('input[data-cart-quantity]');
         if (!input) continue;
 
-        input.setAttribute('data-cart-quantity', item.quantity.toString());
+        input.setAttribute('data-cart-quantity', quantity.toString());
 
         // Update the quantity selector's internal state
         if ('updateCartQuantity' in selector && typeof selector.updateCartQuantity === 'function') {

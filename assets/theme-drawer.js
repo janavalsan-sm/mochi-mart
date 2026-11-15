@@ -75,6 +75,7 @@ export class ThemeDrawer extends Component {
 
     document.addEventListener('keydown', this.#onKeyDown);
     panel.addEventListener('click', this.#onBackdropClick);
+    panel.addEventListener('close', this.#onNativeClose);
   }
 
   disconnectedCallback() {
@@ -85,6 +86,19 @@ export class ThemeDrawer extends Component {
     removeTrapFocus();
     this.#deferredOpen = false;
   }
+
+  /**
+   * Closes the drawer when the browser closes the panel itself, e.g. on a close
+   * request such as the Android Back button. The `close` event is queued, so
+   * the drawer's own restack paths (`#bringToFront`, `#onModalBreakpointChange`)
+   * call `panel.close()` and reopen before it arrives; the panel is open
+   * again by then and the event is ignored.
+   */
+  #onNativeClose = () => {
+    if (this.refs.panel.open) return;
+
+    this.close();
+  };
 
   /**
    * Closes the drawer when the user clicks the backdrop (outside the dialog
@@ -151,12 +165,13 @@ export class ThemeDrawer extends Component {
       this.#focusInitialElement();
     }
 
-    // Ensure keydown and click listeners are registered. The sessionStorage
+    // Ensure keydown, click and close listeners are registered. The sessionStorage
     // restore path bypasses open(), so these may not have been added yet.
     // addEventListener deduplicates identical listeners, so this is safe
     // even if they were already registered.
     document.addEventListener('keydown', this.#onKeyDown);
     panel.addEventListener('click', this.#onBackdropClick);
+    panel.addEventListener('close', this.#onNativeClose);
   };
 
   /**
@@ -223,6 +238,7 @@ export class ThemeDrawer extends Component {
 
     document.addEventListener('keydown', this.#onKeyDown);
     panel.addEventListener('click', this.#onBackdropClick);
+    panel.addEventListener('close', this.#onNativeClose);
   }
 
   /**
@@ -262,6 +278,7 @@ export class ThemeDrawer extends Component {
 
     document.removeEventListener('keydown', this.#onKeyDown);
     panel.removeEventListener('click', this.#onBackdropClick);
+    panel.removeEventListener('close', this.#onNativeClose);
   }
 
   /**
